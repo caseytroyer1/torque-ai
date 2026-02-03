@@ -312,6 +312,145 @@
             color: #FFFFFF;
         }
 
+        /* Results Section */
+        .results-section {
+            display: none;
+            background: #0A1F2E;
+            padding: 80px 20px;
+            margin-top: 0;
+        }
+
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .results-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .results-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 42px;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+            margin-bottom: 0;
+        }
+
+        .faults-section {
+            margin-top: 40px;
+        }
+
+        .faults-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 28px;
+            color: #ffffff;
+            letter-spacing: -1px;
+            margin-bottom: 24px;
+        }
+
+        .fault-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #1E5EFF;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .fault-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .fault-description {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #B8C5D6;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .coaching-tips-section {
+            margin-top: 48px;
+        }
+
+        .coaching-tips-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 28px;
+            color: #ffffff;
+            letter-spacing: -1px;
+            margin-bottom: 24px;
+        }
+
+        .tip-card {
+            background: rgba(30, 94, 255, 0.1);
+            border-left: 4px solid #1E5EFF;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .tip-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Mobile Responsive for Results */
+        @media (max-width: 968px) {
+            .results-section {
+                padding: 60px 20px;
+            }
+
+            .results-heading {
+                font-size: 36px;
+            }
+
+            .faults-heading,
+            .coaching-tips-heading {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .results-section {
+                padding: 40px 20px;
+            }
+
+            .results-heading {
+                font-size: 32px;
+            }
+
+            .faults-heading,
+            .coaching-tips-heading {
+                font-size: 22px;
+            }
+
+            .fault-card,
+            .tip-card {
+                padding: 20px;
+            }
+
+            .fault-name {
+                font-size: 18px;
+            }
+
+            .fault-description,
+            .tip-text {
+                font-size: 15px;
+            }
+        }
+
         /* Mobile Responsive for Swing Coach */
         @media (max-width: 968px) {
             .swing-coach-section {
@@ -1181,6 +1320,23 @@
                     <button class="analyze-button" id="analyzeButton">Analyze Swing</button>
                     <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
                 </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection">
+                    <div class="results-container">
+                        <h2 class="results-heading">Your Swing Analysis</h2>
+                        
+                        <div class="faults-section" id="faultsSection">
+                            <h3 class="faults-heading">Faults Detected</h3>
+                            <div id="faultsList"></div>
+                        </div>
+                        
+                        <div class="coaching-tips-section" id="coachingTipsSection">
+                            <h3 class="coaching-tips-heading">Coaching Tips</h3>
+                            <div id="coachingTipsList"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -1272,6 +1428,11 @@
             if (videoPreview) {
                 videoPreview.src = '';
                 videoPreview.load();
+            }
+            // Hide results section
+            const resultsSection = document.getElementById('resultsSection');
+            if (resultsSection) {
+                resultsSection.classList.remove('active');
             }
         }
 
@@ -1493,7 +1654,7 @@
                 // Extract text content from response
                 const textContent = data.content?.[0]?.text || '';
                 
-                // Try to extract JSON from response
+                // Try to extract JSON from response (handle code blocks if present)
                 let jsonMatch = textContent.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) {
                     // If no JSON found, try to parse the whole response
@@ -1512,6 +1673,63 @@
                 console.error('Analysis API error:', error);
                 throw error;
             }
+        }
+
+        // Function to display analysis results
+        function displayAnalysisResults(analysis) {
+            const resultsSection = document.getElementById('resultsSection');
+            const faultsList = document.getElementById('faultsList');
+            const coachingTipsList = document.getElementById('coachingTipsList');
+            const faultsSection = document.getElementById('faultsSection');
+            const coachingTipsSection = document.getElementById('coachingTipsSection');
+            
+            if (!resultsSection || !faultsList || !coachingTipsList) {
+                console.error('Results section elements not found');
+                return;
+            }
+            
+            // Clear previous results
+            faultsList.innerHTML = '';
+            coachingTipsList.innerHTML = '';
+            
+            // Display faults
+            if (analysis.faults && Array.isArray(analysis.faults) && analysis.faults.length > 0) {
+                faultsSection.style.display = 'block';
+                analysis.faults.forEach(fault => {
+                    const faultCard = document.createElement('div');
+                    faultCard.className = 'fault-card';
+                    faultCard.innerHTML = `
+                        <div class="fault-name">${fault.name || 'Unknown Fault'}</div>
+                        <div class="fault-description">${fault.description || ''}</div>
+                    `;
+                    faultsList.appendChild(faultCard);
+                });
+            } else {
+                faultsSection.style.display = 'none';
+            }
+            
+            // Display coaching tips
+            if (analysis.coaching_tips && Array.isArray(analysis.coaching_tips) && analysis.coaching_tips.length > 0) {
+                coachingTipsSection.style.display = 'block';
+                analysis.coaching_tips.forEach(tip => {
+                    const tipCard = document.createElement('div');
+                    tipCard.className = 'tip-card';
+                    tipCard.innerHTML = `
+                        <div class="tip-text">${tip}</div>
+                    `;
+                    coachingTipsList.appendChild(tipCard);
+                });
+            } else {
+                coachingTipsSection.style.display = 'none';
+            }
+            
+            // Show results section
+            resultsSection.classList.add('active');
+            
+            // Scroll to results
+            setTimeout(() => {
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
         
         // Main analysis function
@@ -1539,10 +1757,13 @@
                 const analysis = await analyzeSwingWithClaude(frames);
                 console.log('Analysis received:', analysis);
                 
-                // Store analysis for display (will be used in next step)
+                // Store analysis for display
                 window.swingAnalysis = analysis;
                 
-                // Reset button (results display will be added in next prompt)
+                // Display results
+                displayAnalysisResults(analysis);
+                
+                // Reset button
                 if (analyzeButton) {
                     analyzeButton.disabled = false;
                     analyzeButton.classList.remove('loading');
@@ -1551,9 +1772,6 @@
                         analyzeButton.textContent = 'Analyze Swing';
                     }, 2000);
                 }
-                
-                // For now, show alert with results
-                alert('Analysis complete! Results will be displayed here.');
                 
             } catch (error) {
                 console.error('Analysis error:', error);
