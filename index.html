@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torque AI - Perfect Your Swing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            padding-top: 72px;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Placeholder Pages */
+        .placeholder-page {
+            background: #112D42;
+            min-height: calc(100vh - 72px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px;
+            text-align: center;
+        }
+
+        .placeholder-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+
+        .placeholder-subtext {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            color: #B8C5D6;
+        }
+
+        /* Swing Coach Page */
+        .swing-coach-section {
+            background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            min-height: calc(100vh - 72px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px;
+        }
+
+        .swing-coach-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .swing-coach-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+        }
+
+        .swing-coach-subtext {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            color: #B8C5D6;
+            margin-bottom: 48px;
+        }
+
+        .upload-zone {
+            width: 600px;
+            height: 400px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            background: rgba(26, 58, 82, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-zone:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(26, 58, 82, 0.7);
+        }
+
+        .upload-zone.dragover {
+            border-color: #1E5EFF;
+            background: rgba(30, 94, 255, 0.2);
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .upload-or {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            margin-bottom: 20px;
+        }
+
+        .browse-button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+            background: #1E5EFF;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .browse-button:hover {
+            background: #3D7AFF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 94, 255, 0.4);
+        }
+
+        .file-hint {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-selected {
+            display: none;
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(30, 94, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(30, 94, 255, 0.3);
+        }
+
+        .file-selected.active {
+            display: block;
+        }
+
+        .file-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .file-size {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+        }
+
+        /* Video Preview Section */
+        .video-preview-section {
+            display: none;
+        }
+
+        .video-preview-section.active {
+            display: block;
+        }
+
+        .upload-zone.hidden {
+            display: none;
+        }
+
+        .file-hint.hidden {
+            display: none;
+        }
+
+        .video-preview {
+            width: 600px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+            display: block;
+            background: #000;
+        }
+
+        .video-file-info {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .analyze-button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #ffffff;
+            background: #1E5EFF;
+            border: none;
+            padding: 20px 48px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(30, 94, 255, 0.3);
+            margin-top: 32px;
+            display: inline-block;
+        }
+
+        .analyze-button:hover {
+            background: #3D7AFF;
+            transform: scale(1.02);
+            box-shadow: 0 6px 30px rgba(30, 94, 255, 0.4);
+        }
+
+        .analyze-button:active {
+            transform: scale(1);
+        }
+
+        .analyze-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .analyze-button.loading {
+            background: #3D7AFF;
+            position: relative;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .upload-different-link {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: block;
+            margin-top: 16px;
+        }
+
+        .upload-different-link:hover {
+            color: #FFFFFF;
+        }
+
+        /* Mobile Responsive for Swing Coach */
+        @media (max-width: 968px) {
+            .swing-coach-section {
+                padding: 80px 20px;
+            }
+
+            .swing-coach-heading {
+                font-size: 36px;
+            }
+
+            .upload-zone {
+                width: 100%;
+                max-width: 600px;
+                height: 350px;
+            }
+
+            .video-preview {
+                width: 100%;
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .swing-coach-section {
+                padding: 60px 20px;
+            }
+
+            .swing-coach-heading {
+                font-size: 32px;
+            }
+
+            .swing-coach-subtext {
+                font-size: 16px;
+            }
+
+            .upload-zone {
+                height: 300px;
+            }
+
+            .upload-icon {
+                font-size: 48px;
+            }
+
+            .upload-text {
+                font-size: 18px;
+            }
+
+            .video-preview {
+                width: 100%;
+            }
+
+            .analyze-button {
+                padding: 18px 40px;
+                font-size: 16px;
+            }
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 20px;
+        }
+
+        /* Noise texture overlay */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 80px;
+        }
+
+        .hero-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 48px;
+            filter: brightness(0) invert(1);
+        }
+
+        .hero-headline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 72px;
+            line-height: 1.1;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+            margin-bottom: 24px;
+        }
+
+        .hero-subheadline {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 24px;
+            line-height: 1.5;
+            color: #B8C5D6;
+            margin-bottom: 32px;
+        }
+
+        .hero-cta-button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #ffffff;
+            background: #1E5EFF;
+            border: none;
+            padding: 20px 48px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(30, 94, 255, 0.3);
+            width: fit-content;
+        }
+
+        .hero-cta-button:hover {
+            background: #2d6eff;
+            box-shadow: 0 6px 30px rgba(30, 94, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .hero-cta-button:active {
+            transform: translateY(0);
+        }
+
+        .hero-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-mockup {
+            width: 400px;
+            height: 600px;
+            background: #2a4a62;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-mockup:hover {
+            transform: perspective(1000px) rotateY(-3deg);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .hero-container {
+                flex-direction: column;
+                gap: 60px;
+            text-align: center;
+            }
+
+            .hero-left {
+                align-items: center;
+            }
+
+            .hero-logo {
+                margin-bottom: 32px;
+            }
+
+            .hero-headline {
+                font-size: 48px;
+                letter-spacing: -1.5px;
+            }
+
+            .hero-subheadline {
+                font-size: 20px;
+            }
+
+            .hero-mockup {
+                width: 100%;
+                max-width: 400px;
+                height: 500px;
+                transform: none;
+            }
+
+            .hero-mockup:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-headline {
+                font-size: 36px;
+            }
+
+            .hero-subheadline {
+                font-size: 18px;
+            }
+
+            .hero-cta-button {
+                padding: 18px 40px;
+                font-size: 16px;
+            }
+
+            .hero-mockup {
+                height: 400px;
+            }
+        }
+
+        /* How It Works Section */
+        .how-it-works-section {
+            background: #112D42;
+            width: 100%;
+            padding: 120px 20px;
+        }
+
+        .how-it-works-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .how-it-works-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 48px;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 80px;
+            letter-spacing: -1.5px;
+        }
+
+        .how-it-works-columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 80px;
+        }
+
+        .how-it-works-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .how-it-works-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 64px;
+            color: #1E5EFF;
+            opacity: 0.8;
+            margin-bottom: 16px;
+            letter-spacing: -1.5px;
+        }
+
+        .how-it-works-icon {
+            width: 80px;
+            height: 80px;
+            background: #1a3a52;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .how-it-works-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: #ffffff;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            letter-spacing: -1.5px;
+        }
+
+        .how-it-works-description {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #B8C5D6;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+
+        /* Mobile Responsive for How It Works */
+        @media (max-width: 968px) {
+            .how-it-works-section {
+                padding: 80px 20px;
+            }
+
+            .how-it-works-heading {
+                font-size: 36px;
+                margin-bottom: 60px;
+                letter-spacing: -1.5px;
+            }
+
+            .how-it-works-columns {
+                flex-direction: column;
+                gap: 60px;
+            }
+
+            .how-it-works-number {
+                font-size: 56px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .how-it-works-section {
+                padding: 60px 20px;
+            }
+
+            .how-it-works-heading {
+                font-size: 32px;
+                margin-bottom: 40px;
+            }
+
+            .how-it-works-number {
+                font-size: 48px;
+            }
+
+            .how-it-works-title {
+                font-size: 20px;
+            }
+
+            .how-it-works-description {
+                font-size: 14px;
+            }
+        }
+
+        /* Features Section */
+        .features-section {
+            background: #0A1F2E;
+            width: 100%;
+            padding: 120px 20px;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 80px;
+            letter-spacing: -1.5px;
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-card.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .feature-image {
+            width: 600px;
+            height: 400px;
+            background: #1a3a52;
+            border-radius: 16px;
+            flex-shrink: 0;
+        }
+
+        .feature-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 32px;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+        }
+
+        .feature-description {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            color: #B8C5D6;
+            line-height: 1.6;
+            margin-top: 16px;
+        }
+
+        /* Mobile Responsive for Features */
+        @media (max-width: 968px) {
+            .features-section {
+                padding: 80px 20px;
+            }
+
+            .features-heading {
+                font-size: 36px;
+                margin-bottom: 60px;
+            }
+
+            .feature-card {
+                flex-direction: column !important;
+                gap: 40px;
+                margin-bottom: 60px;
+            }
+
+            .feature-image {
+            width: 100%;
+                max-width: 600px;
+                height: 300px;
+            }
+
+            .feature-title {
+                font-size: 28px;
+            }
+
+            .feature-description {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .features-section {
+                padding: 60px 20px;
+            }
+
+            .features-heading {
+                font-size: 32px;
+                margin-bottom: 40px;
+            }
+
+            .feature-card {
+                margin-bottom: 50px;
+            }
+
+            .feature-image {
+                height: 250px;
+            }
+
+            .feature-title {
+                font-size: 24px;
+            }
+
+            .feature-description {
+                font-size: 16px;
+            }
+        }
+
+        /* Final CTA Section */
+        .cta-section {
+            background: #112D42;
+            background-image: 
+                radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 30px 30px;
+            width: 100%;
+            padding: 140px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-headline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 56px;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+        }
+
+        .cta-subtext {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: #B8C5D6;
+            margin-top: 16px;
+        }
+
+        .cta-button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #ffffff;
+            background: #1E5EFF;
+            border: none;
+            padding: 20px 48px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(30, 94, 255, 0.3);
+            margin-top: 40px;
+        }
+
+        .cta-button:hover {
+            background: #3D7AFF;
+            transform: scale(1.02);
+            box-shadow: 0 6px 30px rgba(30, 94, 255, 0.4);
+        }
+
+        .cta-button:active {
+            transform: scale(1);
+        }
+
+        /* Mobile Responsive for CTA */
+        @media (max-width: 968px) {
+            .cta-section {
+                padding: 100px 20px;
+            }
+
+            .cta-headline {
+                font-size: 42px;
+            }
+
+            .cta-subtext {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cta-section {
+                padding: 80px 20px;
+            }
+
+            .cta-headline {
+                font-size: 36px;
+            }
+
+            .cta-subtext {
+                font-size: 16px;
+            }
+
+            .cta-button {
+                padding: 18px 40px;
+                font-size: 16px;
+            }
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 37, 64, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: 72px;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .top-nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            padding: 0 48px;
+        }
+
+        .top-nav-logo {
+            height: 40px;
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .top-nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .top-nav-link {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 17px;
+            color: #B8C5D6;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .top-nav-link:hover {
+            color: #FFFFFF;
+        }
+
+        .top-nav-link.active {
+            color: #1E5EFF;
+            font-weight: 600;
+        }
+
+        /* Mobile Responsive for Top Nav */
+        @media (max-width: 968px) {
+            .top-nav-container {
+                padding: 0 24px;
+            }
+
+            .top-nav-links {
+                gap: 24px;
+            }
+
+            .top-nav-link {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-nav-container {
+                padding: 0 16px;
+            }
+
+            .top-nav-links {
+                gap: 16px;
+            }
+
+            .top-nav-link {
+                font-size: 15px;
+            }
+
+            .top-nav-logo {
+                height: 32px;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: #0A2540;
+            width: 100%;
+            padding: 48px 20px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            width: 120px;
+            height: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-nav {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .footer-nav-link {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav-link:hover {
+            color: #FFFFFF;
+        }
+
+        .footer-copyright {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+        }
+
+        /* Mobile Responsive for Footer */
+        @media (max-width: 968px) {
+            .footer-container {
+                flex-direction: column;
+                gap: 32px;
+                text-align: center;
+            }
+
+            .footer-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer {
+                padding: 40px 20px;
+            }
+
+            .footer-nav {
+                gap: 24px;
+            }
+
+            .footer-nav-link,
+            .footer-copyright {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <div class="top-nav-container">
+            <img src="torque-logo.png" alt="Torque AI" class="top-nav-logo">
+            <div class="top-nav-links">
+                <a href="#" class="top-nav-link active" data-page="home">Home</a>
+                <a href="#" class="top-nav-link" data-page="swing-coach">Swing Coach</a>
+                <a href="#" class="top-nav-link" data-page="golf-hub">Golf Hub</a>
+                <a href="#" class="top-nav-link" data-page="contact">Contact Us</a>
+                            </div>
+                        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page-section active">
+        <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-left">
+                <img src="torque-logo.png" alt="Torque AI" class="hero-logo">
+                <h1 class="hero-headline">Perfect Your Swing</h1>
+                <p class="hero-subheadline">AI-powered analysis in seconds</p>
+                <button class="hero-cta-button">Try It Free</button>
+                            </div>
+            <div class="hero-right">
+                <div class="hero-mockup"></div>
+                            </div>
+                        </div>
+    </section>
+
+    <section class="how-it-works-section">
+        <div class="how-it-works-container">
+            <h2 class="how-it-works-heading">How It Works</h2>
+            <div class="how-it-works-columns">
+                <div class="how-it-works-column">
+                    <div class="how-it-works-number">01</div>
+                    <div class="how-it-works-icon"></div>
+                    <h3 class="how-it-works-title">Upload</h3>
+                    <p class="how-it-works-description">Record your swing from any angle</p>
+                        </div>
+                <div class="how-it-works-column">
+                    <div class="how-it-works-number">02</div>
+                    <div class="how-it-works-icon"></div>
+                    <h3 class="how-it-works-title">Analyze</h3>
+                    <p class="how-it-works-description">AI identifies faults instantly</p>
+                        </div>
+                <div class="how-it-works-column">
+                    <div class="how-it-works-number">03</div>
+                    <div class="how-it-works-icon"></div>
+                    <h3 class="how-it-works-title">Improve</h3>
+                    <p class="how-it-works-description">Get personalized coaching tips</p>
+                        </div>
+                    </div>
+                        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="features-container">
+            <h2 class="features-heading">Powerful Analysis</h2>
+            
+            <div class="feature-card">
+                <div class="feature-image"></div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Instant Fault Detection</h3>
+                    <p class="feature-description">AI identifies over-the-top swings, tempo issues, and grip problems in seconds</p>
+                </div>
+            </div>
+
+            <div class="feature-card reverse">
+                <div class="feature-image"></div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Track Your Progress</h3>
+                    <p class="feature-description">Watch your swing metrics improve with detailed analytics over time</p>
+                    </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-image"></div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Personalized Coaching</h3>
+                    <p class="feature-description">Get specific drills and fixes tailored to your unique swing faults</p>
+                            </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2 class="cta-headline">Ready to Elevate Your Game?</h2>
+            <p class="cta-subtext">Join golfers improving their swing with AI</p>
+            <button class="cta-button">Start Analyzing Free</button>
+                        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <img src="torque-logo.png" alt="Torque AI" class="footer-logo">
+            <nav class="footer-nav">
+                <a href="#" class="footer-nav-link">Home</a>
+                <a href="#" class="footer-nav-link">Features</a>
+                <a href="#" class="footer-nav-link">About</a>
+                <a href="#" class="footer-nav-link">Contact</a>
+            </nav>
+            <div class="footer-copyright">© 2025 Torque AI</div>
+                </div>
+    </footer>
+    </div>
+
+    <!-- Swing Coach Page -->
+    <div id="swing-coach-page" class="page-section">
+        <section class="swing-coach-section">
+            <div class="swing-coach-container">
+                <h1 class="swing-coach-heading">Analyze Your Swing</h1>
+                <p class="swing-coach-subtext">Upload a video and get instant AI feedback</p>
+                
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Drag and drop your video here</div>
+                    <div class="upload-or">or</div>
+                    <button class="browse-button" id="browseButton">Browse Files</button>
+                </div>
+                
+                <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
+                
+                <div class="file-hint">Supports MP4, MOV • Max 50MB</div>
+                
+                <div class="file-selected" id="fileSelected">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-size" id="fileSize"></div>
+                </div>
+
+                <!-- Video Preview Section -->
+                <div class="video-preview-section" id="videoPreviewSection">
+                    <video id="videoPreview" class="video-preview" controls></video>
+                    <div class="video-file-info" id="videoFileInfo"></div>
+                    <button class="analyze-button" id="analyzeButton">Analyze Swing</button>
+                    <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Golf Hub Page -->
+    <div id="golf-hub-page" class="page-section">
+        <div class="placeholder-page">
+            <div>
+                <h1 class="placeholder-heading">Golf Hub - Coming Soon</h1>
+                <p class="placeholder-subtext">This page is under construction</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="contact-page" class="page-section">
+        <div class="placeholder-page">
+            <div>
+                <h1 class="placeholder-heading">Contact Us - Coming Soon</h1>
+                <p class="placeholder-subtext">This page is under construction</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Top navigation functionality
+        const topNavLinks = document.querySelectorAll('.top-nav-link');
+        const pageSections = document.querySelectorAll('.page-section');
+        
+        // Function to switch pages
+        function switchPage(pageId) {
+            // Hide all page sections
+            pageSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId + '-page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            
+            // Update active nav link
+            topNavLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageId) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Add click event listeners to nav links
+        topNavLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Get the page identifier
+                const page = this.getAttribute('data-page');
+                switchPage(page);
+            });
+        });
+        
+        // Initialize: ensure home page is active on load
+        switchPage('home');
+
+        // Swing Coach Upload Functionality
+        const uploadZone = document.getElementById('uploadZone');
+        const browseButton = document.getElementById('browseButton');
+        const videoFileInput = document.getElementById('videoFileInput');
+        const fileSelected = document.getElementById('fileSelected');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const videoPreviewSection = document.getElementById('videoPreviewSection');
+        const videoPreview = document.getElementById('videoPreview');
+        const videoFileInfo = document.getElementById('videoFileInfo');
+        const fileHint = document.querySelector('.file-hint');
+        const uploadDifferentLink = document.getElementById('uploadDifferentLink');
+
+        // Function to reset to upload screen
+        function resetUploadScreen() {
+            uploadZone.classList.remove('hidden');
+            if (fileHint) fileHint.classList.remove('hidden');
+            videoPreviewSection.classList.remove('active');
+            fileSelected.classList.remove('active');
+            videoFileInput.value = '';
+            if (videoPreview) {
+                videoPreview.src = '';
+                videoPreview.load();
+            }
+        }
+
+        // Function to handle file selection
+        function handleFileSelect(file) {
+            if (file) {
+                // Validate file type
+                const validTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo'];
+                const fileType = file.type;
+                
+                if (!validTypes.includes(fileType) && !file.name.match(/\.(mp4|mov|avi)$/i)) {
+                    alert('Please upload a valid video file (MP4, MOV, or AVI)');
+                    return;
+                }
+
+                // Validate file size (50MB = 50 * 1024 * 1024 bytes)
+                const maxSize = 50 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert('File size exceeds 50MB limit');
+                    return;
+                }
+
+                // Create object URL for video preview
+                const videoURL = URL.createObjectURL(file);
+                if (videoPreview) {
+                    videoPreview.src = videoURL;
+                }
+
+                // Display file info
+                const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                if (videoFileInfo) {
+                    videoFileInfo.textContent = `${file.name} • ${fileSizeMB} MB`;
+                }
+
+                // Hide upload zone and show video preview
+                uploadZone.classList.add('hidden');
+                if (fileHint) fileHint.classList.add('hidden');
+                fileSelected.classList.remove('active');
+                videoPreviewSection.classList.add('active');
+            }
+        }
+
+        // Browse button click
+        if (browseButton) {
+            browseButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                videoFileInput.click();
+            });
+        }
+
+        // File input change
+        if (videoFileInput) {
+            videoFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                handleFileSelect(file);
+            });
+        }
+
+        // Drag and drop functionality
+        if (uploadZone) {
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Highlight drop zone when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                uploadZone.classList.add('dragover');
+            }
+
+            function unhighlight(e) {
+                uploadZone.classList.remove('dragover');
+            }
+
+            // Handle dropped files
+            uploadZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    handleFileSelect(files[0]);
+                    // Update file input
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(files[0]);
+                    videoFileInput.files = dataTransfer.files;
+                }
+            }
+
+            // Click on upload zone to browse
+            uploadZone.addEventListener('click', function(e) {
+                if (e.target !== browseButton) {
+                    videoFileInput.click();
+                }
+            });
+        }
+
+        // Upload different video link
+        if (uploadDifferentLink) {
+            uploadDifferentLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                resetUploadScreen();
+            });
+        }
+
+        // Analyze button functionality
+        const analyzeButton = document.getElementById('analyzeButton');
+        
+        // Function to extract frame from video at specific timestamp
+        async function extractFrame(video, timestamp) {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions to match video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Seek to timestamp
+                video.currentTime = timestamp;
+                
+                // Wait for video to seek
+                video.addEventListener('seeked', function onSeeked() {
+                    video.removeEventListener('seeked', onSeeked);
+                    
+                    try {
+                        // Draw video frame to canvas
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        
+                        // Convert to base64 JPEG
+                        const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+                        resolve(base64);
+                    } catch (error) {
+                        reject(error);
+                    }
+                }, { once: true });
+                
+                // Error handling
+                video.addEventListener('error', function onError() {
+                    video.removeEventListener('error', onError);
+                    reject(new Error('Failed to seek video'));
+                }, { once: true });
+            });
+        }
+        
+        // Function to extract all frames from video
+        async function extractFrames(video) {
+            try {
+                // Wait for video metadata to load
+                if (!video.videoWidth || !video.videoHeight) {
+                    await new Promise((resolve) => {
+                        video.addEventListener('loadedmetadata', resolve, { once: true });
+                    });
+                }
+                
+                const duration = video.duration;
+                const timestamps = [
+                    duration * 0.10, // 10% - address
+                    duration * 0.40, // 40% - backswing
+                    duration * 0.70, // 70% - impact
+                    duration * 0.90  // 90% - follow-through
+                ];
+                
+                const frames = [];
+                for (let i = 0; i < timestamps.length; i++) {
+                    try {
+                        const frame = await extractFrame(video, timestamps[i]);
+                        frames.push(frame);
+                        console.log(`Extracted frame ${i + 1} at ${timestamps[i].toFixed(2)}s`);
+                    } catch (error) {
+                        console.error(`Error extracting frame ${i + 1}:`, error);
+                        throw new Error(`Failed to extract frame ${i + 1}`);
+                    }
+                }
+                
+                return frames;
+            } catch (error) {
+                console.error('Error extracting frames:', error);
+                throw error;
+            }
+        }
+        
+        // Function to call Claude API
+        async function analyzeSwingWithClaude(frames) {
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'YOUR_API_KEY_HERE', // This should be set from environment or config
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 2000,
+                        messages: [{
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: 'image/jpeg',
+                                        data: frames[0]
+                                    }
+                                },
+                                {
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: 'image/jpeg',
+                                        data: frames[1]
+                                    }
+                                },
+                                {
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: 'image/jpeg',
+                                        data: frames[2]
+                                    }
+                                },
+                                {
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: 'image/jpeg',
+                                        data: frames[3]
+                                    }
+                                },
+                                {
+                                    type: 'text',
+                                    text: 'You are an expert golf instructor analyzing a swing. Analyze these 4 frames (address, backswing, impact, follow-through) and identify swing faults. Focus on: over-the-top swing path, tempo issues, grip problems, head movement, weight transfer. Return ONLY a JSON object with this structure: { "faults": [{ "name": "fault name", "description": "what you see wrong" }], "coaching_tips": ["tip 1", "tip 2", "tip 3"] }'
+                                }
+                            ]
+                        }]
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Extract text content from response
+                const textContent = data.content?.[0]?.text || '';
+                
+                // Try to extract JSON from response
+                let jsonMatch = textContent.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) {
+                    // If no JSON found, try to parse the whole response
+                    jsonMatch = textContent;
+                }
+                
+                try {
+                    const analysis = JSON.parse(jsonMatch);
+                    return analysis;
+                } catch (parseError) {
+                    console.error('Failed to parse JSON from response:', parseError);
+                    console.log('Raw response:', textContent);
+                    throw new Error('Invalid response format from API');
+                }
+            } catch (error) {
+                console.error('Claude API error:', error);
+                throw error;
+            }
+        }
+        
+        // Main analysis function
+        async function analyzeSwing() {
+            if (!videoPreview || !videoPreview.src) {
+                alert('Please upload a video first');
+                return;
+            }
+            
+            // Show loading state
+            if (analyzeButton) {
+                analyzeButton.disabled = true;
+                analyzeButton.classList.add('loading');
+                analyzeButton.innerHTML = '<span class="loading-spinner"></span>Analyzing your swing...';
+            }
+            
+            try {
+                // Extract frames
+                console.log('Extracting frames from video...');
+                const frames = await extractFrames(videoPreview);
+                console.log('Frames extracted successfully:', frames.length);
+                
+                // Call Claude API
+                console.log('Calling Claude API...');
+                const analysis = await analyzeSwingWithClaude(frames);
+                console.log('Analysis received:', analysis);
+                
+                // Store analysis for display (will be used in next step)
+                window.swingAnalysis = analysis;
+                
+                // Reset button (results display will be added in next prompt)
+                if (analyzeButton) {
+                    analyzeButton.disabled = false;
+                    analyzeButton.classList.remove('loading');
+                    analyzeButton.textContent = 'Analysis Complete!';
+                    setTimeout(() => {
+                        analyzeButton.textContent = 'Analyze Swing';
+                    }, 2000);
+                }
+                
+                // For now, show alert with results
+                alert('Analysis complete! Results will be displayed here.');
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                
+                // Reset button
+                if (analyzeButton) {
+                    analyzeButton.disabled = false;
+                    analyzeButton.classList.remove('loading');
+                    analyzeButton.textContent = 'Analyze Swing';
+                }
+                
+                // Show error message
+                alert(`Analysis failed: ${error.message}. Please try again.`);
+            }
+        }
+        
+        // Add click event listener
+        if (analyzeButton) {
+            analyzeButton.addEventListener('click', analyzeSwing);
+        }
+    </script>
+</body>
+</html>
