@@ -508,6 +508,194 @@
             }
         }
 
+        /* Contact Page */
+        .contact-section {
+            background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            min-height: calc(100vh - 72px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 60px;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .contact-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+        }
+
+        .contact-subtext {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            color: #B8C5D6;
+            margin-bottom: 60px;
+        }
+
+        .contact-form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(26, 58, 82, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            color: #ffffff;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px;
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #1E5EFF;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-textarea {
+            height: 150px;
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-submit-button {
+            width: 100%;
+            background: #1E5EFF;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 18px 48px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(30, 94, 255, 0.3);
+        }
+
+        .form-submit-button:hover {
+            background: #3D7AFF;
+            transform: scale(1.02);
+            box-shadow: 0 6px 30px rgba(30, 94, 255, 0.4);
+        }
+
+        .form-submit-button:active {
+            transform: scale(1);
+        }
+
+        .alternative-contact {
+            margin-top: 48px;
+            text-align: center;
+        }
+
+        .alternative-contact-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+        }
+
+        .alternative-contact-email {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            color: #1E5EFF;
+            margin-top: 8px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .alternative-contact-email:hover {
+            color: #3D7AFF;
+        }
+
+        /* Mobile Responsive for Contact Page */
+        @media (max-width: 968px) {
+            .contact-section {
+                padding: 80px 20px 40px;
+            }
+
+            .contact-heading {
+                font-size: 36px;
+            }
+
+            .contact-subtext {
+                font-size: 16px;
+            }
+
+            .contact-form-container {
+                padding: 40px 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-section {
+                padding: 60px 20px 40px;
+            }
+
+            .contact-heading {
+                font-size: 32px;
+            }
+
+            .contact-subtext {
+                font-size: 15px;
+                margin-bottom: 40px;
+            }
+
+            .contact-form-container {
+                padding: 32px 24px;
+            }
+
+            .form-submit-button {
+                padding: 16px 40px;
+                font-size: 16px;
+            }
+        }
+
         .hero-section {
             min-height: 100vh;
             background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
@@ -1353,12 +1541,58 @@
 
     <!-- Contact Page -->
     <div id="contact-page" class="page-section">
-        <div class="placeholder-page">
-            <div>
-                <h1 class="placeholder-heading">Contact Us - Coming Soon</h1>
-                <p class="placeholder-subtext">This page is under construction</p>
+        <section class="contact-section">
+            <div class="contact-container">
+                <h1 class="contact-heading">Get in Touch</h1>
+                <p class="contact-subtext">Have questions? We'd love to hear from you.</p>
+                
+                <div class="contact-form-container">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="contactName" class="form-label">Name</label>
+                            <input 
+                                type="text" 
+                                id="contactName" 
+                                name="name" 
+                                class="form-input" 
+                                placeholder="Your name" 
+                                required
+                            />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactEmail" class="form-label">Email</label>
+                            <input 
+                                type="email" 
+                                id="contactEmail" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="your@email.com" 
+                                required
+                            />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactMessage" class="form-label">Message</label>
+                            <textarea 
+                                id="contactMessage" 
+                                name="message" 
+                                class="form-textarea" 
+                                placeholder="Tell us what's on your mind..." 
+                                required
+                            ></textarea>
+                        </div>
+                        
+                        <button type="submit" class="form-submit-button">Send Message</button>
+                    </form>
+                </div>
+                
+                <div class="alternative-contact">
+                    <p class="alternative-contact-text">Or email us directly at</p>
+                    <a href="mailto:support@torqueai.com" class="alternative-contact-email">support@torqueai.com</a>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <script>
@@ -1791,6 +2025,25 @@
         // Add click event listener
         if (analyzeButton) {
             analyzeButton.addEventListener('click', analyzeSwing);
+        }
+
+        // Contact Form Handler
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const name = document.getElementById('contactName').value;
+                const email = document.getElementById('contactEmail').value;
+                const message = document.getElementById('contactMessage').value;
+                
+                // Show success message
+                alert("Thank you! We'll get back to you soon.");
+                
+                // Clear form fields
+                contactForm.reset();
+            });
         }
     </script>
 </body>
