@@ -69,11 +69,24 @@
         /* Swing Coach Page */
         .swing-coach-section {
             background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            background-image: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 255, 255, 0.02) 40px,
+                    rgba(255, 255, 255, 0.02) 41px
+                ),
+                radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            background-position: center center;
+            background-size: auto, cover;
+            background-repeat: repeat, no-repeat;
             min-height: calc(100vh - 72px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 120px 20px;
+            position: relative;
         }
 
         .swing-coach-container {
@@ -511,11 +524,24 @@
         /* Contact Page */
         .contact-section {
             background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            background-image: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 255, 255, 0.02) 40px,
+                    rgba(255, 255, 255, 0.02) 41px
+                ),
+                radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            background-position: center center;
+            background-size: auto, cover;
+            background-repeat: repeat, no-repeat;
             min-height: calc(100vh - 72px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 100px 20px 60px;
+            position: relative;
         }
 
         .contact-container {
@@ -698,15 +724,15 @@
 
         .hero-section {
             min-height: 100vh;
-            background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 48px 20px;
+            overflow: hidden;
         }
 
-        /* Noise texture overlay */
+        /* Vintage image with blur effect (bottom layer) */
         .hero-section::before {
             content: '';
             position: absolute;
@@ -714,9 +740,38 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.3;
+            background-image: url('vintage-golf-bg.jpg');
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            opacity: 0.15;
+            filter: blur(8px);
             pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Gradient and pattern overlay (top layer) */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 255, 255, 0.02) 40px,
+                    rgba(255, 255, 255, 0.02) 41px
+                ),
+                radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
+            background-position: center center;
+            background-size: auto, cover;
+            background-repeat: repeat, no-repeat;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .hero-container {
