@@ -100,36 +100,52 @@
         }
 
         /* Tab Navigation */
-        .coach-tabs-container {
+        .swing-tabs {
             display: flex;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            margin: 0 auto;
-            padding-left: 0;
             gap: 16px;
-            margin-bottom: 0;
+            margin-bottom: 80px;
         }
 
-        .nav-item {
-            display: inline-block;
+        .tab-btn {
+            background: none;
+            border: none;
             padding: 20px 40px;
+            color: rgba(255, 255, 255, 0.6);
             font-family: 'Space Grotesk', sans-serif;
             font-size: 17px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.6);
             cursor: pointer;
-            transition: all 0.3s;
             border-bottom: 3px solid transparent;
+            transition: all 0.3s;
         }
 
-        .nav-item:hover {
+        .tab-btn:hover {
             color: white;
         }
 
-        .nav-item.active {
+        .tab-btn.active {
             color: white;
-            border-bottom: 3px solid #1E5EFF;
+            border-bottom-color: #1E5EFF;
+        }
+
+        .tab-pane {
+            display: none;
+            min-height: 800px;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Upload Card Container */
+        .upload-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 60px 80px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         /* Filming Instructions */
@@ -1586,61 +1602,75 @@
             <div class="swing-coach-container">
                 <h1 class="swing-coach-heading">Analyze Your Swing</h1>
                 
-                <!-- Tab Navigation -->
-                <div class="coach-tabs-container">
-                    <div class="nav-item active" data-tab="analyze">Analyze</div>
-                    <div class="nav-item" data-tab="myswings">My Swings</div>
-                    <div class="nav-item" data-tab="guide">Guide</div>
-                </div>
-                
-                <!-- Filming Instructions -->
-                <div class="filming-instructions">
-                    <h2 class="filming-instructions-heading">How to Film Your Swing</h2>
-                    <p class="filming-instructions-text">For best results, record from a down-the-line angle with the full swing visible. Make sure lighting is good and the camera is stable.</p>
-                    <div class="filming-example-placeholder">
-                        <span class="filming-example-placeholder-text">Example filming angle (coming soon)</span>
-                    </div>
-                </div>
-                
-                <div class="upload-zone" id="uploadZone">
-                    <div class="upload-icon">📤</div>
-                    <div class="upload-text">Drag and drop your video here</div>
-                    <div class="upload-or">or</div>
-                    <button class="browse-button" id="browseButton">Browse Files</button>
-                </div>
-                
-                <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
-                
-                <div class="file-hint">Supports MP4, MOV • Max 50MB</div>
-                
-                <div class="file-selected" id="fileSelected">
-                    <div class="file-name" id="fileName"></div>
-                    <div class="file-size" id="fileSize"></div>
+                <!-- Tabs -->
+                <div class="swing-tabs">
+                    <button class="tab-btn active" onclick="switchTab('analyze', event)">Analyze</button>
+                    <button class="tab-btn" onclick="switchTab('myswings', event)">My Swings</button>
+                    <button class="tab-btn" onclick="switchTab('guide', event)">Guide</button>
                 </div>
 
-                <!-- Video Preview Section -->
-                <div class="video-preview-section" id="videoPreviewSection">
-                    <video id="videoPreview" class="video-preview" controls></video>
-                    <div class="video-file-info" id="videoFileInfo"></div>
-                    <button class="analyze-button" id="analyzeButton">Analyze Swing</button>
-                    <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
-                </div>
-
-                <!-- Results Section -->
-                <div class="results-section" id="resultsSection">
-                    <div class="results-container">
-                        <h2 class="results-heading">Your Swing Analysis</h2>
-                        
-                        <div class="faults-section" id="faultsSection">
-                            <h3 class="faults-heading">Faults Detected</h3>
-                            <div id="faultsList"></div>
+                <!-- Content Areas -->
+                <div id="analyze" class="tab-pane active">
+                    <!-- Upload Card -->
+                    <div class="upload-card">
+                        <!-- Filming Instructions -->
+                        <div class="filming-instructions">
+                            <h2 class="filming-instructions-heading">How to Film Your Swing</h2>
+                            <p class="filming-instructions-text">For best results, record from a down-the-line angle with the full swing visible. Make sure lighting is good and the camera is stable.</p>
+                            <div class="filming-example-placeholder">
+                                <span class="filming-example-placeholder-text">Example filming angle (coming soon)</span>
+                            </div>
                         </div>
                         
-                        <div class="coaching-tips-section" id="coachingTipsSection">
-                            <h3 class="coaching-tips-heading">Coaching Tips</h3>
-                            <div id="coachingTipsList"></div>
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-icon">📤</div>
+                            <div class="upload-text">Drag and drop your video here</div>
+                            <div class="upload-or">or</div>
+                            <button class="browse-button" id="browseButton">Browse Files</button>
+                        </div>
+                        
+                        <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
+                        
+                        <div class="file-hint">Supports MP4, MOV • Max 50MB</div>
+                        
+                        <div class="file-selected" id="fileSelected">
+                            <div class="file-name" id="fileName"></div>
+                            <div class="file-size" id="fileSize"></div>
                         </div>
                     </div>
+
+                    <!-- Video Preview Section -->
+                    <div class="video-preview-section" id="videoPreviewSection">
+                        <video id="videoPreview" class="video-preview" controls></video>
+                        <div class="video-file-info" id="videoFileInfo"></div>
+                        <button class="analyze-button" id="analyzeButton">Analyze Swing</button>
+                        <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="results-section" id="resultsSection">
+                        <div class="results-container">
+                            <h2 class="results-heading">Your Swing Analysis</h2>
+                            
+                            <div class="faults-section" id="faultsSection">
+                                <h3 class="faults-heading">Faults Detected</h3>
+                                <div id="faultsList"></div>
+                            </div>
+                            
+                            <div class="coaching-tips-section" id="coachingTipsSection">
+                                <h3 class="coaching-tips-heading">Coaching Tips</h3>
+                                <div id="coachingTipsList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="myswings" class="tab-pane">
+                    <p style="color: white; text-align: center; padding: 60px;">Your saved swings will appear here</p>
+                </div>
+
+                <div id="guide" class="tab-pane">
+                    <p style="color: white; text-align: center; padding: 60px;">Filming guide coming soon</p>
                 </div>
             </div>
         </section>
@@ -1757,22 +1787,31 @@
         switchPage('home');
 
         // Swing Coach Tab Functionality
-        const navItems = document.querySelectorAll('.nav-item');
-        
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const targetTab = this.getAttribute('data-tab');
-                
-                // Remove active class from all nav items
-                navItems.forEach(nav => nav.classList.remove('active'));
-                
-                // Add active class to clicked nav item
-                this.classList.add('active');
-                
-                // Tab switching functionality can be added here
-                console.log('Switched to tab:', targetTab);
-            });
-        });
+        function switchTab(tabName, event) {
+            // Hide all tab panes
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+            
+            // Remove active from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected pane
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activate clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: find button by tab name
+                buttons.forEach(btn => {
+                    if (btn.textContent.trim() === tabName.charAt(0).toUpperCase() + tabName.slice(1) || 
+                        btn.getAttribute('onclick').includes(tabName)) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        }
 
         // Swing Coach Upload Functionality
         const uploadZone = document.getElementById('uploadZone');
