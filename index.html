@@ -99,9 +99,83 @@
             margin-bottom: 48px;
         }
 
+        /* Tab Navigation */
+        .coach-tabs-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 0 auto;
+            padding-left: 0;
+            gap: 16px;
+            margin-bottom: 0;
+        }
+
+        .nav-item {
+            display: inline-block;
+            padding: 20px 40px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 17px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: white;
+        }
+
+        .nav-item.active {
+            color: white;
+            border-bottom: 3px solid #1E5EFF;
+        }
+
+        /* Filming Instructions */
+        .filming-instructions {
+            max-width: 700px;
+            margin: 80px auto 60px auto;
+            text-align: center;
+        }
+
+        .filming-instructions-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 16px;
+        }
+
+        .filming-instructions-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #B8C5D6;
+            line-height: 1.6;
+        }
+
+        .filming-example-placeholder {
+            height: 200px;
+            width: 350px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            margin: 24px auto 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filming-example-placeholder-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
         .upload-zone {
             width: 600px;
-            height: 400px;
+            height: 450px;
             border: 2px dashed rgba(255, 255, 255, 0.3);
             border-radius: 16px;
             background: rgba(26, 58, 82, 0.5);
@@ -109,7 +183,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin: 0 auto;
+            margin: 0 auto 80px auto;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -1511,7 +1585,22 @@
         <section class="swing-coach-section">
             <div class="swing-coach-container">
                 <h1 class="swing-coach-heading">Analyze Your Swing</h1>
-                <p class="swing-coach-subtext">Upload a video and get instant AI feedback</p>
+                
+                <!-- Tab Navigation -->
+                <div class="coach-tabs-container">
+                    <div class="nav-item active" data-tab="analyze">Analyze</div>
+                    <div class="nav-item" data-tab="myswings">My Swings</div>
+                    <div class="nav-item" data-tab="guide">Guide</div>
+                </div>
+                
+                <!-- Filming Instructions -->
+                <div class="filming-instructions">
+                    <h2 class="filming-instructions-heading">How to Film Your Swing</h2>
+                    <p class="filming-instructions-text">For best results, record from a down-the-line angle with the full swing visible. Make sure lighting is good and the camera is stable.</p>
+                    <div class="filming-example-placeholder">
+                        <span class="filming-example-placeholder-text">Example filming angle (coming soon)</span>
+                    </div>
+                </div>
                 
                 <div class="upload-zone" id="uploadZone">
                     <div class="upload-icon">📤</div>
@@ -1666,6 +1755,24 @@
         
         // Initialize: ensure home page is active on load
         switchPage('home');
+
+        // Swing Coach Tab Functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Remove active class from all nav items
+                navItems.forEach(nav => nav.classList.remove('active'));
+                
+                // Add active class to clicked nav item
+                this.classList.add('active');
+                
+                // Tab switching functionality can be added here
+                console.log('Switched to tab:', targetTab);
+            });
+        });
 
         // Swing Coach Upload Functionality
         const uploadZone = document.getElementById('uploadZone');
