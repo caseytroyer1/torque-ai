@@ -66,6 +66,144 @@
             color: #B8C5D6;
         }
 
+        /* Golf Hub Page */
+        .golf-hub-section {
+            background: #0A2540;
+            min-height: calc(100vh - 72px);
+            padding: 100px 20px 80px;
+        }
+
+        .golf-hub-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .golf-hub-hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .golf-hub-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 56px;
+            color: #ffffff;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+        }
+
+        .golf-hub-subheading {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: #B8C5D6;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 60px;
+        }
+
+        .video-card {
+            background: rgba(26, 58, 82, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .video-wrapper iframe,
+        .video-wrapper img,
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: cover;
+        }
+
+        .video-placeholder {
+            background: #1a2332;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-placeholder-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+
+        .video-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Mobile Responsive for Golf Hub */
+        @media (max-width: 968px) {
+            .golf-hub-section {
+                padding: 80px 20px 60px;
+            }
+
+            .golf-hub-heading {
+                font-size: 42px;
+            }
+
+            .golf-hub-subheading {
+                font-size: 18px;
+            }
+
+            .video-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .golf-hub-section {
+                padding: 60px 20px 40px;
+            }
+
+            .golf-hub-heading {
+                font-size: 36px;
+            }
+
+            .golf-hub-subheading {
+                font-size: 16px;
+            }
+
+            .video-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
         /* Swing Coach Page */
         .swing-coach-section {
             background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
@@ -788,15 +926,23 @@
 
         .hero-section {
             min-height: 100vh;
-            background-image: url('vintage-golf-bg.png'), radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
-            background-position: center center, center center;
-            background-size: cover, cover;
-            background-repeat: no-repeat, no-repeat;
+            background: radial-gradient(circle at center, rgba(26, 58, 82, 0.4) 0%, rgba(10, 37, 64, 0.6) 100%);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 48px 20px;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
         }
 
         /* Noise texture overlay */
@@ -886,18 +1032,11 @@
             align-items: center;
         }
 
-        .hero-mockup {
-            width: 400px;
-            height: 600px;
-            background: #2a4a62;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transform: perspective(1000px) rotateY(-5deg);
-            transition: transform 0.3s ease;
-        }
-
-        .hero-mockup:hover {
-            transform: perspective(1000px) rotateY(-3deg);
+        .hero-phone {
+            width: 600px;
+            height: auto;
+            filter: drop-shadow(0 30px 80px rgba(0, 0, 0, 0.6));
+            transform: rotate(0deg);
         }
 
         /* Mobile Responsive */
@@ -925,15 +1064,9 @@
                 font-size: 20px;
             }
 
-            .hero-mockup {
+            .hero-phone {
                 width: 100%;
                 max-width: 400px;
-                height: 500px;
-                transform: none;
-            }
-
-            .hero-mockup:hover {
-                transform: none;
             }
         }
 
@@ -951,8 +1084,8 @@
                 font-size: 16px;
             }
 
-            .hero-mockup {
-                height: 400px;
+            .hero-phone {
+                max-width: 350px;
             }
         }
 
@@ -1344,9 +1477,10 @@
         }
 
         .top-nav-logo {
-            height: 40px;
+            height: 55px;
             width: auto;
             filter: brightness(0) invert(1);
+            display: block;
         }
 
         .top-nav-links {
@@ -1406,7 +1540,7 @@
             }
 
             .top-nav-logo {
-                height: 32px;
+                height: 42px;
             }
         }
 
@@ -1505,6 +1639,9 @@
     <!-- Home Page -->
     <div id="home-page" class="page-section active">
         <section class="hero-section">
+            <video class="hero-video" autoplay loop muted playsinline>
+                <source src="hero-background.mp4" type="video/mp4">
+            </video>
         <div class="hero-container">
             <div class="hero-left">
                 <img src="torque-logo.png" alt="Torque AI" class="hero-logo">
@@ -1513,7 +1650,7 @@
                 <button class="hero-cta-button" onclick="switchPage('swing-coach')">Try It Free</button>
                             </div>
             <div class="hero-right">
-                <div class="hero-mockup"></div>
+                <img src="hero-page-phone.png" alt="Torque AI Analysis" class="hero-phone">
                             </div>
                         </div>
     </section>
@@ -1678,12 +1815,70 @@
 
     <!-- Golf Hub Page -->
     <div id="golf-hub-page" class="page-section">
-        <div class="placeholder-page">
-            <div>
-                <h1 class="placeholder-heading">Golf Hub - Coming Soon</h1>
-                <p class="placeholder-subtext">This page is under construction</p>
+        <section class="golf-hub-section">
+            <div class="golf-hub-container">
+                <div class="golf-hub-hero">
+                    <h1 class="golf-hub-heading">Golf Hub</h1>
+                    <p class="golf-hub-subheading">Master your game with expert instruction</p>
+                </div>
+
+                <div class="video-grid">
+                    <div class="video-card">
+                        <div class="video-wrapper">
+                            <div class="video-placeholder">
+                                <div class="video-placeholder-text">Video Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="video-title">How to Start the Downswing</div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-wrapper">
+                            <div class="video-placeholder">
+                                <div class="video-placeholder-text">Video Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="video-title">Perfect Golf Grip</div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-wrapper">
+                            <div class="video-placeholder">
+                                <div class="video-placeholder-text">Video Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="video-title">Fix Your Slice</div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-wrapper">
+                            <div class="video-placeholder">
+                                <div class="video-placeholder-text">Video Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="video-title">Proper Weight Shift</div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-wrapper">
+                            <div class="video-placeholder">
+                                <div class="video-placeholder-text">Video Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="video-title">Impact Position Drill</div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-wrapper">
+                            <div class="video-placeholder">
+                                <div class="video-placeholder-text">Video Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="video-title">Lag in Golf Swing</div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <!-- Contact Page -->
