@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torque AI - Perfect Your Swing</title>
+    <title>Torque AI - Tour-Level Swing Coach. Powered by AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -824,6 +824,545 @@
             font-size: 18px;
         }
 
+        .swing-measurements-section {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .swing-measurements-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 20px;
+        }
+
+        .diagnosis-section {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .diagnosis-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 24px;
+        }
+
+        .priority-issue-card {
+            background: rgba(255, 165, 0, 0.15);
+            border: 2px solid rgba(255, 165, 0, 0.5);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(255, 165, 0, 0.2);
+        }
+
+        .priority-issue-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .priority-icon {
+            font-size: 24px;
+        }
+
+        .priority-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin: 0;
+        }
+
+        .priority-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .priority-category {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-issue-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .priority-description {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            line-height: 1.6;
+            margin-top: 4px;
+        }
+
+        .issues-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .issue-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255, 165, 0, 0.1);
+            border-left: 3px solid rgba(255, 165, 0, 0.8);
+            border-radius: 8px;
+        }
+
+        .issue-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .issue-content {
+            flex: 1;
+        }
+
+        .issue-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .issue-description {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            line-height: 1.6;
+        }
+
+        .strengths-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .strength-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(30, 94, 255, 0.1);
+            border-left: 3px solid #1E5EFF;
+            border-radius: 8px;
+        }
+
+        .strength-icon {
+            width: 24px;
+            height: 24px;
+            background: #1E5EFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .strength-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #ffffff;
+            line-height: 1.5;
+        }
+
+        .diagnosis-summary {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid #1E5EFF;
+        }
+
+        .summary-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 15px;
+            color: #B8C5D6;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Processing Overlay */
+        .processing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 37, 64, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 16px;
+        }
+
+        .processing-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .processing-content {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px;
+        }
+
+        .processing-spinner {
+            width: 64px;
+            height: 64px;
+            border: 4px solid rgba(30, 94, 255, 0.2);
+            border-top-color: #1E5EFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 32px;
+        }
+
+        .processing-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 32px;
+        }
+
+        .processing-checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            text-align: left;
+        }
+
+        .processing-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        .processing-step.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .processing-step.complete {
+            opacity: 0.6;
+        }
+
+        .step-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(30, 94, 255, 0.3);
+            border-top-color: #1E5EFF;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .step-checkmark {
+            width: 20px;
+            height: 20px;
+            background: #1E5EFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #B8C5D6;
+            flex: 1;
+        }
+
+        /* Split View Results */
+        .results-split-container {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .results-split-container.active {
+            display: grid;
+            grid-template-columns: 40% 60%;
+            gap: 40px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .results-video-panel {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .results-video-wrapper {
+            background: rgba(26, 58, 82, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .results-video {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .results-analysis-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Quick Summary Card */
+        .quick-summary-card {
+            background: rgba(30, 94, 255, 0.1);
+            border: 2px solid rgba(30, 94, 255, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            animation: fadeIn 0.4s ease-out 0.1s both;
+        }
+
+        .summary-icon {
+            width: 64px;
+            height: 64px;
+            background: #1E5EFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 24px rgba(30, 94, 255, 0.4);
+        }
+
+        .summary-icon.warning {
+            background: rgba(255, 165, 0, 0.2);
+            border: 2px solid rgba(255, 165, 0, 0.5);
+            color: #FFA500;
+        }
+
+        .summary-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+
+        .summary-line {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #B8C5D6;
+            line-height: 1.5;
+        }
+
+        /* Primary Focus Card */
+        .primary-focus-card {
+            background: linear-gradient(135deg, rgba(30, 94, 255, 0.15) 0%, rgba(30, 94, 255, 0.05) 100%);
+            border: 2px solid rgba(30, 94, 255, 0.5);
+            border-radius: 16px;
+            padding: 32px;
+            animation: fadeIn 0.4s ease-out 0.2s both;
+            box-shadow: 0 8px 32px rgba(30, 94, 255, 0.2);
+            position: relative;
+        }
+
+        .primary-focus-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #0A2540 0%, #1E5EFF 100%);
+            border-radius: 16px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .primary-focus-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: #1E5EFF;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .primary-focus-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 22px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+        }
+
+        .primary-focus-description {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #B8C5D6;
+            line-height: 1.6;
+        }
+
+        /* Collapsible Sections */
+        .collapsible-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            animation: fadeIn 0.4s ease-out 0.3s both;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .collapsible-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1E5EFF;
+            font-size: 18px;
+            transition: transform 0.3s ease-out;
+        }
+
+        .collapsible-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 2000px;
+            margin-top: 24px;
+        }
+
+        /* Measurement Groups */
+        .measurement-group {
+            margin-bottom: 24px;
+        }
+
+        .measurement-group-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+        }
+
+        .measurement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .measurement-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+        }
+
+        .measurement-value {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .measurement-value.good {
+            color: #4ade80;
+        }
+
+        .measurement-value.moderate {
+            color: #fbbf24;
+        }
+
+        .measurement-value.needs-attention {
+            color: #f87171;
+        }
+
+        .measurement-target {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: rgba(184, 197, 214, 0.6);
+            margin-top: 4px;
+        }
+
         /* Mobile Responsive for Results */
         @media (max-width: 968px) {
             .results-section {
@@ -837,6 +1376,22 @@
             .faults-heading,
             .coaching-tips-heading {
                 font-size: 24px;
+            }
+
+            .results-split-container.active {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 20px;
+            }
+
+            .results-video-panel {
+                position: relative;
+                top: 0;
+            }
+
+            .quick-summary-card,
+            .primary-focus-card {
+                padding: 24px;
             }
         }
 
@@ -895,6 +1450,84 @@
 
             .detail-label {
                 min-width: auto;
+            }
+
+            .swing-measurements-heading {
+                font-size: 18px;
+            }
+
+            .diagnosis-heading {
+                font-size: 18px;
+            }
+
+            .priority-issue-card {
+                padding: 20px;
+            }
+
+            .priority-title {
+                font-size: 16px;
+            }
+
+            .priority-issue-name {
+                font-size: 15px;
+            }
+
+            .priority-description {
+                font-size: 13px;
+            }
+
+            .issue-item {
+                padding: 14px;
+            }
+
+            .issue-name {
+                font-size: 15px;
+            }
+
+            .issue-description {
+                font-size: 13px;
+            }
+
+            .strength-item {
+                padding: 10px 14px;
+            }
+
+            .strength-text {
+                font-size: 13px;
+            }
+
+            .diagnosis-summary {
+                padding: 16px;
+            }
+
+            .summary-text {
+                font-size: 14px;
+            }
+
+            .results-split-container.active {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .results-video-panel {
+                position: relative;
+                top: 0;
+            }
+
+            .processing-content {
+                padding: 24px;
+            }
+
+            .processing-heading {
+                font-size: 20px;
+            }
+
+            .quick-summary-card {
+                padding: 24px;
+            }
+
+            .primary-focus-card {
+                padding: 24px;
             }
         }
 
@@ -1732,6 +2365,13 @@
             font-weight: 600;
         }
 
+        .auth-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            margin-left: 20px;
+        }
+
         /* Mobile Responsive for Top Nav */
         @media (max-width: 968px) {
             .top-nav-container {
@@ -1853,7 +2493,12 @@
                 <a href="#" class="top-nav-link" data-page="swing-coach">Swing Coach</a>
                 <a href="#" class="top-nav-link" data-page="golf-hub">Golf Hub</a>
                 <a href="#" class="top-nav-link" data-page="contact">Contact Us</a>
-                            </div>
+                <div id="authLinks" class="auth-links">
+                    <a href="login.html" class="top-nav-link" id="loginLink">Login</a>
+                    <a href="#" class="top-nav-link" id="mySwingsLink" style="display: none;">My Swings</a>
+                    <a href="#" class="top-nav-link" id="logoutLink" style="display: none;">Logout</a>
+                </div>
+            </div>
                         </div>
     </nav>
 
@@ -1866,8 +2511,8 @@
         <div class="hero-container">
             <div class="hero-left">
                 <img src="torque-logo.png" alt="Torque AI" class="hero-logo">
-                <h1 class="hero-headline">Perfect Your Swing</h1>
-                <p class="hero-subheadline">AI-powered analysis in seconds</p>
+                <h1 class="hero-headline">Tour-Level Swing Coach. Powered by AI</h1>
+                <p class="hero-subheadline">Computer vision, pose tracking, and biomechanics - delivering instant swing corrections.</p>
                 <button class="hero-cta-button" onclick="switchPage('swing-coach')">Try It Free</button>
                             </div>
             <div class="hero-right">
@@ -2000,10 +2645,44 @@
 
                     <!-- Video Preview Section -->
                     <div class="video-preview-section" id="videoPreviewSection">
-                        <video id="videoPreview" class="video-preview" controls></video>
+                        <div style="position: relative;">
+                            <video id="videoPreview" class="video-preview" controls></video>
+                            <div class="processing-overlay" id="processingOverlay">
+                                <div class="processing-content">
+                                    <div class="processing-spinner"></div>
+                                    <h3 class="processing-heading">Analyzing your swing...</h3>
+                                    <div class="processing-checklist">
+                                        <div class="processing-step" id="step1">
+                                            <div class="step-spinner"></div>
+                                            <span class="step-text">Detecting body position...</span>
+                                        </div>
+                                        <div class="processing-step" id="step2">
+                                            <div class="step-spinner"></div>
+                                            <span class="step-text">Measuring swing angles...</span>
+                                        </div>
+                                        <div class="processing-step" id="step3">
+                                            <div class="step-spinner"></div>
+                                            <span class="step-text">Analyzing biomechanics...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="video-file-info" id="videoFileInfo"></div>
                         <button class="analyze-button" id="analyzeButton">Analyze Swing</button>
                         <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
+                    </div>
+
+                    <!-- Split View Results Container -->
+                    <div class="results-split-container" id="resultsSplitContainer">
+                        <div class="results-video-panel">
+                            <div class="results-video-wrapper">
+                                <video id="resultsVideo" class="results-video" controls></video>
+                            </div>
+                        </div>
+                        <div class="results-analysis-panel" id="resultsAnalysisPanel">
+                            <!-- Content will be dynamically inserted here -->
+                        </div>
                     </div>
 
                     <!-- Results Section -->
@@ -2161,6 +2840,93 @@
 
     <script>
         // Top navigation functionality
+        // Authentication state management
+        let isAuthenticated = false;
+        let authToken = null;
+
+        // Check authentication status on page load
+        async function checkAuthStatus() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                updateAuthUI(false);
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/check-session', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    isAuthenticated = true;
+                    authToken = token;
+                    updateAuthUI(true);
+                } else {
+                    // Token invalid, clear it
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userEmail');
+                    updateAuthUI(false);
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                updateAuthUI(false);
+            }
+        }
+
+        function updateAuthUI(authenticated) {
+            const loginLink = document.getElementById('loginLink');
+            const mySwingsLink = document.getElementById('mySwingsLink');
+            const logoutLink = document.getElementById('logoutLink');
+
+            if (authenticated) {
+                if (loginLink) loginLink.style.display = 'none';
+                if (mySwingsLink) mySwingsLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
+            } else {
+                if (loginLink) loginLink.style.display = 'block';
+                if (mySwingsLink) mySwingsLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+        }
+
+        // Logout handler
+        const logoutLink = document.getElementById('logoutLink');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    try {
+                        await fetch('http://localhost:5000/api/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                    }
+                }
+
+                // Clear local storage
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userEmail');
+                
+                // Update UI
+                updateAuthUI(false);
+                
+                // Reload page
+                window.location.reload();
+            });
+        }
+
+        // Check auth on page load
+        checkAuthStatus();
+
         const topNavLinks = document.querySelectorAll('.top-nav-link');
         const pageSections = document.querySelectorAll('.page-section');
         
@@ -2254,10 +3020,22 @@
                 videoPreview.src = '';
                 videoPreview.load();
             }
-            // Hide results section
+            // Hide results section and split view
             const resultsSection = document.getElementById('resultsSection');
             if (resultsSection) {
                 resultsSection.classList.remove('active');
+            }
+            const resultsSplitContainer = document.getElementById('resultsSplitContainer');
+            if (resultsSplitContainer) {
+                resultsSplitContainer.classList.remove('active');
+            }
+            // Show upload card and filming instructions again
+            const uploadCard = document.querySelector('.upload-card');
+            if (uploadCard) {
+                uploadCard.style.display = '';
+            }
+            if (videoPreviewSection) {
+                videoPreviewSection.style.display = '';
             }
         }
 
@@ -2548,6 +3326,16 @@
                 coachingTipsSection.style.display = 'none';
             }
             
+            // Hide filming instructions and upload card
+            const uploadCard = document.querySelector('.upload-card');
+            if (uploadCard) {
+                uploadCard.style.display = 'none';
+            }
+            const videoPreviewSection = document.getElementById('videoPreviewSection');
+            if (videoPreviewSection) {
+                videoPreviewSection.style.display = 'none';
+            }
+            
             // Show results section
             resultsSection.classList.add('active');
             
@@ -2555,6 +3343,70 @@
             setTimeout(() => {
                 resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
+        }
+        
+        // Processing Animation Functions
+        function startProcessingAnimation() {
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            
+            // Activate step 1 immediately
+            setTimeout(() => {
+                if (step1) step1.classList.add('active');
+            }, 100);
+            
+            // Complete step 1 and activate step 2 after 2 seconds
+            setTimeout(() => {
+                if (step1) {
+                    step1.classList.add('complete');
+                    const spinner = step1.querySelector('.step-spinner');
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                        const checkmark = document.createElement('div');
+                        checkmark.className = 'step-checkmark';
+                        checkmark.textContent = '✓';
+                        step1.insertBefore(checkmark, step1.firstChild);
+                    }
+                }
+                if (step2) step2.classList.add('active');
+            }, 2000);
+            
+            // Complete step 2 and activate step 3 after 4 seconds
+            setTimeout(() => {
+                if (step2) {
+                    step2.classList.add('complete');
+                    const spinner = step2.querySelector('.step-spinner');
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                        const checkmark = document.createElement('div');
+                        checkmark.className = 'step-checkmark';
+                        checkmark.textContent = '✓';
+                        step2.insertBefore(checkmark, step2.firstChild);
+                    }
+                }
+                if (step3) step3.classList.add('active');
+            }, 4000);
+        }
+        
+        function completeProcessingAnimation() {
+            return new Promise((resolve) => {
+                const step3 = document.getElementById('step3');
+                setTimeout(() => {
+                    if (step3) {
+                        step3.classList.add('complete');
+                        const spinner = step3.querySelector('.step-spinner');
+                        if (spinner) {
+                            spinner.style.display = 'none';
+                            const checkmark = document.createElement('div');
+                            checkmark.className = 'step-checkmark';
+                            checkmark.textContent = '✓';
+                            step3.insertBefore(checkmark, step3.firstChild);
+                        }
+                    }
+                    resolve();
+                }, 2000); // Complete step 3 after 2 more seconds (total 6 seconds)
+            });
         }
         
         // Main analysis function
@@ -2572,7 +3424,16 @@
             if (analyzeButton) {
                 analyzeButton.disabled = true;
                 analyzeButton.classList.add('loading');
-                analyzeButton.innerHTML = '<span class="loading-spinner"></span>Uploading and analyzing...';
+                analyzeButton.innerHTML = '<span class="loading-spinner"></span>Analyzing...';
+            }
+            
+            // Show processing overlay
+            const processingOverlay = document.getElementById('processingOverlay');
+            const videoPreview = document.getElementById('videoPreview');
+            if (processingOverlay && videoPreview) {
+                processingOverlay.classList.add('active');
+                // Start processing animation
+                startProcessingAnimation();
             }
             
             try {
@@ -2618,18 +3479,33 @@
                 
                 console.log('Upload successful! Data:', data);
                 
-                // Display the JSON response
-                displayUploadResponse(data);
+                // Wait for processing animation to complete (minimum 6 seconds)
+                const processingStartTime = Date.now();
+                const minProcessingTime = 6000;
                 
-                // Reset button
-                if (analyzeButton) {
-                    analyzeButton.disabled = false;
-                    analyzeButton.classList.remove('loading');
-                    analyzeButton.textContent = 'Upload Complete!';
+                // Complete processing animation
+                completeProcessingAnimation().then(() => {
+                    // Wait if needed to meet minimum time
+                    const elapsed = Date.now() - processingStartTime;
+                    const remaining = Math.max(0, minProcessingTime - elapsed);
+                    
                     setTimeout(() => {
-                        analyzeButton.textContent = 'Analyze Swing';
-                    }, 2000);
-                }
+                        // Hide processing overlay
+                        if (processingOverlay) {
+                            processingOverlay.classList.remove('active');
+                        }
+                        
+                        // Display split-view results
+                        displaySplitViewResults(data);
+                        
+                        // Reset button
+                        if (analyzeButton) {
+                            analyzeButton.disabled = false;
+                            analyzeButton.classList.remove('loading');
+                            analyzeButton.textContent = 'Analyze Swing';
+                        }
+                    }, remaining);
+                });
                 
             } catch (error) {
                 console.error('Upload error details:', {
@@ -2637,6 +3513,12 @@
                     message: error.message,
                     stack: error.stack
                 });
+                
+                // Hide processing overlay
+                const processingOverlay = document.getElementById('processingOverlay');
+                if (processingOverlay) {
+                    processingOverlay.classList.remove('active');
+                }
                 
                 // Reset button
                 if (analyzeButton) {
@@ -2698,7 +3580,95 @@
             const filename = data.filename || 'N/A';
             const fileSizeMB = data.file_size_mb || (data.file_size ? (data.file_size / (1024 * 1024)).toFixed(2) : 'N/A');
             
-            console.log('Extracted data:', { status, message, filename, fileSizeMB });
+            // Extract analysis data
+            const analysis = data.analysis || {};
+            const duration = analysis.duration_seconds !== undefined ? analysis.duration_seconds : 'N/A';
+            const fps = analysis.fps !== undefined ? analysis.fps : 'N/A';
+            const framesAnalyzed = analysis.frames_analyzed !== undefined ? analysis.frames_analyzed : 'N/A';
+            const statusMessage = analysis.status || analysis.message || 'N/A';
+            
+            // Extract rotation delta values (change from address, not absolute angles)
+            const backswingHipRotation = analysis.hip_rotation_backswing || analysis.backswing_hip_rotation;
+            const backswingShoulderRotation = analysis.shoulder_rotation_backswing || analysis.backswing_shoulder_rotation;
+            const impactHipRotation = analysis.hip_rotation_impact || analysis.impact_hip_rotation;
+            const impactShoulderRotation = analysis.shoulder_rotation_impact || analysis.impact_shoulder_rotation;
+            
+            // Extract other angle measurements
+            const addressHipAngle = analysis.address_hip_angle;
+            const addressShoulderAngle = analysis.address_shoulder_angle;
+            const spineAngleAddress = analysis.spine_angle_address;
+            const spineAngleImpact = analysis.spine_angle_impact;
+            const spineAngleChange = analysis.spine_angle_change;
+            
+            // Check if we have any angle data
+            const hasAngleData = backswingHipRotation !== undefined || backswingShoulderRotation !== undefined || 
+                                 impactHipRotation !== undefined || impactShoulderRotation !== undefined ||
+                                 addressHipAngle !== undefined || addressShoulderAngle !== undefined ||
+                                 spineAngleAddress !== undefined || spineAngleImpact !== undefined ||
+                                 spineAngleChange !== undefined;
+            
+            // Extract diagnosis data
+            const diagnosis = data.diagnosis || {};
+            const issuesDetected = diagnosis.issues_detected || [];
+            const strengths = diagnosis.strengths || [];
+            const priorityIssue = diagnosis.priority_issue;
+            const summary = diagnosis.summary;
+            const hasDiagnosis = issuesDetected.length > 0 || strengths.length > 0 || priorityIssue || summary;
+            
+            // Helper function to format angle with degree symbol
+            const formatAngle = (angle) => {
+                if (angle === null || angle === undefined) return 'N/A';
+                return `${angle}°`;
+            };
+            
+            console.log('Extracted data:', { status, message, filename, fileSizeMB, analysis, diagnosis });
+            
+            // Create swing measurements section if angle data exists
+            let swingMeasurementsHTML = '';
+            if (hasAngleData) {
+                swingMeasurementsHTML = `
+                    <div class="swing-measurements-section">
+                        <h3 class="swing-measurements-heading">Swing Measurements</h3>
+                        <div class="upload-details">
+                            ${backswingHipRotation !== undefined ? `
+                            <div class="upload-detail-item">
+                                <span class="detail-label">Hip Rotation (Backswing):</span>
+                                <span class="detail-value highlight">${formatAngle(backswingHipRotation)}</span>
+                            </div>` : ''}
+                            ${impactHipRotation !== undefined ? `
+                            <div class="upload-detail-item">
+                                <span class="detail-label">Hip Rotation (Impact):</span>
+                                <span class="detail-value highlight">${formatAngle(impactHipRotation)}</span>
+                            </div>` : ''}
+                            ${backswingShoulderRotation !== undefined ? `
+                            <div class="upload-detail-item">
+                                <span class="detail-label">Shoulder Rotation (Backswing):</span>
+                                <span class="detail-value highlight">${formatAngle(backswingShoulderRotation)}</span>
+                            </div>` : ''}
+                            ${impactShoulderRotation !== undefined ? `
+                            <div class="upload-detail-item">
+                                <span class="detail-label">Shoulder Rotation (Impact):</span>
+                                <span class="detail-value highlight">${formatAngle(impactShoulderRotation)}</span>
+                            </div>` : ''}
+                            ${spineAngleAddress !== undefined ? `
+                            <div class="upload-detail-item">
+                                <span class="detail-label">Spine Angle at Address:</span>
+                                <span class="detail-value highlight">${formatAngle(spineAngleAddress)}</span>
+                            </div>` : ''}
+                            ${spineAngleImpact !== undefined ? `
+                            <div class="upload-detail-item">
+                                <span class="detail-label">Spine Angle at Impact:</span>
+                                <span class="detail-value highlight">${formatAngle(spineAngleImpact)}</span>
+                            </div>` : ''}
+                            ${spineAngleChange !== undefined ? `
+                            <div class="upload-detail-item">
+                                <span class="detail-label">Spine Angle Change:</span>
+                                <span class="detail-value highlight">${formatAngle(spineAngleChange)}</span>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
             
             // Create response display with premium styling
             const responseHTML = `
@@ -2719,7 +3689,70 @@
                             <span class="detail-label">File Size:</span>
                             <span class="detail-value highlight">${fileSizeMB} MB</span>
                         </div>
+                        <div class="upload-detail-item">
+                            <span class="detail-label">Duration:</span>
+                            <span class="detail-value highlight">${duration} seconds</span>
+                        </div>
+                        <div class="upload-detail-item">
+                            <span class="detail-label">Frame Rate:</span>
+                            <span class="detail-value highlight">${fps} fps</span>
+                        </div>
+                        <div class="upload-detail-item">
+                            <span class="detail-label">Frames Analyzed:</span>
+                            <span class="detail-value highlight">${framesAnalyzed} frames</span>
+                        </div>
+                        <div class="upload-detail-item">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">${escapeHtml(statusMessage)}</span>
+                        </div>
                     </div>
+                    ${swingMeasurementsHTML}
+                    ${hasDiagnosis ? `
+                    <div class="diagnosis-section">
+                        <h3 class="diagnosis-heading">Analysis & Recommendations</h3>
+                        ${priorityIssue ? `
+                        <div class="priority-issue-card">
+                            <div class="priority-issue-header">
+                                <div class="priority-icon">🎯</div>
+                                <h4 class="priority-title">Primary Focus Area</h4>
+                            </div>
+                            <div class="priority-content">
+                                <div class="priority-category">${escapeHtml(priorityIssue.category)}</div>
+                                <div class="priority-issue-name">${escapeHtml(priorityIssue.issue)}</div>
+                                <div class="priority-description">${escapeHtml(priorityIssue.description)}</div>
+                            </div>
+                        </div>
+                        ` : ''}
+                        ${issuesDetected.length > 0 ? `
+                        <div class="issues-list">
+                            ${issuesDetected.map(issue => `
+                            <div class="issue-item">
+                                <div class="issue-icon">⚠️</div>
+                                <div class="issue-content">
+                                    <div class="issue-name">${escapeHtml(issue.issue)}</div>
+                                    <div class="issue-description">${escapeHtml(issue.description)}</div>
+                                </div>
+                            </div>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                        ${strengths.length > 0 ? `
+                        <div class="strengths-list">
+                            ${strengths.map(strength => `
+                            <div class="strength-item">
+                                <div class="strength-icon">✓</div>
+                                <div class="strength-text">${escapeHtml(strength)}</div>
+                            </div>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                        ${summary ? `
+                        <div class="diagnosis-summary">
+                            <p class="summary-text">${escapeHtml(summary)}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ` : ''}
                 </div>
             `;
             
@@ -2735,6 +3768,224 @@
             setTimeout(() => {
                 resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
+        }
+        
+        // Display Split-View Results
+        function displaySplitViewResults(data) {
+            const resultsSplitContainer = document.getElementById('resultsSplitContainer');
+            const resultsAnalysisPanel = document.getElementById('resultsAnalysisPanel');
+            const resultsVideo = document.getElementById('resultsVideo');
+            const videoPreview = document.getElementById('videoPreview');
+            
+            if (!resultsSplitContainer || !resultsAnalysisPanel) {
+                console.error('Split view elements not found');
+                return;
+            }
+            
+            // Copy video source to results video
+            if (resultsVideo && videoPreview && videoPreview.src) {
+                resultsVideo.src = videoPreview.src;
+            }
+            
+            // Extract data
+            const analysis = data.analysis || {};
+            const diagnosis = data.diagnosis || {};
+            const issuesDetected = diagnosis.issues_detected || [];
+            const strengths = diagnosis.strengths || [];
+            const priorityIssue = diagnosis.priority_issue;
+            const summary = diagnosis.summary;
+            
+            // Extract rotation delta values (change from address, not absolute angles)
+            const backswingHipRotation = analysis.hip_rotation_backswing || analysis.backswing_hip_rotation;
+            const backswingShoulderRotation = analysis.shoulder_rotation_backswing || analysis.backswing_shoulder_rotation;
+            const impactHipRotation = analysis.hip_rotation_impact || analysis.impact_hip_rotation;
+            const impactShoulderRotation = analysis.shoulder_rotation_impact || analysis.impact_shoulder_rotation;
+            const spineAngleAddress = analysis.spine_angle_address;
+            const spineAngleImpact = analysis.spine_angle_impact;
+            const spineAngleChange = analysis.spine_angle_change;
+            
+            const formatAngle = (angle) => {
+                if (angle === null || angle === undefined) return 'N/A';
+                return `${angle}°`;
+            };
+            
+            const getMeasurementClass = (value, goodRange, moderateRange) => {
+                if (value === null || value === undefined) return '';
+                if (value >= goodRange[0] && value <= goodRange[1]) return 'good';
+                if (value >= moderateRange[0] && value <= moderateRange[1]) return 'moderate';
+                return 'needs-attention';
+            };
+            
+            // Build HTML
+            let html = '';
+            
+            // SECTION 1: Quick Summary Card
+            const hasIssues = issuesDetected.length > 0;
+            html += `
+                <div class="quick-summary-card">
+                    <div class="summary-icon ${hasIssues ? 'warning' : ''}">${hasIssues ? '⚠️' : '✓'}</div>
+                    <h3 class="summary-title">${hasIssues ? 'Issues Detected' : 'Analysis Complete'}</h3>
+                    <p class="summary-line">${summary || (hasIssues ? `${issuesDetected.length} area(s) identified that may benefit from improvement` : 'Your swing analysis is complete')}</p>
+                </div>
+            `;
+            
+            // SECTION 2: Primary Focus
+            if (priorityIssue) {
+                html += `
+                    <div class="primary-focus-card">
+                        <div class="primary-focus-label">Primary Focus Area</div>
+                        <h3 class="primary-focus-title">${escapeHtml(priorityIssue.issue)}</h3>
+                        <p class="primary-focus-description">${escapeHtml(priorityIssue.description)}</p>
+                    </div>
+                `;
+            }
+            
+            // SECTION 3: Additional Observations (collapsible)
+            const secondaryIssues = issuesDetected.filter(issue => issue !== priorityIssue);
+            if (secondaryIssues.length > 0 || strengths.length > 0) {
+                html += `
+                    <div class="collapsible-section">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <h3 class="collapsible-title">Additional Observations</h3>
+                            <div class="collapsible-icon">▼</div>
+                        </div>
+                        <div class="collapsible-content">
+                            ${secondaryIssues.map(issue => `
+                                <div class="issue-item" style="margin-bottom: 16px;">
+                                    <div class="issue-icon">⚠️</div>
+                                    <div class="issue-content">
+                                        <div class="issue-name">${escapeHtml(issue.issue)}</div>
+                                        <div class="issue-description">${escapeHtml(issue.description)}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                            ${strengths.map(strength => `
+                                <div class="strength-item" style="margin-bottom: 12px;">
+                                    <div class="strength-icon">✓</div>
+                                    <div class="strength-text">${escapeHtml(strength)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // SECTION 4: Detailed Measurements (collapsible)
+            if (backswingHipRotation !== undefined || backswingShoulderRotation !== undefined || 
+                impactHipRotation !== undefined || impactShoulderRotation !== undefined ||
+                spineAngleAddress !== undefined || spineAngleImpact !== undefined || spineAngleChange !== undefined) {
+                html += `
+                    <div class="collapsible-section">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <h3 class="collapsible-title">View All Measurements</h3>
+                            <div class="collapsible-icon">▼</div>
+                        </div>
+                        <div class="collapsible-content">
+                            ${backswingHipRotation !== undefined || impactHipRotation !== undefined ? `
+                            <div class="measurement-group">
+                                <h4 class="measurement-group-title">Hip Rotation</h4>
+                                ${backswingHipRotation !== undefined ? `
+                                <div class="measurement-item">
+                                    <div>
+                                        <div class="measurement-label">Hip Rotation (Backswing)</div>
+                                        <div class="measurement-target">Target: 30-60°</div>
+                                    </div>
+                                    <div class="measurement-value ${getMeasurementClass(backswingHipRotation, [30, 60], [25, 65])}">${formatAngle(backswingHipRotation)}</div>
+                                </div>` : ''}
+                                ${impactHipRotation !== undefined ? `
+                                <div class="measurement-item">
+                                    <div>
+                                        <div class="measurement-label">Hip Rotation (Impact)</div>
+                                        <div class="measurement-target">Target: 30-45°</div>
+                                    </div>
+                                    <div class="measurement-value ${getMeasurementClass(impactHipRotation, [30, 45], [25, 50])}">${formatAngle(impactHipRotation)}</div>
+                                </div>` : ''}
+                            </div>` : ''}
+                            ${backswingShoulderRotation !== undefined || impactShoulderRotation !== undefined ? `
+                            <div class="measurement-group">
+                                <h4 class="measurement-group-title">Shoulder Rotation</h4>
+                                ${backswingShoulderRotation !== undefined ? `
+                                <div class="measurement-item">
+                                    <div>
+                                        <div class="measurement-label">Shoulder Rotation (Backswing)</div>
+                                        <div class="measurement-target">Target: 80-110°</div>
+                                    </div>
+                                    <div class="measurement-value ${getMeasurementClass(backswingShoulderRotation, [80, 110], [70, 120])}">${formatAngle(backswingShoulderRotation)}</div>
+                                </div>` : ''}
+                                ${impactShoulderRotation !== undefined ? `
+                                <div class="measurement-item">
+                                    <div>
+                                        <div class="measurement-label">Shoulder Rotation (Impact)</div>
+                                        <div class="measurement-target">Target: 0-10°</div>
+                                    </div>
+                                    <div class="measurement-value ${getMeasurementClass(impactShoulderRotation, [0, 10], [0, 15])}">${formatAngle(impactShoulderRotation)}</div>
+                                </div>` : ''}
+                            </div>` : ''}
+                            ${spineAngleAddress !== undefined || spineAngleImpact !== undefined || spineAngleChange !== undefined ? `
+                            <div class="measurement-group">
+                                <h4 class="measurement-group-title">Spine Angles</h4>
+                                ${spineAngleAddress !== undefined ? `
+                                <div class="measurement-item">
+                                    <div>
+                                        <div class="measurement-label">Spine Angle (Address)</div>
+                                    </div>
+                                    <div class="measurement-value">${formatAngle(spineAngleAddress)}</div>
+                                </div>` : ''}
+                                ${spineAngleImpact !== undefined ? `
+                                <div class="measurement-item">
+                                    <div>
+                                        <div class="measurement-label">Spine Angle (Impact)</div>
+                                    </div>
+                                    <div class="measurement-value">${formatAngle(spineAngleImpact)}</div>
+                                </div>` : ''}
+                                ${spineAngleChange !== undefined ? `
+                                <div class="measurement-item">
+                                    <div>
+                                        <div class="measurement-label">Spine Angle Change</div>
+                                        <div class="measurement-target">Target: <10°</div>
+                                    </div>
+                                    <div class="measurement-value ${getMeasurementClass(Math.abs(spineAngleChange), [0, 10], [10, 15])}">${formatAngle(spineAngleChange)}</div>
+                                </div>` : ''}
+                            </div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Insert HTML
+            resultsAnalysisPanel.innerHTML = html;
+            
+            // Show split view
+            resultsSplitContainer.classList.add('active');
+            
+            // Hide old results section, video preview, and filming instructions
+            const oldResultsSection = document.getElementById('resultsSection');
+            if (oldResultsSection) {
+                oldResultsSection.classList.remove('active');
+            }
+            const videoPreviewSection = document.getElementById('videoPreviewSection');
+            if (videoPreviewSection) {
+                videoPreviewSection.style.display = 'none';
+            }
+            const uploadCard = document.querySelector('.upload-card');
+            if (uploadCard) {
+                uploadCard.style.display = 'none';
+            }
+            
+            // Scroll to results
+            setTimeout(() => {
+                resultsSplitContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+        
+        // Toggle collapsible sections
+        function toggleCollapsible(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapsible-icon');
+            if (content && icon) {
+                content.classList.toggle('expanded');
+                icon.classList.toggle('expanded');
+            }
         }
         
         // Helper function to escape HTML
