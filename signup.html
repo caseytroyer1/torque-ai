@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Torque AI</title>
@@ -279,110 +280,96 @@
     </div>
 
     <script>
-        const signupForm = document.getElementById('signupForm');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const submitButton = document.getElementById('submitButton');
-        const passwordToggle = document.getElementById('passwordToggle');
-        const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
+        document.addEventListener('DOMContentLoaded', function() {
+            const SUPABASE_URL = 'https://lfewkargttvgtndqhucv.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmZXdrYXJndHR2Z3RuZHFodWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTkyODUsImV4cCI6MjA4NzczNTI4NX0.Ij-upJUkf7j1wemFJKvf0pq9rvO0KTeBYRb1ka97EAw';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Password toggle functionality
-        passwordToggle.addEventListener('click', () => {
-            const passwordInput = document.getElementById('password');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                passwordToggle.textContent = 'Hide';
-            } else {
-                passwordInput.type = 'password';
-                passwordToggle.textContent = 'Show';
-            }
-        });
+            const signupForm = document.getElementById('signupForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const submitButton = document.getElementById('submitButton');
+            const passwordToggle = document.getElementById('passwordToggle');
+            const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
 
-        confirmPasswordToggle.addEventListener('click', () => {
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-            if (confirmPasswordInput.type === 'password') {
-                confirmPasswordInput.type = 'text';
-                confirmPasswordToggle.textContent = 'Hide';
-            } else {
-                confirmPasswordInput.type = 'password';
-                confirmPasswordToggle.textContent = 'Show';
-            }
-        });
+            passwordToggle.addEventListener('click', () => {
+                const passwordInput = document.getElementById('password');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    passwordToggle.textContent = 'Hide';
+                } else {
+                    passwordInput.type = 'password';
+                    passwordToggle.textContent = 'Show';
+                }
+            });
 
-        // Form submission
-        signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Hide previous messages
-            errorMessage.classList.remove('show');
-            successMessage.classList.remove('show');
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            confirmPasswordToggle.addEventListener('click', () => {
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+                if (confirmPasswordInput.type === 'password') {
+                    confirmPasswordInput.type = 'text';
+                    confirmPasswordToggle.textContent = 'Hide';
+                } else {
+                    confirmPasswordInput.type = 'password';
+                    confirmPasswordToggle.textContent = 'Show';
+                }
+            });
 
-            // Client-side validation
-            if (password !== confirmPassword) {
-                showError('Passwords do not match');
-                return;
-            }
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            if (password.length < 6) {
-                showError('Password must be at least 6 characters');
-                return;
-            }
+                errorMessage.classList.remove('show');
+                successMessage.classList.remove('show');
 
-            // Disable button
-            submitButton.disabled = true;
-            submitButton.textContent = 'Creating Account...';
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
 
-            try {
-                const response = await fetch('http://localhost:5000/api/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                        confirm_password: confirmPassword
-                    })
-                });
+                if (password !== confirmPassword) {
+                    showError('Passwords do not match');
+                    return;
+                }
 
-                const data = await response.json();
+                if (password.length < 6) {
+                    showError('Password must be at least 6 characters');
+                    return;
+                }
 
-                if (response.ok) {
-                    // Store token
-                    localStorage.setItem('authToken', data.token);
-                    localStorage.setItem('userEmail', data.user.email);
-                    
+                submitButton.disabled = true;
+                submitButton.textContent = 'Creating Account...';
+
+                try {
+                    const { data, error } = await supabase.auth.signUp({ email, password });
+
+                    if (error) {
+                        showError(error.message);
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Create Account';
+                        return;
+                    }
+
                     showSuccess('Account created successfully! Redirecting...');
-                    
-                    // Redirect to main page after 1.5 seconds
-                    setTimeout(() => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Create Account';
+                    setTimeout(function() {
                         window.location.href = 'index.html';
                     }, 1500);
-                } else {
-                    showError(data.message || 'Failed to create account');
+                } catch (err) {
+                    showError(err.message || 'Something went wrong.');
                     submitButton.disabled = false;
                     submitButton.textContent = 'Create Account';
                 }
-            } catch (error) {
-                showError('Network error. Please try again.');
-                submitButton.disabled = false;
-                submitButton.textContent = 'Create Account';
+            });
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.classList.add('show');
+            }
+
+            function showSuccess(message) {
+                successMessage.textContent = message;
+                successMessage.classList.add('show');
             }
         });
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
-        }
-
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.classList.add('show');
-        }
     </script>
 </body>
 </html>
