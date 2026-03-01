@@ -9,6 +9,19 @@ from database import init_database, create_user, get_user_by_email, get_user_by_
 from auth import create_session, verify_session, delete_session
 
 app = Flask(__name__)
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    return response
+
+@app.route('/analyze-swing', methods=['OPTIONS'])
+def handle_options():
+    response = app.make_default_options_response()
+    return response
+
 CORS(app, origins="*", allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "OPTIONS"])
 
 # Allowed video file extensions
