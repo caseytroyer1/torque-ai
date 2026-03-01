@@ -9,7 +9,7 @@ from database import init_database, create_user, get_user_by_email, get_user_by_
 from auth import create_session, verify_session, delete_session
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, origins="*", allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "OPTIONS"])
 
 # Allowed video file extensions
 ALLOWED_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv', 'webm'}
