@@ -89,7 +89,7 @@ def analyze_video_with_mediapipe(video_path):
         import math
         
         # Set up MediaPipe Pose Landmarker
-        base_options = python.BaseOptions(model_asset_path='backend/pose_landmarker.task')
+        base_options = python.BaseOptions(model_asset_path=os.path.join(os.path.dirname(__file__), 'pose_landmarker.task'))
         options = vision.PoseLandmarkerOptions(
             base_options=base_options,
             running_mode=vision.RunningMode.VIDEO,
