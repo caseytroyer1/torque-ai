@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
 from werkzeug.utils import secure_filename
 import cv2
@@ -21,8 +20,6 @@ def after_request(response):
 def handle_options():
     response = app.make_default_options_response()
     return response
-
-CORS(app, origins="*", allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "OPTIONS"])
 
 # Allowed video file extensions
 ALLOWED_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv', 'webm'}
