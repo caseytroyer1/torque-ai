@@ -1416,10 +1416,38 @@
             padding: 20px;
             border-left: 4px solid rgba(255, 255, 255, 0.15);
             animation: resultsFadeIn 0.5s ease-out both;
+            position: relative;
+            transition: filter 0.2s ease, background 0.2s ease;
+        }
+        .results-analysis-panel .metric-card:hover {
+            filter: brightness(1.08);
+            background: rgba(26, 58, 82, 0.45);
         }
         .results-analysis-panel .metric-card.status-good { border-left-color: #4ade80; }
         .results-analysis-panel .metric-card.status-moderate { border-left-color: #fbbf24; }
         .results-analysis-panel .metric-card.status-needs-attention { border-left-color: #f87171; }
+        .results-analysis-panel .metric-info-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 22px;
+            height: 22px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            color: rgba(184, 197, 214, 0.6);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: color 0.2s ease;
+        }
+        .results-analysis-panel .metric-info-btn:hover {
+            color: #1E5EFF;
+        }
         .results-analysis-panel .metric-card .metric-name {
             font-family: 'Inter', sans-serif;
             font-weight: 500;
@@ -1481,10 +1509,10 @@
             background: rgba(26, 58, 82, 0.35);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 20px 24px;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
         }
         .results-analysis-panel .strength-card .strength-check {
             width: 32px;
@@ -1501,7 +1529,7 @@
         .results-analysis-panel .strength-card .strength-label {
             font-family: 'Inter', sans-serif;
             font-weight: 500;
-            font-size: 15px;
+            font-size: 16px;
             color: #ffffff;
         }
         .results-analysis-panel .additional-issues-section {
@@ -1552,6 +1580,76 @@
         @keyframes resultsFadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        /* Metric info modal */
+        .metric-info-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .metric-info-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .metric-info-modal-overlay .metric-info-modal-card {
+            background: #0A2540;
+            border: 1px solid #1E5EFF;
+            border-radius: 16px;
+            max-width: 440px;
+            width: 100%;
+            padding: 28px 32px 32px;
+            position: relative;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+            transform: scale(0.96);
+            transition: transform 0.25s ease;
+        }
+        .metric-info-modal-overlay.active .metric-info-modal-card {
+            transform: scale(1);
+        }
+        .metric-info-modal-overlay .metric-info-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: #B8C5D6;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .metric-info-modal-overlay .metric-info-modal-close:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+        .metric-info-modal-overlay .metric-info-modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            padding-right: 36px;
+        }
+        .metric-info-modal-overlay .metric-info-modal-body {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #B8C5D6;
+            line-height: 1.65;
         }
         @media (max-width: 900px) {
             .results-analysis-panel .metrics-dashboard {
@@ -4176,6 +4274,7 @@
                 html += `<div class="metrics-dashboard">`;
                 if (backswingHipRotation !== undefined) {
                     html += `<div class="metric-card ${getMetricStatusClass(backswingHipRotation, [30, 60], [25, 65])}">
+                        <button type="button" class="metric-info-btn" data-metric-key="hipBackswing" aria-label="More info">ⓘ</button>
                         <div class="metric-name">Hip Rotation Backswing</div>
                         <div class="metric-value">${formatAngle(backswingHipRotation)}</div>
                         <div class="metric-target">Target: 30–60°</div>
@@ -4183,6 +4282,7 @@
                 }
                 if (impactHipRotation !== undefined) {
                     html += `<div class="metric-card ${getMetricStatusClass(impactHipRotation, [30, 45], [25, 50])}">
+                        <button type="button" class="metric-info-btn" data-metric-key="hipImpact" aria-label="More info">ⓘ</button>
                         <div class="metric-name">Hip Rotation Impact</div>
                         <div class="metric-value">${formatAngle(impactHipRotation)}</div>
                         <div class="metric-target">Target: 30–45°</div>
@@ -4190,6 +4290,7 @@
                 }
                 if (backswingShoulderRotation !== undefined) {
                     html += `<div class="metric-card ${getMetricStatusClass(backswingShoulderRotation, [80, 110], [70, 120])}">
+                        <button type="button" class="metric-info-btn" data-metric-key="shoulderBackswing" aria-label="More info">ⓘ</button>
                         <div class="metric-name">Shoulder Rotation Backswing</div>
                         <div class="metric-value">${formatAngle(backswingShoulderRotation)}</div>
                         <div class="metric-target">Target: 80–110°</div>
@@ -4197,6 +4298,7 @@
                 }
                 if (impactShoulderRotation !== undefined) {
                     html += `<div class="metric-card ${getMetricStatusClass(impactShoulderRotation, [0, 10], [0, 15])}">
+                        <button type="button" class="metric-info-btn" data-metric-key="shoulderImpact" aria-label="More info">ⓘ</button>
                         <div class="metric-name">Shoulder Rotation Impact</div>
                         <div class="metric-value">${formatAngle(impactShoulderRotation)}</div>
                         <div class="metric-target">Target: 0–10°</div>
@@ -4204,20 +4306,23 @@
                 }
                 if (spineAngleAddress !== undefined) {
                     html += `<div class="metric-card">
+                        <button type="button" class="metric-info-btn" data-metric-key="spineAddress" aria-label="More info">ⓘ</button>
                         <div class="metric-name">Spine Angle Address</div>
                         <div class="metric-value">${formatAngle(spineAngleAddress)}</div>
-                        <div class="metric-target">—</div>
+                        <div class="metric-target">Maintain from address</div>
                     </div>`;
                 }
                 if (spineAngleImpact !== undefined) {
                     html += `<div class="metric-card">
+                        <button type="button" class="metric-info-btn" data-metric-key="spineImpact" aria-label="More info">ⓘ</button>
                         <div class="metric-name">Spine Angle Impact</div>
                         <div class="metric-value">${formatAngle(spineAngleImpact)}</div>
-                        <div class="metric-target">—</div>
+                        <div class="metric-target">Maintain from address</div>
                     </div>`;
                 }
                 if (spineAngleChange !== undefined) {
                     html += `<div class="metric-card ${getMetricStatusClass(Math.abs(spineAngleChange), [0, 10], [10, 15])}">
+                        <button type="button" class="metric-info-btn" data-metric-key="spineChange" aria-label="More info">ⓘ</button>
                         <div class="metric-name">Spine Angle Change</div>
                         <div class="metric-value">${formatAngle(spineAngleChange)}</div>
                         <div class="metric-target">Target: &lt;10°</div>
@@ -4225,6 +4330,7 @@
                 }
                 if (xFactor !== null) {
                     html += `<div class="metric-card">
+                        <button type="button" class="metric-info-btn" data-metric-key="xFactor" aria-label="More info">ⓘ</button>
                         <div class="metric-name">X-Factor</div>
                         <div class="metric-value">${formatAngle(xFactor)}</div>
                         <div class="metric-target">Shoulder − hip backswing</div>
@@ -4332,7 +4438,77 @@
                 contactForm.reset();
             });
         }
+        // Metric info modal and tooltips
+        const METRIC_EXPLANATIONS = {
+            hipBackswing: {
+                name: 'Hip Rotation Backswing',
+                text: 'How much your hips rotate away from the target during your backswing. Good hip turn creates the foundation for power and proper sequencing. Tour pros average 45-50°. Target: 30-60°.'
+            },
+            hipImpact: {
+                name: 'Hip Rotation Impact',
+                text: 'How much your hips have rotated toward the target at impact compared to address. Your hips should lead the downswing, clearing the way for your arms and club. Target: 30-45°.'
+            },
+            shoulderBackswing: {
+                name: 'Shoulder Rotation Backswing',
+                text: 'How much your shoulders turn away from the target in your backswing. A full shoulder turn combined with hip resistance creates the X-Factor coil that generates power. Target: 80-110°.'
+            },
+            shoulderImpact: {
+                name: 'Shoulder Rotation Impact',
+                text: 'How much your shoulders have returned to square at impact. Ideally your shoulders are close to their address position at impact for consistent ball striking. Target: 0-10°.'
+            },
+            spineAddress: {
+                name: 'Spine Angle Address',
+                text: 'The angle of your spine at setup, measured from vertical. Most tour players set up with a forward tilt of 20-35°. This is your baseline position that you want to maintain throughout the swing.'
+            },
+            spineImpact: {
+                name: 'Spine Angle Impact',
+                text: 'The angle of your spine at impact. Ideally this should be close to your address spine angle. Big differences indicate early extension or reverse pivot.'
+            },
+            spineChange: {
+                name: 'Spine Angle Change',
+                text: 'The difference in your spine angle between address and impact. Less than 10° change means you maintained your posture. More than 15° suggests early extension - a common cause of thin and fat shots. Target: under 10°.'
+            },
+            xFactor: {
+                name: 'X-Factor',
+                text: 'The difference between your shoulder rotation and hip rotation at the top of your backswing. This separation creates a powerful coil effect. Greater X-Factor is associated with more clubhead speed. Tour pros average 45-55°.'
+            }
+        };
+        function showMetricModal(name, text) {
+            const overlay = document.getElementById('metricInfoModal');
+            if (!overlay) return;
+            overlay.querySelector('.metric-info-modal-title').textContent = name;
+            overlay.querySelector('.metric-info-modal-body').textContent = text;
+            overlay.classList.add('active');
+        }
+        function closeMetricModal() {
+            const overlay = document.getElementById('metricInfoModal');
+            if (overlay) overlay.classList.remove('active');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('metricInfoModal');
+            if (overlay) {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) closeMetricModal();
+                });
+                const closeBtn = overlay.querySelector('.metric-info-modal-close');
+                if (closeBtn) closeBtn.addEventListener('click', closeMetricModal);
+            }
+        });
+        document.body.addEventListener('click', function(e) {
+            const btn = e.target.closest('.metric-info-btn');
+            if (!btn) return;
+            const key = btn.getAttribute('data-metric-key');
+            const info = METRIC_EXPLANATIONS[key];
+            if (info) showMetricModal(info.name, info.text);
+        });
     </script>
+    <div id="metricInfoModal" class="metric-info-modal-overlay" aria-hidden="true">
+        <div class="metric-info-modal-card">
+            <button type="button" class="metric-info-modal-close" aria-label="Close">&times;</button>
+            <h3 class="metric-info-modal-title"></h3>
+            <p class="metric-info-modal-body"></p>
+        </div>
+    </div>
 </body>
 </html>
 
