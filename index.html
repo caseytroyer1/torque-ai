@@ -1363,6 +1363,230 @@
             margin-top: 4px;
         }
 
+        /* Premium Results Layout */
+        .results-analysis-panel .hero-summary-card {
+            background: rgba(10, 37, 64, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 48px 40px;
+            text-align: center;
+            animation: resultsFadeIn 0.5s ease-out both;
+        }
+        .results-analysis-panel .hero-summary-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 24px;
+        }
+        .results-analysis-panel .hero-summary-icon.ok {
+            background: rgba(74, 222, 128, 0.15);
+            border: 2px solid rgba(74, 222, 128, 0.4);
+        }
+        .results-analysis-panel .hero-summary-icon.warn {
+            background: rgba(251, 191, 36, 0.15);
+            border: 2px solid rgba(251, 191, 36, 0.4);
+        }
+        .results-analysis-panel .hero-summary-headline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+        .results-analysis-panel .hero-summary-subtext {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #B8C5D6;
+        }
+        .results-analysis-panel .metrics-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            animation: resultsFadeIn 0.5s ease-out 0.08s both;
+        }
+        .results-analysis-panel .metric-card {
+            background: rgba(26, 58, 82, 0.35);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid rgba(255, 255, 255, 0.15);
+            animation: resultsFadeIn 0.5s ease-out both;
+        }
+        .results-analysis-panel .metric-card.status-good { border-left-color: #4ade80; }
+        .results-analysis-panel .metric-card.status-moderate { border-left-color: #fbbf24; }
+        .results-analysis-panel .metric-card.status-needs-attention { border-left-color: #f87171; }
+        .results-analysis-panel .metric-card .metric-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            color: #B8C5D6;
+            margin-bottom: 8px;
+        }
+        .results-analysis-panel .metric-card .metric-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+        .results-analysis-panel .metric-card .metric-target {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: rgba(184, 197, 214, 0.6);
+            margin-top: 6px;
+        }
+        .results-analysis-panel .primary-focus-callout {
+            background: rgba(30, 94, 255, 0.12);
+            border: 1px solid rgba(30, 94, 255, 0.35);
+            border-radius: 16px;
+            padding: 28px 32px;
+            animation: resultsFadeIn 0.5s ease-out 0.12s both;
+        }
+        .results-analysis-panel .primary-focus-callout .focus-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: #1E5EFF;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+        }
+        .results-analysis-panel .primary-focus-callout .focus-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+        .results-analysis-panel .primary-focus-callout .focus-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #B8C5D6;
+            line-height: 1.6;
+        }
+        .results-analysis-panel .strengths-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            animation: resultsFadeIn 0.5s ease-out 0.16s both;
+        }
+        .results-analysis-panel .strength-card {
+            background: rgba(26, 58, 82, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .results-analysis-panel .strength-card .strength-check {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(30, 94, 255, 0.2);
+            color: #1E5EFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .results-analysis-panel .strength-card .strength-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            color: #ffffff;
+        }
+        .results-analysis-panel .additional-issues-section {
+            animation: resultsFadeIn 0.5s ease-out 0.2s both;
+        }
+        .results-analysis-panel .additional-issues-section .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+            margin-bottom: 14px;
+        }
+        .results-analysis-panel .issue-card {
+            background: rgba(26, 58, 82, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+        .results-analysis-panel .issue-card .issue-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .results-analysis-panel .issue-card .issue-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .results-analysis-panel .issue-card .issue-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #B8C5D6;
+            line-height: 1.5;
+        }
+        @keyframes resultsFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 900px) {
+            .results-analysis-panel .metrics-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .results-analysis-panel .strengths-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .results-analysis-panel .hero-summary-card {
+                padding: 32px 24px;
+            }
+            .results-analysis-panel .hero-summary-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 32px;
+            }
+            .results-analysis-panel .hero-summary-headline {
+                font-size: 24px;
+            }
+            .results-analysis-panel .metrics-dashboard {
+                grid-template-columns: 1fr;
+            }
+            .results-analysis-panel .metric-card .metric-value {
+                font-size: 24px;
+            }
+            .results-analysis-panel .primary-focus-callout {
+                padding: 22px 24px;
+            }
+            .results-analysis-panel .primary-focus-callout .focus-name {
+                font-size: 18px;
+            }
+        }
+
         /* Mobile Responsive for Results */
         @media (max-width: 968px) {
             .results-section {
@@ -3921,141 +4145,124 @@
                 if (value >= moderateRange[0] && value <= moderateRange[1]) return 'moderate';
                 return 'needs-attention';
             };
+            const getMetricStatusClass = (value, goodRange, moderateRange) => {
+                const c = getMeasurementClass(value, goodRange, moderateRange);
+                return c ? 'status-' + c : '';
+            };
+            const xFactor = (backswingShoulderRotation != null && backswingHipRotation != null)
+                ? (backswingShoulderRotation - backswingHipRotation) : null;
             
-            // Build HTML
+            // Build HTML - Premium 5-section layout
+            const hasIssues = issuesDetected.length > 0;
+            const secondaryIssues = priorityIssue ? issuesDetected.filter(issue => issue.issue !== priorityIssue.issue) : issuesDetected;
+            
             let html = '';
             
-            // SECTION 1: Quick Summary Card
-            const hasIssues = issuesDetected.length > 0;
+            // SECTION 1 - Hero Summary (full width card)
             html += `
-                <div class="quick-summary-card">
-                    <div class="summary-icon ${hasIssues ? 'warning' : ''}">${hasIssues ? '⚠️' : '✓'}</div>
-                    <h3 class="summary-title">${hasIssues ? 'Issues Detected' : 'Analysis Complete'}</h3>
-                    <p class="summary-line">${summary || (hasIssues ? `${issuesDetected.length} area(s) identified that may benefit from improvement` : 'Your swing analysis is complete')}</p>
+                <div class="hero-summary-card">
+                    <div class="hero-summary-icon ${hasIssues ? 'warn' : 'ok'}">${hasIssues ? '⚠️' : '✅'}</div>
+                    <h2 class="hero-summary-headline">Your Swing Analysis</h2>
+                    <p class="hero-summary-subtext">${strengths.length} strength${strengths.length !== 1 ? 's' : ''} · ${issuesDetected.length} area${issuesDetected.length !== 1 ? 's' : ''} to focus on</p>
                 </div>
             `;
             
-            // SECTION 2: Primary Focus
+            // SECTION 2 - Metrics Dashboard (horizontal grid)
+            const hasAnyMetric = backswingHipRotation !== undefined || impactHipRotation !== undefined ||
+                backswingShoulderRotation !== undefined || impactShoulderRotation !== undefined ||
+                spineAngleAddress !== undefined || spineAngleImpact !== undefined ||
+                spineAngleChange !== undefined || xFactor !== null;
+            if (hasAnyMetric) {
+                html += `<div class="metrics-dashboard">`;
+                if (backswingHipRotation !== undefined) {
+                    html += `<div class="metric-card ${getMetricStatusClass(backswingHipRotation, [30, 60], [25, 65])}">
+                        <div class="metric-name">Hip Rotation Backswing</div>
+                        <div class="metric-value">${formatAngle(backswingHipRotation)}</div>
+                        <div class="metric-target">Target: 30–60°</div>
+                    </div>`;
+                }
+                if (impactHipRotation !== undefined) {
+                    html += `<div class="metric-card ${getMetricStatusClass(impactHipRotation, [30, 45], [25, 50])}">
+                        <div class="metric-name">Hip Rotation Impact</div>
+                        <div class="metric-value">${formatAngle(impactHipRotation)}</div>
+                        <div class="metric-target">Target: 30–45°</div>
+                    </div>`;
+                }
+                if (backswingShoulderRotation !== undefined) {
+                    html += `<div class="metric-card ${getMetricStatusClass(backswingShoulderRotation, [80, 110], [70, 120])}">
+                        <div class="metric-name">Shoulder Rotation Backswing</div>
+                        <div class="metric-value">${formatAngle(backswingShoulderRotation)}</div>
+                        <div class="metric-target">Target: 80–110°</div>
+                    </div>`;
+                }
+                if (impactShoulderRotation !== undefined) {
+                    html += `<div class="metric-card ${getMetricStatusClass(impactShoulderRotation, [0, 10], [0, 15])}">
+                        <div class="metric-name">Shoulder Rotation Impact</div>
+                        <div class="metric-value">${formatAngle(impactShoulderRotation)}</div>
+                        <div class="metric-target">Target: 0–10°</div>
+                    </div>`;
+                }
+                if (spineAngleAddress !== undefined) {
+                    html += `<div class="metric-card">
+                        <div class="metric-name">Spine Angle Address</div>
+                        <div class="metric-value">${formatAngle(spineAngleAddress)}</div>
+                        <div class="metric-target">—</div>
+                    </div>`;
+                }
+                if (spineAngleImpact !== undefined) {
+                    html += `<div class="metric-card">
+                        <div class="metric-name">Spine Angle Impact</div>
+                        <div class="metric-value">${formatAngle(spineAngleImpact)}</div>
+                        <div class="metric-target">—</div>
+                    </div>`;
+                }
+                if (spineAngleChange !== undefined) {
+                    html += `<div class="metric-card ${getMetricStatusClass(Math.abs(spineAngleChange), [0, 10], [10, 15])}">
+                        <div class="metric-name">Spine Angle Change</div>
+                        <div class="metric-value">${formatAngle(spineAngleChange)}</div>
+                        <div class="metric-target">Target: &lt;10°</div>
+                    </div>`;
+                }
+                if (xFactor !== null) {
+                    html += `<div class="metric-card">
+                        <div class="metric-name">X-Factor</div>
+                        <div class="metric-value">${formatAngle(xFactor)}</div>
+                        <div class="metric-target">Shoulder − hip backswing</div>
+                    </div>`;
+                }
+                html += `</div>`;
+            }
+            
+            // SECTION 3 - Primary Focus (full width, only if issues)
             if (priorityIssue) {
                 html += `
-                    <div class="primary-focus-card">
-                        <div class="primary-focus-label">Primary Focus Area</div>
-                        <h3 class="primary-focus-title">${escapeHtml(priorityIssue.issue)}</h3>
-                        <p class="primary-focus-description">${escapeHtml(priorityIssue.description)}</p>
+                    <div class="primary-focus-callout">
+                        <div class="focus-label">Primary Focus Area</div>
+                        <h3 class="focus-name">${escapeHtml(priorityIssue.issue)}</h3>
+                        <p class="focus-description">${escapeHtml(priorityIssue.description)}</p>
                     </div>
                 `;
             }
             
-            // SECTION 3: Additional Observations (collapsible)
-            const secondaryIssues = issuesDetected.filter(issue => issue !== priorityIssue);
-            if (secondaryIssues.length > 0 || strengths.length > 0) {
-                html += `
-                    <div class="collapsible-section">
-                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
-                            <h3 class="collapsible-title">Additional Observations</h3>
-                            <div class="collapsible-icon">▼</div>
-                        </div>
-                        <div class="collapsible-content">
-                            ${secondaryIssues.map(issue => `
-                                <div class="issue-item" style="margin-bottom: 16px;">
-                                    <div class="issue-icon">⚠️</div>
-                                    <div class="issue-content">
-                                        <div class="issue-name">${escapeHtml(issue.issue)}</div>
-                                        <div class="issue-description">${escapeHtml(issue.description)}</div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                            ${strengths.map(strength => `
-                                <div class="strength-item" style="margin-bottom: 12px;">
-                                    <div class="strength-icon">✓</div>
-                                    <div class="strength-text">${escapeHtml(strength)}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
+            // SECTION 4 - Strengths Grid (2 columns desktop, 1 mobile)
+            if (strengths.length > 0) {
+                html += `<div class="strengths-grid">`;
+                strengths.forEach(s => {
+                    html += `<div class="strength-card"><span class="strength-check">✓</span><span class="strength-label">${escapeHtml(s)}</span></div>`;
+                });
+                html += `</div>`;
             }
             
-            // SECTION 4: Detailed Measurements (collapsible)
-            if (backswingHipRotation !== undefined || backswingShoulderRotation !== undefined || 
-                impactHipRotation !== undefined || impactShoulderRotation !== undefined ||
-                spineAngleAddress !== undefined || spineAngleImpact !== undefined || spineAngleChange !== undefined) {
-                html += `
-                    <div class="collapsible-section">
-                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
-                            <h3 class="collapsible-title">View All Measurements</h3>
-                            <div class="collapsible-icon">▼</div>
-                        </div>
-                        <div class="collapsible-content">
-                            ${backswingHipRotation !== undefined || impactHipRotation !== undefined ? `
-                            <div class="measurement-group">
-                                <h4 class="measurement-group-title">Hip Rotation</h4>
-                                ${backswingHipRotation !== undefined ? `
-                                <div class="measurement-item">
-                                    <div>
-                                        <div class="measurement-label">Hip Rotation (Backswing)</div>
-                                        <div class="measurement-target">Target: 30-60°</div>
-                                    </div>
-                                    <div class="measurement-value ${getMeasurementClass(backswingHipRotation, [30, 60], [25, 65])}">${formatAngle(backswingHipRotation)}</div>
-                                </div>` : ''}
-                                ${impactHipRotation !== undefined ? `
-                                <div class="measurement-item">
-                                    <div>
-                                        <div class="measurement-label">Hip Rotation (Impact)</div>
-                                        <div class="measurement-target">Target: 30-45°</div>
-                                    </div>
-                                    <div class="measurement-value ${getMeasurementClass(impactHipRotation, [30, 45], [25, 50])}">${formatAngle(impactHipRotation)}</div>
-                                </div>` : ''}
-                            </div>` : ''}
-                            ${backswingShoulderRotation !== undefined || impactShoulderRotation !== undefined ? `
-                            <div class="measurement-group">
-                                <h4 class="measurement-group-title">Shoulder Rotation</h4>
-                                ${backswingShoulderRotation !== undefined ? `
-                                <div class="measurement-item">
-                                    <div>
-                                        <div class="measurement-label">Shoulder Rotation (Backswing)</div>
-                                        <div class="measurement-target">Target: 80-110°</div>
-                                    </div>
-                                    <div class="measurement-value ${getMeasurementClass(backswingShoulderRotation, [80, 110], [70, 120])}">${formatAngle(backswingShoulderRotation)}</div>
-                                </div>` : ''}
-                                ${impactShoulderRotation !== undefined ? `
-                                <div class="measurement-item">
-                                    <div>
-                                        <div class="measurement-label">Shoulder Rotation (Impact)</div>
-                                        <div class="measurement-target">Target: 0-10°</div>
-                                    </div>
-                                    <div class="measurement-value ${getMeasurementClass(impactShoulderRotation, [0, 10], [0, 15])}">${formatAngle(impactShoulderRotation)}</div>
-                                </div>` : ''}
-                            </div>` : ''}
-                            ${spineAngleAddress !== undefined || spineAngleImpact !== undefined || spineAngleChange !== undefined ? `
-                            <div class="measurement-group">
-                                <h4 class="measurement-group-title">Spine Angles</h4>
-                                ${spineAngleAddress !== undefined ? `
-                                <div class="measurement-item">
-                                    <div>
-                                        <div class="measurement-label">Spine Angle (Address)</div>
-                                    </div>
-                                    <div class="measurement-value">${formatAngle(spineAngleAddress)}</div>
-                                </div>` : ''}
-                                ${spineAngleImpact !== undefined ? `
-                                <div class="measurement-item">
-                                    <div>
-                                        <div class="measurement-label">Spine Angle (Impact)</div>
-                                    </div>
-                                    <div class="measurement-value">${formatAngle(spineAngleImpact)}</div>
-                                </div>` : ''}
-                                ${spineAngleChange !== undefined ? `
-                                <div class="measurement-item">
-                                    <div>
-                                        <div class="measurement-label">Spine Angle Change</div>
-                                        <div class="measurement-target">Target: <10°</div>
-                                    </div>
-                                    <div class="measurement-value ${getMeasurementClass(Math.abs(spineAngleChange), [0, 10], [10, 15])}">${formatAngle(spineAngleChange)}</div>
-                                </div>` : ''}
-                            </div>` : ''}
-                        </div>
-                    </div>
-                `;
+            // SECTION 5 - Additional Issues (if any beyond primary)
+            if (secondaryIssues.length > 0) {
+                html += `<div class="additional-issues-section"><div class="section-title">Additional areas to work on</div>`;
+                secondaryIssues.forEach(issue => {
+                    html += `<div class="issue-card">
+                        <div class="issue-icon">⚠️</div>
+                        <div><div class="issue-name">${escapeHtml(issue.issue)}</div><div class="issue-description">${escapeHtml(issue.description || '')}</div></div>
+                    </div>`;
+                });
+                html += `</div>`;
             }
             
             // Insert HTML
