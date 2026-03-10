@@ -117,6 +117,7 @@ def analyze_video_with_mediapipe(video_path):
         
         fps = cap.get(cv2.CAP_PROP_FPS)
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print(f"[Video] total_frames={total_frames}, fps={fps}")
         RIGHT_WRIST = 16
         
         # STEP 1: First pass - collect pose and right wrist Y for every frame
@@ -205,9 +206,9 @@ def analyze_video_with_mediapipe(video_path):
                 print(f"[Backswing top] Frame {backswing_frame_idx} (right wrist at highest position, wrist_y={frame_data[backswing_frame_idx][1]:.4f})")
             
             # IMPACT: within downswing window only (avoid picking follow-through)
-            # Window = backswing_frame to backswing_frame + (backswing - address) * 1.5
+            # Window = backswing_frame to backswing_frame + (backswing - address) * 3
             if backswing_frame_idx is not None and address_frame_idx is not None and address_wrist_y is not None:
-                downswing_length = int((backswing_frame_idx - address_frame_idx) * 1.5)
+                downswing_length = int((backswing_frame_idx - address_frame_idx) * 3)
                 impact_window_end = min(total_frames, backswing_frame_idx + 1 + downswing_length)
                 impact_candidates = [(idx, frame_data[idx][1]) for idx in range(backswing_frame_idx + 1, impact_window_end)
                                      if frame_data[idx] is not None and frame_data[idx][1] is not None]

@@ -4043,10 +4043,12 @@
             const summary = diagnosis.summary;
             const hasDiagnosis = issuesDetected.length > 0 || strengths.length > 0 || priorityIssue || summary;
             
-            // Helper function to format angle with degree symbol
+            // Helper function to format angle with degree symbol (max 1 decimal place)
             const formatAngle = (angle) => {
                 if (angle === null || angle === undefined) return 'N/A';
-                return `${angle}°`;
+                const num = Number(angle);
+                if (Number.isNaN(num)) return 'N/A';
+                return `${num.toFixed(1)}°`;
             };
             
             console.log('Extracted data:', { status, message, filename, fileSizeMB, analysis, diagnosis });
@@ -4234,7 +4236,9 @@
             
             const formatAngle = (angle) => {
                 if (angle === null || angle === undefined) return 'N/A';
-                return `${angle}°`;
+                const num = Number(angle);
+                if (Number.isNaN(num)) return 'N/A';
+                return `${num.toFixed(1)}°`;
             };
             
             const getMeasurementClass = (value, goodRange, moderateRange) => {
