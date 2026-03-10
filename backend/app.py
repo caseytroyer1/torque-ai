@@ -204,13 +204,16 @@ def analyze_video_with_mediapipe(video_path):
                 backswing_frame_idx = min(backswing_candidates, key=lambda c: c[1])[0]
                 print(f"[Backswing top] Frame {backswing_frame_idx} (right wrist at highest position, wrist_y={frame_data[backswing_frame_idx][1]:.4f})")
             
-            # IMPACT: after backswing top, wrist Y closest to address
-            if backswing_frame_idx is not None and address_wrist_y is not None:
-                impact_candidates = [(idx, frame_data[idx][1]) for idx in range(backswing_frame_idx + 1, total_frames)
+            # IMPACT: within downswing window only (avoid picking follow-through)
+            # Window = backswing_frame to backswing_frame + (backswing - address) * 1.5
+            if backswing_frame_idx is not None and address_frame_idx is not None and address_wrist_y is not None:
+                downswing_length = int((backswing_frame_idx - address_frame_idx) * 1.5)
+                impact_window_end = min(total_frames, backswing_frame_idx + 1 + downswing_length)
+                impact_candidates = [(idx, frame_data[idx][1]) for idx in range(backswing_frame_idx + 1, impact_window_end)
                                      if frame_data[idx] is not None and frame_data[idx][1] is not None]
                 if impact_candidates:
                     impact_frame_idx = min(impact_candidates, key=lambda c: abs(c[1] - address_wrist_y))[0]
-                    print(f"[Impact] Frame {impact_frame_idx} (wrist Y closest to address {address_wrist_y:.4f}, impact wrist_y={frame_data[impact_frame_idx][1]:.4f})")
+                    print(f"[Impact] Frame {impact_frame_idx} (within downswing window frames {backswing_frame_idx + 1}-{impact_window_end - 1}, wrist Y closest to address {address_wrist_y:.4f}, impact wrist_y={frame_data[impact_frame_idx][1]:.4f})")
         
         # STEP 3: Fallback to percentage-based frames if intelligent detection failed
         if address_frame_idx is None or backswing_frame_idx is None or impact_frame_idx is None:
