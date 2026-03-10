@@ -292,6 +292,25 @@ def analyze_video_with_mediapipe(video_path):
             angle = math.degrees(math.atan2(dx, -dy))  # Negative dy because y increases downward
             return round(angle, 1)
         
+        def angle_at_joint(landmarks, upper_idx, joint_idx, lower_idx):
+            """Angle at joint (upper-joint-lower) in degrees. 180 = straight."""
+            if not landmarks or len(landmarks) <= max(upper_idx, joint_idx, lower_idx):
+                return None
+            upper = landmarks[upper_idx]
+            joint = landmarks[joint_idx]
+            lower = landmarks[lower_idx]
+            v1_x = upper.x - joint.x
+            v1_y = upper.y - joint.y
+            v2_x = lower.x - joint.x
+            v2_y = lower.y - joint.y
+            dot = v1_x * v2_x + v1_y * v2_y
+            mag1 = math.sqrt(v1_x * v1_x + v1_y * v1_y)
+            mag2 = math.sqrt(v2_x * v2_x + v2_y * v2_y)
+            if mag1 < 1e-6 or mag2 < 1e-6:
+                return None
+            cos_a = max(-1, min(1, dot / (mag1 * mag2)))
+            return round(math.degrees(math.acos(cos_a)), 1)
+        
         # Calculate Z-axis depth differences at ADDRESS (baseline)
         baseline_hip_z = calculate_hip_z_rotation(key_frames['address']) if key_frames['address'] else None
         baseline_shoulder_z = calculate_shoulder_z_rotation(key_frames['address']) if key_frames['address'] else None
@@ -331,6 +350,50 @@ def analyze_video_with_mediapipe(video_path):
         if spine_angle_address is not None and spine_angle_impact is not None:
             spine_angle_change = round(spine_angle_impact - spine_angle_address, 1)
         
+        # Setup/posture metrics from address frame
+        LEFT_KNEE = 25
+        RIGHT_KNEE = 26
+        LEFT_ANKLE = 27
+        RIGHT_ANKLE = 28
+        setup_spine_angle = spine_angle_address
+        setup_knee_flex_left = angle_at_joint(key_frames['address'], LEFT_HIP, LEFT_KNEE, LEFT_ANKLE) if key_frames['address'] else None
+        setup_knee_flex_right = angle_at_joint(key_frames['address'], RIGHT_HIP, RIGHT_KNEE, RIGHT_ANKLE) if key_frames['address'] else None
+        setup_knee_flex = None
+        if setup_knee_flex_left is not None and setup_knee_flex_right is not None:
+            setup_knee_flex = round((setup_knee_flex_left + setup_knee_flex_right) / 2, 1)
+        elif setup_knee_flex_left is not None:
+            setup_knee_flex = setup_knee_flex_left
+        elif setup_knee_flex_right is not None:
+            setup_knee_flex = setup_knee_flex_right
+        setup_shoulder_level = None
+        if key_frames['address'] and len(key_frames['address']) > max(LEFT_SHOULDER, RIGHT_SHOULDER):
+            left_y = key_frames['address'][LEFT_SHOULDER].y
+            right_y = key_frames['address'][RIGHT_SHOULDER].y
+            setup_shoulder_level = round(abs(left_y - right_y), 4)
+        setup_hip_hinge = None
+        if key_frames['address'] and len(key_frames['address']) > max(LEFT_HIP, RIGHT_HIP, LEFT_ANKLE, RIGHT_ANKLE):
+            hip_mid_x = (key_frames['address'][LEFT_HIP].x + key_frames['address'][RIGHT_HIP].x) / 2
+            ankle_mid_x = (key_frames['address'][LEFT_ANKLE].x + key_frames['address'][RIGHT_ANKLE].x) / 2
+            setup_hip_hinge = round(hip_mid_x - ankle_mid_x, 4)
+        # Setup grade: spine 20-35°, knee 150-170°, shoulder < 0.03, hip hinge in range (-0.08 to 0.08)
+        in_range = 0
+        if setup_spine_angle is not None and 20 <= setup_spine_angle <= 35:
+            in_range += 1
+        if setup_knee_flex is not None and 150 <= setup_knee_flex <= 170:
+            in_range += 1
+        if setup_shoulder_level is not None and setup_shoulder_level < 0.03:
+            in_range += 1
+        if setup_hip_hinge is not None and -0.08 <= setup_hip_hinge <= 0.08:
+            in_range += 1
+        if in_range == 4:
+            setup_grade = 'A'
+        elif in_range == 3:
+            setup_grade = 'B'
+        elif in_range == 2:
+            setup_grade = 'C'
+        else:
+            setup_grade = 'D'
+        
         # Log rotation values for debugging
         print("=== Rotation Calculation (Z-axis Depth - Frontal Plane) ===")
         print(f"Hip Z-values - Address: {baseline_hip_z}, Backswing: {backswing_hip_z}, Impact: {impact_hip_z}")
@@ -367,7 +430,15 @@ def analyze_video_with_mediapipe(video_path):
             # Spine angle measurements (unchanged)
             'spine_angle_address': spine_angle_address,
             'spine_angle_impact': spine_angle_impact,
-            'spine_angle_change': spine_angle_change
+            'spine_angle_change': spine_angle_change,
+            # Setup/posture at address
+            'setup_spine_angle': setup_spine_angle,
+            'setup_knee_flex': setup_knee_flex,
+            'setup_knee_flex_left': setup_knee_flex_left,
+            'setup_knee_flex_right': setup_knee_flex_right,
+            'setup_shoulder_level': setup_shoulder_level,
+            'setup_hip_hinge': setup_hip_hinge,
+            'setup_grade': setup_grade
         }
         
         return analysis, None
@@ -383,6 +454,39 @@ def diagnose_swing(analysis_data):
     
     issues_detected = []
     strengths = []
+    
+    # SETUP / POSTURE (address)
+    setup_knee_flex = analysis_data.get('setup_knee_flex')
+    if setup_knee_flex is not None:
+        setup_knee_flex = round(float(setup_knee_flex), 1)
+        if 150 <= setup_knee_flex <= 170:
+            strengths.append("Good knee flex at address")
+        elif setup_knee_flex < 150:
+            issues_detected.append({
+                'category': 'Setup',
+                'issue': 'Excessive knee flex',
+                'description': f'Your knee flex of {setup_knee_flex}° at address may be too bent. A slight flex (150-170°) helps with balance and rotation.',
+                'severity': 'needs_attention'
+            })
+        elif setup_knee_flex > 170:
+            issues_detected.append({
+                'category': 'Setup',
+                'issue': 'Locked knees at address',
+                'description': f'Your knee angle of {setup_knee_flex}° suggests knees may be too straight at address. A slight flex (150-170°) improves stability.',
+                'severity': 'needs_attention'
+            })
+    setup_shoulder_level = analysis_data.get('setup_shoulder_level')
+    if setup_shoulder_level is not None:
+        setup_shoulder_level = float(setup_shoulder_level)
+        if setup_shoulder_level <= 0.03:
+            strengths.append("Level shoulders at address")
+        elif setup_shoulder_level > 0.05:
+            issues_detected.append({
+                'category': 'Setup',
+                'issue': 'Uneven shoulders at address',
+                'description': f'Your shoulder height difference ({setup_shoulder_level:.3f}) suggests uneven setup. Level shoulders promote consistent ball striking.',
+                'severity': 'needs_attention'
+            })
     
     # HIP ROTATION (Backswing) - using rotation delta/change amount
     backswing_hip = (analysis_data.get('hip_rotation_backswing') or 
@@ -493,13 +597,14 @@ def diagnose_swing(analysis_data):
             })
     
     # Limit to maximum 2 issues, prioritize most impactful
-    # Priority order: 1) Early extension (>15° spine change), 2) Restricted hip turn (<30°), 3) Restricted shoulder turn (<70°)
+    # Priority order: 1) Early extension, 2) Setup, 3) Hip rotation, 4) Shoulder rotation, etc.
     priority_order = {
-        'Spine Angle': 1,  # Highest priority - early extension
-        'Hip Rotation': 2,  # Second priority - restricted hip turn
-        'Shoulder Rotation': 3,  # Third priority - restricted shoulder turn
-        'X-Factor': 4,
-        'Impact Position': 5
+        'Spine Angle': 1,
+        'Setup': 2,
+        'Hip Rotation': 3,
+        'Shoulder Rotation': 4,
+        'X-Factor': 5,
+        'Impact Position': 6
     }
     
     # Sort by priority and limit to maximum 2 issues
