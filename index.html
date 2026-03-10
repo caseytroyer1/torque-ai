@@ -1222,51 +1222,34 @@
             text-align: center;
             margin-bottom: 24px;
         }
-        .setup-score-ring-wrap {
+        .setup-grade-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+            gap: 12px;
         }
-        .setup-score-ring {
-            position: relative;
-            width: 120px;
-            height: 120px;
+        .setup-grade-icon {
+            font-size: 48px;
+            line-height: 1;
         }
-        .setup-score-ring svg {
-            transform: rotate(-90deg);
-            width: 120px;
-            height: 120px;
-        }
-        .setup-score-ring .ring-bg {
-            fill: none;
-            stroke: #1e3a5f;
-            stroke-width: 8;
-        }
-        .setup-score-ring .ring-progress {
-            fill: none;
-            stroke-width: 8;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.5s ease;
-        }
-        .setup-score-value {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .setup-grade-icon.tier-elite { color: #22c55e; }
+        .setup-grade-icon.tier-solid { color: #1E5EFF; }
+        .setup-grade-icon.tier-needs { color: #ef4444; }
+        .setup-grade-label {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            font-size: 24px;
-            color: #ffffff;
+            font-size: 40px;
+            line-height: 1.2;
         }
-        .setup-score-label {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 22px;
+        .setup-grade-label.tier-elite { color: #22c55e; }
+        .setup-grade-label.tier-solid { color: #1E5EFF; }
+        .setup-grade-label.tier-needs { color: #ef4444; }
+        .setup-grade-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: rgba(184, 197, 214, 0.8);
         }
-        .setup-score-label.tier-elite { color: #22c55e; }
-        .setup-score-label.tier-solid { color: #1E5EFF; }
-        .setup-score-label.tier-needs { color: #ef4444; }
         .setup-metrics-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -4472,21 +4455,12 @@
             const setupScore = (spineInRange ? 25 : 0) + (kneeInRange ? 25 : 0) + (shoulderInRange ? 25 : 0) + (hipGood ? 25 : 0);
             const setupTier = setupScore >= 85 ? 'elite' : (setupScore >= 60 ? 'solid' : 'needs');
             const setupLabel = setupScore >= 85 ? 'Elite' : (setupScore >= 60 ? 'Solid Foundation' : 'Needs Attention');
-            const setupRingColor = setupScore >= 85 ? '#22c55e' : (setupScore >= 60 ? '#1E5EFF' : '#ef4444');
-            const ringR = 56;
-            const ringCircumference = 2 * Math.PI * ringR;
-            const ringOffset = ringCircumference * (1 - setupScore / 100);
             html += `<div class="tab-panel active" id="tab-setup" role="tabpanel">
                 <div class="setup-grade-card">
-                    <div class="setup-score-ring-wrap">
-                        <div class="setup-score-ring">
-                            <svg viewBox="0 0 120 120">
-                                <circle class="ring-bg" cx="60" cy="60" r="${ringR}" stroke-width="8" />
-                                <circle class="ring-progress" cx="60" cy="60" r="${ringR}" stroke="${setupRingColor}" stroke-width="8" stroke-dasharray="${ringCircumference}" stroke-dashoffset="${ringOffset}" />
-                            </svg>
-                            <span class="setup-score-value">${setupScore}</span>
-                        </div>
-                        <span class="setup-score-label tier-${setupTier}">${escapeHtml(setupLabel)}</span>
+                    <div class="setup-grade-content">
+                        <span class="setup-grade-icon tier-${setupTier}" aria-hidden="true">✦</span>
+                        <span class="setup-grade-label tier-${setupTier}">${escapeHtml(setupLabel)}</span>
+                        <span class="setup-grade-subtitle">Setup & Posture Analysis</span>
                     </div>
                 </div>
                 <div class="setup-metrics-grid">`;
