@@ -1222,6 +1222,22 @@
             text-align: center;
             margin-bottom: 24px;
         }
+        .setup-grade-card.grade-a {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: #22c55e;
+        }
+        .setup-grade-card.grade-b {
+            background: rgba(30, 94, 255, 0.12);
+            border-color: #1E5EFF;
+        }
+        .setup-grade-card.grade-c {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: #f59e0b;
+        }
+        .setup-grade-card.grade-d {
+            background: rgba(239, 68, 68, 0.12);
+            border-color: #ef4444;
+        }
         .setup-grade-letter {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -1253,6 +1269,25 @@
             font-size: 15px;
             color: #B8C5D6;
             line-height: 1.6;
+        }
+        .view-mechanics-btn {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+            background: #1E5EFF;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 28px;
+            transition: background 0.2s ease, filter 0.2s ease;
+        }
+        .view-mechanics-btn:hover {
+            background: #1a54e6;
+            filter: brightness(1.05);
         }
         .follow-through-placeholder {
             background: rgba(26, 58, 82, 0.35);
@@ -1550,9 +1585,9 @@
             filter: brightness(1.08);
             background: rgba(26, 58, 82, 0.45);
         }
-        .results-analysis-panel .metric-card.status-good { border-left-color: #4ade80; }
-        .results-analysis-panel .metric-card.status-moderate { border-left-color: #fbbf24; }
-        .results-analysis-panel .metric-card.status-needs-attention { border-left-color: #f87171; }
+        .results-analysis-panel .metric-card.status-good { border-left-color: #22c55e; }
+        .results-analysis-panel .metric-card.status-moderate { border-left-color: #f59e0b; }
+        .results-analysis-panel .metric-card.status-needs-attention { border-left-color: #ef4444; }
         .results-analysis-panel .metric-info-btn {
             position: absolute;
             top: 12px;
@@ -4388,7 +4423,18 @@
             const setupShoulderLevel = analysis.setup_shoulder_level;
             const setupHipHinge = analysis.setup_hip_hinge;
             const setupIssueFromDiagnosis = issuesDetected.find(i => i.category === 'Setup');
-            
+            const getSetupSpineStatus = (v) => {
+                if (v == null) return ''; if (v >= 20 && v <= 35) return 'status-good'; if ((v >= 15 && v < 20) || (v > 35 && v <= 40)) return 'status-moderate'; return 'status-needs-attention';
+            };
+            const getSetupKneeStatus = (v) => {
+                if (v == null) return ''; if (v >= 150 && v <= 170) return 'status-good'; if ((v >= 145 && v < 150) || (v > 170 && v <= 175)) return 'status-moderate'; return 'status-needs-attention';
+            };
+            const getSetupShoulderStatus = (v) => {
+                if (v == null) return ''; if (v < 0.03) return 'status-good'; if (v <= 0.06) return 'status-moderate'; return 'status-needs-attention';
+            };
+            const getSetupHipStatus = (hinge) => {
+                if (hinge == null) return ''; if (hinge >= -0.08 && hinge <= 0.08) return 'status-good'; return 'status-moderate';
+            };
             const hasIssues = issuesDetected.length > 0;
             const secondaryIssues = priorityIssue ? issuesDetected.filter(issue => issue.issue !== priorityIssue.issue) : issuesDetected;
             
@@ -4397,7 +4443,7 @@
                 <h2>Your Swing Analysis</h2>
                 <div class="results-tabs" role="tablist">
                     <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
-                    <button type="button" class="tab-btn" data-tab="backswing" role="tab" aria-selected="false">Backswing</button>
+                    <button type="button" class="tab-btn" data-tab="backswing" role="tab" aria-selected="false">Mechanics</button>
                     <button type="button" class="tab-btn" data-tab="followthrough" role="tab" aria-selected="false">Follow Through</button>
                 </div>
             </div>
@@ -4406,18 +4452,18 @@
             // SETUP TAB
             const gradeClass = 'grade-' + (setupGrade || 'D').toLowerCase();
             html += `<div class="tab-panel active" id="tab-setup" role="tabpanel">
-                <div class="setup-grade-card">
+                <div class="setup-grade-card ${gradeClass}">
                     <div class="setup-grade-letter ${gradeClass}">${escapeHtml(setupGrade)}</div>
                     <p class="setup-grade-subtext">Setup & Posture Analysis</p>
                 </div>
                 <div class="setup-metrics-grid">`;
-            html += `<div class="metric-card">
+            html += `<div class="metric-card ${getSetupSpineStatus(setupSpineAngle)}">
                 <button type="button" class="metric-info-btn" data-metric-key="setupSpineAngle" aria-label="More info">ⓘ</button>
                 <div class="metric-name">Spine Angle at Address</div>
                 <div class="metric-value">${setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : 'N/A'}</div>
                 <div class="metric-target">Target: 20–35°</div>
             </div>`;
-            html += `<div class="metric-card">
+            html += `<div class="metric-card ${getSetupKneeStatus(setupKneeFlex)}">
                 <button type="button" class="metric-info-btn" data-metric-key="setupKneeFlex" aria-label="More info">ⓘ</button>
                 <div class="metric-name">Knee Flex</div>
                 <div class="metric-value">${setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : 'N/A'}</div>
@@ -4425,14 +4471,14 @@
             </div>`;
             const shoulderLabel = setupShoulderLevel != null ? (setupShoulderLevel < 0.03 ? 'Level' : 'Uneven') : 'N/A';
             const shoulderDetail = setupShoulderLevel != null ? ' (diff: ' + Number(setupShoulderLevel).toFixed(3) + ')' : '';
-            html += `<div class="metric-card">
+            html += `<div class="metric-card ${getSetupShoulderStatus(setupShoulderLevel)}">
                 <button type="button" class="metric-info-btn" data-metric-key="setupShoulderLevel" aria-label="More info">ⓘ</button>
                 <div class="metric-name">Shoulder Level</div>
                 <div class="metric-value">${escapeHtml(shoulderLabel)}${shoulderDetail}</div>
                 <div class="metric-target">Level at address</div>
             </div>`;
             const hipLabel = setupHipHinge != null ? (setupHipHinge >= -0.08 && setupHipHinge <= 0.08 ? 'Good' : 'Needs Work') : 'N/A';
-            html += `<div class="metric-card">
+            html += `<div class="metric-card ${getSetupHipStatus(setupHipHinge)}">
                 <button type="button" class="metric-info-btn" data-metric-key="setupHipHinge" aria-label="More info">ⓘ</button>
                 <div class="metric-name">Hip Hinge</div>
                 <div class="metric-value">${escapeHtml(hipLabel)}</div>
@@ -4443,6 +4489,7 @@
                 ? escapeHtml(setupIssueFromDiagnosis.description)
                 : 'Great setup! Focus on your backswing mechanics.';
             html += `<div class="setup-coaching-tip">${setupTip}</div>
+            <button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>
             </div>`;
             
             // BACKSWING TAB
@@ -4564,17 +4611,27 @@
             // Tab switching
             const tabBtns = resultsAnalysisPanel.querySelectorAll('.tab-btn');
             const tabPanels = resultsAnalysisPanel.querySelectorAll('.tab-panel');
+            function switchToTab(tabId) {
+                tabBtns.forEach(b => {
+                    const isActive = b.getAttribute('data-tab') === tabId;
+                    b.classList.toggle('active', isActive);
+                    b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                });
+                tabPanels.forEach(p => {
+                    p.classList.toggle('active', p.id === 'tab-' + tabId);
+                });
+            }
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-                    tabPanels.forEach(p => { p.classList.remove('active'); });
-                    this.classList.add('active');
-                    this.setAttribute('aria-selected', 'true');
-                    const panel = resultsAnalysisPanel.querySelector('#tab-' + tabId);
-                    if (panel) panel.classList.add('active');
+                    switchToTab(this.getAttribute('data-tab'));
                 });
             });
+            const viewMechanicsBtn = resultsAnalysisPanel.querySelector('.view-mechanics-btn');
+            if (viewMechanicsBtn) {
+                viewMechanicsBtn.addEventListener('click', function() {
+                    switchToTab('backswing');
+                });
+            }
             
             // Show split view
             resultsSplitContainer.classList.add('active');
