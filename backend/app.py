@@ -116,52 +116,122 @@ def analyze_video_with_mediapipe(video_path):
             return None, "Could not open video file"
         
         fps = cap.get(cv2.CAP_PROP_FPS)
-        frame_count = 0
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        RIGHT_WRIST = 16
+        
+        # STEP 1: First pass - collect pose and right wrist Y for every frame
+        # frame_data[i] = (landmarks, wrist_y) or None
+        frame_data = [None] * total_frames
         poses_detected = 0
         
-        # Store key frames: address (first), backswing (middle), impact (60%)
-        key_frames = {
-            'address': None,
-            'backswing': None,
-            'impact': None
-        }
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        address_frame = 0
-        backswing_frame = total_frames // 2
-        impact_frame = int(total_frames * 0.6)
-        
-        # Process frames
-        while cap.isOpened():
+        for frame_count in range(total_frames):
             ret, frame = cap.read()
             if not ret:
                 break
-            
-            # Convert BGR to RGB for MediaPipe
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            
-            # Convert to MediaPipe format
             timestamp_ms = int((frame_count / fps) * 1000) if fps > 0 else frame_count * 33
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
-            
-            # Detect pose
             detection_result = detector.detect_for_video(mp_image, timestamp_ms)
             
             if detection_result.pose_landmarks and len(detection_result.pose_landmarks) > 0:
                 poses_detected += 1
                 landmarks = detection_result.pose_landmarks[0]
-                
-                # Store key frames
-                if frame_count == address_frame:
-                    key_frames['address'] = landmarks
-                elif frame_count == backswing_frame:
-                    key_frames['backswing'] = landmarks
-                elif frame_count == impact_frame:
-                    key_frames['impact'] = landmarks
-            
-            frame_count += 1
+                if len(landmarks) > RIGHT_WRIST:
+                    wrist_y = landmarks[RIGHT_WRIST].y
+                    frame_data[frame_count] = (landmarks, wrist_y)
+                else:
+                    frame_data[frame_count] = (landmarks, None)
         
         cap.release()
         detector.close()
+        
+        # STEP 2: Find swing window and key frames intelligently
+        MOTION_THRESHOLD = 0.015  # normalized Y change (tune for sensitivity)
+        CONSECUTIVE_MOTION_FRAMES = 2  # require N frames above threshold
+        ADDRESS_WINDOW = 10  # frames before movement to pick address from
+        
+        swing_start_frame = None
+        address_frame_idx = None
+        backswing_frame_idx = None
+        impact_frame_idx = None
+        address_wrist_y = None
+        
+        # Find first significant motion (swing start)
+        for i in range(1, total_frames):
+            if frame_data[i] is None or frame_data[i][1] is None:
+                continue
+            if frame_data[i - 1] is None or frame_data[i - 1][1] is None:
+                continue
+            motion = abs(frame_data[i][1] - frame_data[i - 1][1])
+            if motion <= MOTION_THRESHOLD:
+                continue
+            # Require CONSECUTIVE_MOTION_FRAMES above threshold
+            count = 1
+            j = i + 1
+            while j < total_frames and count < CONSECUTIVE_MOTION_FRAMES:
+                if frame_data[j] is None or frame_data[j][1] is None or frame_data[j - 1] is None or frame_data[j - 1][1] is None:
+                    break
+                m = abs(frame_data[j][1] - frame_data[j - 1][1])
+                if m > MOTION_THRESHOLD:
+                    count += 1
+                    j += 1
+                else:
+                    break
+            if count >= CONSECUTIVE_MOTION_FRAMES:
+                swing_start_frame = i
+                print(f"[Swing detection] Swing start frame: {swing_start_frame} (motion threshold {MOTION_THRESHOLD}, first significant wrist movement)")
+                break
+        
+        if swing_start_frame is not None:
+            # ADDRESS: last "still" frame before movement - most stable of the 10 frames before swing start
+            window_start = max(0, swing_start_frame - ADDRESS_WINDOW)
+            address_candidates = []
+            for idx in range(window_start, swing_start_frame):
+                if frame_data[idx] is not None and frame_data[idx][1] is not None:
+                    address_candidates.append((idx, frame_data[idx][1]))
+            if address_candidates:
+                # Pick frame whose wrist_y is closest to median (most typical "still" pose)
+                wrist_ys = [y for _, y in address_candidates]
+                median_y = sorted(wrist_ys)[len(wrist_ys) // 2]
+                address_frame_idx = min(address_candidates, key=lambda c: abs(c[1] - median_y))[0]
+                address_wrist_y = frame_data[address_frame_idx][1]
+                print(f"[Address] Frame {address_frame_idx} (most stable of frames {window_start}-{swing_start_frame - 1}, wrist_y={address_wrist_y:.4f})")
+            
+            # BACKSWING TOP: right wrist at highest position (min Y) in swing window
+            backswing_candidates = [(idx, frame_data[idx][1]) for idx in range(swing_start_frame, total_frames)
+                                   if frame_data[idx] is not None and frame_data[idx][1] is not None]
+            if backswing_candidates:
+                backswing_frame_idx = min(backswing_candidates, key=lambda c: c[1])[0]
+                print(f"[Backswing top] Frame {backswing_frame_idx} (right wrist at highest position, wrist_y={frame_data[backswing_frame_idx][1]:.4f})")
+            
+            # IMPACT: after backswing top, wrist Y closest to address
+            if backswing_frame_idx is not None and address_wrist_y is not None:
+                impact_candidates = [(idx, frame_data[idx][1]) for idx in range(backswing_frame_idx + 1, total_frames)
+                                     if frame_data[idx] is not None and frame_data[idx][1] is not None]
+                if impact_candidates:
+                    impact_frame_idx = min(impact_candidates, key=lambda c: abs(c[1] - address_wrist_y))[0]
+                    print(f"[Impact] Frame {impact_frame_idx} (wrist Y closest to address {address_wrist_y:.4f}, impact wrist_y={frame_data[impact_frame_idx][1]:.4f})")
+        
+        # STEP 3: Fallback to percentage-based frames if intelligent detection failed
+        if address_frame_idx is None or backswing_frame_idx is None or impact_frame_idx is None:
+            address_frame_idx = 0
+            backswing_frame_idx = total_frames // 2
+            impact_frame_idx = min(int(total_frames * 0.6), total_frames - 1) if total_frames > 0 else 0
+            print(f"[Fallback] Using percentage-based frames: address={address_frame_idx}, backswing={backswing_frame_idx}, impact={impact_frame_idx}")
+        
+        # Build key_frames from selected indices (with bounds check)
+        def get_landmarks(idx):
+            if idx is None or total_frames == 0 or idx < 0 or idx >= total_frames:
+                return None
+            entry = frame_data[idx]
+            return entry[0] if entry is not None else None
+        
+        key_frames = {
+            'address': get_landmarks(address_frame_idx),
+            'backswing': get_landmarks(backswing_frame_idx),
+            'impact': get_landmarks(impact_frame_idx)
+        }
+        print(f"[Key frames] address={address_frame_idx}, backswing={backswing_frame_idx}, impact={impact_frame_idx}")
         
         # Calculate angles for key frames
         # MediaPipe pose landmark indices
