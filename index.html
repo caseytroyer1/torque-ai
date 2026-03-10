@@ -4424,7 +4424,12 @@
             const setupHipHinge = analysis.setup_hip_hinge;
             const setupIssueFromDiagnosis = issuesDetected.find(i => i.category === 'Setup');
             const getSetupSpineStatus = (v) => {
-                if (v == null) return ''; if (v >= 20 && v <= 35) return 'status-good'; if ((v >= 15 && v < 20) || (v > 35 && v <= 40)) return 'status-moderate'; return 'status-needs-attention';
+                if (v == null) return '';
+                const n = Number(v);
+                if (Number.isNaN(n)) return '';
+                if (n >= 20 && n <= 35) return 'status-good';
+                if ((n >= 15 && n < 20) || (n > 35 && n <= 40)) return 'status-moderate';
+                return 'status-needs-attention';
             };
             const getSetupKneeStatus = (v) => {
                 if (v == null) return ''; if (v >= 150 && v <= 170) return 'status-good'; if ((v >= 145 && v < 150) || (v > 170 && v <= 175)) return 'status-moderate'; return 'status-needs-attention';
@@ -4469,12 +4474,11 @@
                 <div class="metric-value">${setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : 'N/A'}</div>
                 <div class="metric-target">Target: 150–170°</div>
             </div>`;
-            const shoulderLabel = setupShoulderLevel != null ? (setupShoulderLevel < 0.03 ? 'Level' : 'Uneven') : 'N/A';
-            const shoulderDetail = setupShoulderLevel != null ? ' (diff: ' + Number(setupShoulderLevel).toFixed(3) + ')' : '';
+            const shoulderDisplay = setupShoulderLevel == null ? 'N/A' : (setupShoulderLevel < 0.03 ? 'Level ✓' : (setupShoulderLevel <= 0.06 ? 'Slightly Uneven' : 'Uneven'));
             html += `<div class="metric-card ${getSetupShoulderStatus(setupShoulderLevel)}">
                 <button type="button" class="metric-info-btn" data-metric-key="setupShoulderLevel" aria-label="More info">ⓘ</button>
                 <div class="metric-name">Shoulder Level</div>
-                <div class="metric-value">${escapeHtml(shoulderLabel)}${shoulderDetail}</div>
+                <div class="metric-value">${escapeHtml(shoulderDisplay)}</div>
                 <div class="metric-target">Level at address</div>
             </div>`;
             const hipLabel = setupHipHinge != null ? (setupHipHinge >= -0.08 && setupHipHinge <= 0.08 ? 'Good' : 'Needs Work') : 'N/A';
