@@ -938,6 +938,9 @@ Use this data to give personalized advice when relevant. Reference their specifi
         })
 
     except Exception as e:
+        import traceback
+        print(f"Golf coach error: {str(e)}")
+        print(traceback.format_exc())
         return jsonify({'error': str(e), 'success': False}), 500
 
 
