@@ -66,7 +66,43 @@
             color: #B8C5D6;
         }
 
-        /* Golf Hub Page - Personal Coach + Drill Library */
+        /* Golf Hub Page - Hero + Personal Coach + Drill Library */
+        .golf-hub-hero {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            background: url('images/vintage-golf-3.jpeg') center center / cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .golf-hub-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(10, 37, 64, 0.55), rgba(10, 37, 64, 0.85) 55%, #0A2540 100%);
+            pointer-events: none;
+        }
+        .golf-hub-hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        .golf-hub-hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin: 0 0 12px;
+        }
+        .golf-hub-hero-subtext {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            color: #B8C5D6;
+            margin: 0;
+        }
         .golf-hub-section {
             background: #0A2540;
             min-height: calc(100vh - 72px);
@@ -241,13 +277,28 @@
             background: #0d2137;
             aspect-ratio: 16/9;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 10px;
+            border: 2px dashed rgba(30, 94, 255, 0.3);
+            border-radius: 16px 16px 0 0;
         }
-        .drill-card-video span {
+        .drill-card-video .drill-video-icon {
+            font-size: 40px;
+            line-height: 1;
+            color: #1E5EFF;
+        }
+        .drill-card-video .drill-video-title {
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .drill-card-video .drill-video-subtext {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #B8C5D6;
         }
         .drill-card-body { padding: 20px; }
         .drill-card-tag {
@@ -284,10 +335,14 @@
             color: rgba(255, 255, 255, 0.6);
         }
         @media (max-width: 968px) {
+            .golf-hub-hero { height: 220px; }
+            .golf-hub-hero-title { font-size: 36px; }
+            .golf-hub-hero-subtext { font-size: 16px; }
             .golf-coach-heading { font-size: 32px; }
             .drill-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 600px) {
+            .golf-hub-hero-title { font-size: 28px; }
             .golf-coach-heading { font-size: 28px; }
             .golf-chat-input-row { flex-direction: column; }
             .drill-grid { grid-template-columns: 1fr; }
@@ -3382,6 +3437,12 @@
 
     <!-- Golf Hub Page -->
     <div id="golf-hub-page" class="page-section">
+        <div class="golf-hub-hero">
+            <div class="golf-hub-hero-content">
+                <h1 class="golf-hub-hero-title">Golf Hub</h1>
+                <p class="golf-hub-hero-subtext">Master your game with expert instruction</p>
+            </div>
+        </div>
         <section class="golf-hub-section">
             <div class="golf-hub-container">
                 <!-- Section 1: Personal Coach -->
