@@ -66,7 +66,7 @@
             color: #B8C5D6;
         }
 
-        /* Golf Hub Page - AI Coach + Drill Library */
+        /* Golf Hub Page - Personal Coach + Drill Library */
         .golf-hub-section {
             background: #0A2540;
             min-height: calc(100vh - 72px);
@@ -140,6 +140,8 @@
             gap: 10px;
         }
         .golf-chat-bubble .ai-icon { color: #1E5EFF; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+        .golf-chat-bubble .chat-heading { font-size: 1em; font-weight: 700; margin: 0.5em 0 0.25em; }
+        .golf-chat-bubble .chat-list { margin: 0.25em 0; padding-left: 1.2em; }
         .golf-chat-input-row {
             display: flex;
             gap: 12px;
@@ -1371,6 +1373,25 @@
         .view-mechanics-btn:hover {
             background: #1a54e6;
             filter: brightness(1.05);
+        }
+        .ask-personal-coach-btn {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #1E5EFF;
+            background: transparent;
+            border: 2px solid #1E5EFF;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .ask-personal-coach-btn:hover {
+            background: #1E5EFF;
+            color: #ffffff;
         }
         .follow-through-placeholder {
             background: rgba(26, 58, 82, 0.35);
@@ -3363,16 +3384,16 @@
     <div id="golf-hub-page" class="page-section">
         <section class="golf-hub-section">
             <div class="golf-hub-container">
-                <!-- Section 1: AI Golf Coach -->
+                <!-- Section 1: Personal Coach -->
                 <div class="golf-coach-header">
                     <div class="golf-coach-label">POWERED BY AI</div>
-                    <h1 class="golf-coach-heading">Your Personal Golf Coach</h1>
+                    <h1 class="golf-coach-heading">Your Personal Coach</h1>
                     <p class="golf-coach-subtext">Ask anything about your swing, technique, or game</p>
                 </div>
                 <div class="golf-chat-wrap">
                     <div class="golf-chat-messages" id="golfChatMessages"></div>
                     <div class="golf-chat-input-row">
-                        <input type="text" class="golf-chat-input" id="golfChatInput" placeholder="Ask your golf coach anything..." />
+                        <input type="text" class="golf-chat-input" id="golfChatInput" placeholder="Ask your personal coach anything..." />
                         <button type="button" class="golf-chat-send" id="golfChatSend">Send</button>
                     </div>
                 </div>
@@ -3600,7 +3621,7 @@
             }
         });
 
-        // Golf Hub: AI Coach welcome message (personalized if swing data exists)
+        // Golf Hub: Personal Coach welcome message (personalized if swing data exists)
         function ensureGolfCoachWelcome() {
             var el = document.getElementById('golfChatMessages');
             if (!el || el.children.length > 0) return;
@@ -3614,11 +3635,11 @@
                 var primaryIssue = diagnosis.priority_issue ? (typeof diagnosis.priority_issue === 'object' ? diagnosis.priority_issue.issue : diagnosis.priority_issue) : null;
                 text = "Hi! I've reviewed your latest swing analysis. Your " + setupLabel + " setup shows " + (primaryIssue || 'some great fundamentals') + ". What would you like to work on today?";
             } else {
-                text = "Hi! I'm your AI golf coach. Ask me anything about your swing, technique, drills, or how to improve your game!";
+                text = "Hi! I'm your personal coach. Ask me anything about your swing, technique, drills, or how to improve your game!";
             }
             var wrap = document.createElement('div');
             wrap.className = 'golf-chat-msg ai';
-            wrap.innerHTML = '<div class="golf-chat-bubble"><span class="ai-icon" aria-hidden="true">✦</span><span>' + text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span></div>';
+            wrap.innerHTML = '<div class="golf-chat-bubble"><span class="ai-icon" aria-hidden="true">✦</span><span>' + formatCoachMarkdown(text) + '</span></div>';
             el.appendChild(wrap);
         }
 
@@ -3658,13 +3679,42 @@
                 primary_issue: pri ? (typeof pri === 'object' ? pri.issue : pri) : 'None detected'
             };
         }
+        function formatCoachMarkdown(text) {
+            if (!text) return '';
+            var s = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            var lines = s.split('\n');
+            var out = [];
+            var listItems = [];
+            function flushList() {
+                if (listItems.length) {
+                    out.push('<ul class="chat-list">' + listItems.join('') + '</ul>');
+                    listItems = [];
+                }
+            }
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+                if (/^#+\s/.test(line)) {
+                    flushList();
+                    var headingText = line.replace(/^#+\s*/, '');
+                    out.push('<h4 class="chat-heading">' + headingText + '</h4>');
+                } else if (/^\s*-\s+/.test(line)) {
+                    listItems.push('<li>' + line.replace(/^\s*-\s+/, '') + '</li>');
+                } else {
+                    flushList();
+                    out.push(line);
+                }
+            }
+            flushList();
+            return out.join('<br>');
+        }
         function appendChatMessage(role, content) {
             var wrap = document.createElement('div');
             wrap.className = 'golf-chat-msg ' + role;
             if (role === 'user') {
                 wrap.innerHTML = '<div class="golf-chat-bubble">' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') + '</div>';
             } else {
-                wrap.innerHTML = '<div class="golf-chat-bubble"><span class="ai-icon" aria-hidden="true">✦</span><span>' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') + '</span></div>';
+                wrap.innerHTML = '<div class="golf-chat-bubble"><span class="ai-icon" aria-hidden="true">✦</span><span>' + formatCoachMarkdown(content) + '</span></div>';
             }
             golfChatMessages.appendChild(wrap);
             golfChatMessages.scrollTop = golfChatMessages.scrollHeight;
@@ -4740,6 +4790,7 @@
                 : 'Great setup! Focus on your backswing mechanics.';
             html += `<div class="setup-coaching-tip">${setupTip}</div>
             <button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>
+            <button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach About This Swing →</button>
             </div>`;
             
             // BACKSWING TAB
@@ -4845,7 +4896,8 @@
                 });
                 html += `</div>`;
             }
-            html += `</div>`;
+            html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach About This Swing →</button>
+            </div>`;
             
             // FOLLOW THROUGH TAB
             html += `<div class="tab-panel" id="tab-followthrough" role="tabpanel">
@@ -4882,6 +4934,11 @@
                     switchToTab('backswing');
                 });
             }
+            resultsAnalysisPanel.querySelectorAll('.ask-personal-coach-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    switchPage('golf-hub');
+                });
+            });
             
             // Show split view
             resultsSplitContainer.classList.add('active');

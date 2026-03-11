@@ -906,7 +906,7 @@ def golf_coach():
 
         client = anthropic.Anthropic(api_key=api_key)
 
-        system_prompt = """You are an expert PGA golf coach assistant. Keep responses under 150 words. Be practical and encouraging."""
+        system_prompt = """You are an expert PGA golf coach assistant. Keep responses under 100 words. Be conversational, direct and encouraging. No headers or bullet points - just natural coaching conversation like a real coach talking to a student."""
 
         if swing_data:
             system_prompt += f"\n\nThis golfer's latest swing: Hip Rotation: {swing_data.get('hip_rotation_backswing', 'N/A')}°, Shoulder Rotation: {swing_data.get('shoulder_rotation_backswing', 'N/A')}°, Setup: {swing_data.get('setup_label', 'N/A')}"
