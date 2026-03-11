@@ -70,19 +70,14 @@
         .golf-hub-hero {
             position: relative;
             width: 100%;
-            height: 350px;
-            background: url('vintage-golf-3.jpg') center center / cover no-repeat;
+            height: 400px;
+            background-image: linear-gradient(rgba(10, 37, 64, 0.5), rgba(10, 37, 64, 0.9)), url('vintage-golf-3.jpg');
+            background-size: cover;
+            background-position: center bottom;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-        }
-        .golf-hub-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(rgba(10, 37, 64, 0.55), rgba(10, 37, 64, 0.85) 55%, #0A2540 100%);
-            pointer-events: none;
         }
         .golf-hub-hero-content {
             position: relative;
