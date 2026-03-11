@@ -66,11 +66,11 @@
             color: #B8C5D6;
         }
 
-        /* Golf Hub Page */
+        /* Golf Hub Page - AI Coach + Drill Library */
         .golf-hub-section {
             background: #0A2540;
             min-height: calc(100vh - 72px);
-            padding: 100px 20px 80px;
+            padding: 80px 20px 100px;
         }
 
         .golf-hub-container {
@@ -78,130 +78,217 @@
             margin: 0 auto;
         }
 
-        .golf-hub-hero {
-            text-align: center;
-            margin-bottom: 80px;
+        .golf-coach-header { text-align: center; margin-bottom: 40px; }
+        .golf-coach-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            color: #1E5EFF;
+            margin-bottom: 8px;
         }
-
-        .golf-hub-heading {
+        .golf-coach-heading {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            font-size: 56px;
+            font-size: 40px;
             color: #ffffff;
-            letter-spacing: -1.5px;
-            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
         }
-
-        .golf-hub-subheading {
+        .golf-coach-subtext {
             font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 20px;
+            font-size: 18px;
             color: #B8C5D6;
         }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 60px;
+        .golf-chat-wrap {
+            max-width: 800px;
+            margin: 0 auto 80px;
+        }
+        .golf-chat-messages {
+            min-height: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+            background: #0d2137;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .golf-chat-msg {
+            display: flex;
+            margin-bottom: 16px;
+            animation: resultsFadeIn 0.3s ease-out;
+        }
+        .golf-chat-msg.user { justify-content: flex-end; }
+        .golf-chat-msg.ai { justify-content: flex-start; }
+        .golf-chat-bubble {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .golf-chat-msg.user .golf-chat-bubble {
+            background: #1E5EFF;
+            color: #ffffff;
+        }
+        .golf-chat-msg.ai .golf-chat-bubble {
+            background: #1a3a5c;
+            color: #ffffff;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .golf-chat-bubble .ai-icon { color: #1E5EFF; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+        .golf-chat-input-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .golf-chat-input {
+            flex: 1;
+            padding: 14px 18px;
+            background: #0d2137;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+        .golf-chat-input::placeholder { color: rgba(255, 255, 255, 0.4); }
+        .golf-chat-send {
+            padding: 14px 28px;
+            background: #1E5EFF;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .golf-chat-send:hover { filter: brightness(1.1); }
+        .golf-chat-loading {
+            padding: 12px 18px;
+            color: #B8C5D6;
+            font-size: 14px;
+        }
+        .golf-chat-loading::after {
+            content: '';
+            animation: coachDots 1.2s steps(4, end) infinite;
+        }
+        @keyframes coachDots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
         }
 
-        .video-card {
+        .drill-library-header { text-align: center; margin-bottom: 32px; }
+        .drill-library-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 32px;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .drill-library-subtext {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            color: #B8C5D6;
+        }
+        .drill-filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+        .drill-filter-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            color: #B8C5D6;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .drill-filter-btn:hover { border-color: rgba(255, 255, 255, 0.4); color: #ffffff; }
+        .drill-filter-btn.active {
+            background: #1E5EFF;
+            border-color: #1E5EFF;
+            color: #ffffff;
+        }
+        .drill-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .drill-card {
             background: rgba(26, 58, 82, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
-
-        .video-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-            border-radius: 16px 16px 0 0;
-        }
-
-        .video-wrapper iframe,
-        .video-wrapper img,
-        .video-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            object-fit: cover;
-        }
-
-        .video-placeholder {
-            background: #1a2332;
+        .drill-card.hidden { display: none; }
+        .drill-card-video {
+            background: #0d2137;
+            aspect-ratio: 16/9;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
-        .video-placeholder-text {
+        .drill-card-video span {
             font-family: 'Inter', sans-serif;
-            font-size: 18px;
+            font-size: 14px;
             color: rgba(255, 255, 255, 0.5);
-            text-align: center;
         }
-
-
-        .video-title {
-            font-family: 'Inter', sans-serif;
+        .drill-card-body { padding: 20px; }
+        .drill-card-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+        }
+        .drill-card-tag.setup { background: rgba(30, 94, 255, 0.25); color: #7eb8ff; }
+        .drill-card-tag.backswing { background: rgba(34, 197, 94, 0.25); color: #86efac; }
+        .drill-card-tag.impact { background: rgba(245, 158, 11, 0.25); color: #fcd34d; }
+        .drill-card-tag.short-game { background: rgba(168, 85, 247, 0.25); color: #e9d5ff; }
+        .drill-card-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
             font-size: 18px;
             color: #ffffff;
-            padding: 20px;
-            text-align: center;
+            margin-bottom: 10px;
         }
-
-        /* Mobile Responsive for Golf Hub */
+        .drill-card-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #B8C5D6;
+            line-height: 1.55;
+            margin-bottom: 12px;
+        }
+        .drill-card-difficulty {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
         @media (max-width: 968px) {
-            .golf-hub-section {
-                padding: 80px 20px 60px;
-            }
-
-            .golf-hub-heading {
-                font-size: 42px;
-            }
-
-            .golf-hub-subheading {
-                font-size: 18px;
-            }
-
-            .video-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
+            .golf-coach-heading { font-size: 32px; }
+            .drill-grid { grid-template-columns: repeat(2, 1fr); }
         }
-
-        @media (max-width: 480px) {
-            .golf-hub-section {
-                padding: 60px 20px 40px;
-            }
-
-            .golf-hub-heading {
-                font-size: 36px;
-            }
-
-            .golf-hub-subheading {
-                font-size: 16px;
-            }
-
-            .video-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
+        @media (max-width: 600px) {
+            .golf-coach-heading { font-size: 28px; }
+            .golf-chat-input-row { flex-direction: column; }
+            .drill-grid { grid-template-columns: 1fr; }
         }
 
         /* Swing Coach Page */
@@ -3276,64 +3363,113 @@
     <div id="golf-hub-page" class="page-section">
         <section class="golf-hub-section">
             <div class="golf-hub-container">
-                <div class="golf-hub-hero">
-                    <h1 class="golf-hub-heading">Golf Hub</h1>
-                    <p class="golf-hub-subheading">Master your game with expert instruction</p>
+                <!-- Section 1: AI Golf Coach -->
+                <div class="golf-coach-header">
+                    <div class="golf-coach-label">POWERED BY AI</div>
+                    <h1 class="golf-coach-heading">Your Personal Golf Coach</h1>
+                    <p class="golf-coach-subtext">Ask anything about your swing, technique, or game</p>
+                </div>
+                <div class="golf-chat-wrap">
+                    <div class="golf-chat-messages" id="golfChatMessages"></div>
+                    <div class="golf-chat-input-row">
+                        <input type="text" class="golf-chat-input" id="golfChatInput" placeholder="Ask your golf coach anything..." />
+                        <button type="button" class="golf-chat-send" id="golfChatSend">Send</button>
+                    </div>
                 </div>
 
-                <div class="video-grid">
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <div class="video-placeholder">
-                                <div class="video-placeholder-text">Video Coming Soon</div>
-                            </div>
+                <!-- Section 2: Drill Library -->
+                <div class="drill-library-header">
+                    <h2 class="drill-library-heading">Drill Library</h2>
+                    <p class="drill-library-subtext">Practice these drills to improve specific areas of your game</p>
+                </div>
+                <div class="drill-filters">
+                    <button type="button" class="drill-filter-btn active" data-filter="all">All</button>
+                    <button type="button" class="drill-filter-btn" data-filter="Setup">Setup</button>
+                    <button type="button" class="drill-filter-btn" data-filter="Backswing">Backswing</button>
+                    <button type="button" class="drill-filter-btn" data-filter="Impact">Impact</button>
+                    <button type="button" class="drill-filter-btn" data-filter="Short Game">Short Game</button>
+                </div>
+                <div class="drill-grid" id="drillGrid">
+                    <div class="drill-card" data-category="Setup">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag setup">Setup</span>
+                            <h3 class="drill-card-name">Wall Hip Drill</h3>
+                            <p class="drill-card-desc">Stand with your back against a wall and practice your address position. Your hips, back, and head should lightly touch the wall. This builds awareness of proper spine angle and posture.</p>
+                            <span class="drill-card-difficulty">Beginner</span>
                         </div>
-                        <div class="video-title">How to Start the Downswing</div>
                     </div>
-
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <div class="video-placeholder">
-                                <div class="video-placeholder-text">Video Coming Soon</div>
-                            </div>
+                    <div class="drill-card" data-category="Backswing">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag backswing">Backswing</span>
+                            <h3 class="drill-card-name">Feet Together Drill</h3>
+                            <p class="drill-card-desc">Hit shots with your feet together. This forces proper weight transfer and balance throughout the swing. Start with short irons and work up to longer clubs.</p>
+                            <span class="drill-card-difficulty">Beginner</span>
                         </div>
-                        <div class="video-title">Perfect Golf Grip</div>
                     </div>
-
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <div class="video-placeholder">
-                                <div class="video-placeholder-text">Video Coming Soon</div>
-                            </div>
+                    <div class="drill-card" data-category="Backswing">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag backswing">Backswing</span>
+                            <h3 class="drill-card-name">Pause at the Top</h3>
+                            <p class="drill-card-desc">Make your backswing and pause for 2 seconds at the top before starting your downswing. This builds awareness of your backswing position and eliminates rushing.</p>
+                            <span class="drill-card-difficulty">Beginner</span>
                         </div>
-                        <div class="video-title">Fix Your Slice</div>
                     </div>
-
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <div class="video-placeholder">
-                                <div class="video-placeholder-text">Video Coming Soon</div>
-                            </div>
+                    <div class="drill-card" data-category="Impact">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag impact">Impact</span>
+                            <h3 class="drill-card-name">Hip Bump Drill</h3>
+                            <p class="drill-card-desc">From the top of your backswing, initiate the downswing by bumping your lead hip toward the target before rotating. This promotes proper sequencing and hip clearance through impact.</p>
+                            <span class="drill-card-difficulty">Intermediate</span>
                         </div>
-                        <div class="video-title">Proper Weight Shift</div>
                     </div>
-
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <div class="video-placeholder">
-                                <div class="video-placeholder-text">Video Coming Soon</div>
-                            </div>
+                    <div class="drill-card" data-category="Setup">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag setup">Setup</span>
+                            <h3 class="drill-card-name">Alignment Stick Drill</h3>
+                            <p class="drill-card-desc">Place two alignment sticks on the ground - one pointing at your target, one across your toes. Practice taking your stance until your feet, hips, and shoulders are consistently square.</p>
+                            <span class="drill-card-difficulty">Beginner</span>
                         </div>
-                        <div class="video-title">Impact Position Drill</div>
                     </div>
-
-                    <div class="video-card">
-                        <div class="video-wrapper">
-                            <div class="video-placeholder">
-                                <div class="video-placeholder-text">Video Coming Soon</div>
-                            </div>
+                    <div class="drill-card" data-category="Backswing">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag backswing">Backswing</span>
+                            <h3 class="drill-card-name">Step Drill</h3>
+                            <p class="drill-card-desc">Start with feet together, step toward the target as you start your downswing. This exaggerates the weight shift and hip rotation sequence that creates power.</p>
+                            <span class="drill-card-difficulty">Intermediate</span>
                         </div>
-                        <div class="video-title">Lag in Golf Swing</div>
+                    </div>
+                    <div class="drill-card" data-category="Impact">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag impact">Impact</span>
+                            <h3 class="drill-card-name">Gate Drill</h3>
+                            <p class="drill-card-desc">Place two tees just wider than your clubhead on either side of the ball. Swing through the gate without hitting the tees. This promotes an inside-out swing path and eliminates the slice.</p>
+                            <span class="drill-card-difficulty">Intermediate</span>
+                        </div>
+                    </div>
+                    <div class="drill-card" data-category="Short Game">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag short-game">Short Game</span>
+                            <h3 class="drill-card-name">Clock Chipping</h3>
+                            <p class="drill-card-desc">Imagine a clock around the ball. Practice chips swinging to 7 o'clock (short), 8 o'clock (medium), and 9 o'clock (full). Builds consistent distance control around the greens.</p>
+                            <span class="drill-card-difficulty">Beginner</span>
+                        </div>
+                    </div>
+                    <div class="drill-card" data-category="Short Game">
+                        <div class="drill-card-video"><span>Video Coming Soon</span></div>
+                        <div class="drill-card-body">
+                            <span class="drill-card-tag short-game">Short Game</span>
+                            <h3 class="drill-card-name">One Hand Putting</h3>
+                            <p class="drill-card-desc">Practice putting with only your lead hand, then only your trail hand. This builds feel and exposes weaknesses in your putting stroke. Do 10 putts each hand before every practice session.</p>
+                            <span class="drill-card-difficulty">Beginner</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3397,6 +3533,7 @@
     </div>
 
     <script>
+        window.lastSwingData = null;
         // Page navigation — runs first, does not depend on Supabase
         const topNavLinks = document.querySelectorAll('.top-nav-link');
         const pageSections = document.querySelectorAll('.page-section');
@@ -3423,6 +3560,7 @@
 
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (pageId === 'golf-hub') ensureGolfCoachWelcome();
         }
 
         // Add click listeners for nav links with data-page (Home, Golf Hub, Contact Us). Swing Coach is handled in auth IIFE (requires login).
@@ -3460,6 +3598,111 @@
                     closeNavDropdown();
                 });
             }
+        });
+
+        // Golf Hub: AI Coach welcome message (personalized if swing data exists)
+        function ensureGolfCoachWelcome() {
+            var el = document.getElementById('golfChatMessages');
+            if (!el || el.children.length > 0) return;
+            var d = window.lastSwingData;
+            var analysis = (d && d.analysis) ? d.analysis : {};
+            var diagnosis = (d && d.diagnosis) ? d.diagnosis : {};
+            var text;
+            if (d && analysis && (analysis.setup_spine_angle != null || analysis.hip_rotation_backswing != null)) {
+                var score = (analysis.setup_spine_angle != null && Number(analysis.setup_spine_angle) >= 20 && Number(analysis.setup_spine_angle) <= 35 ? 25 : 0) + (analysis.setup_knee_flex != null && Number(analysis.setup_knee_flex) >= 150 && Number(analysis.setup_knee_flex) <= 170 ? 25 : 0) + (analysis.setup_shoulder_level != null && analysis.setup_shoulder_level < 0.03 ? 25 : 0) + (analysis.setup_hip_hinge != null && analysis.setup_hip_hinge >= -0.08 && analysis.setup_hip_hinge <= 0.08 ? 25 : 0);
+                var setupLabel = score >= 85 ? 'Elite' : (score >= 60 ? 'Solid Foundation' : 'Needs Attention');
+                var primaryIssue = diagnosis.priority_issue ? (typeof diagnosis.priority_issue === 'object' ? diagnosis.priority_issue.issue : diagnosis.priority_issue) : null;
+                text = "Hi! I've reviewed your latest swing analysis. Your " + setupLabel + " setup shows " + (primaryIssue || 'some great fundamentals') + ". What would you like to work on today?";
+            } else {
+                text = "Hi! I'm your AI golf coach. Ask me anything about your swing, technique, drills, or how to improve your game!";
+            }
+            var wrap = document.createElement('div');
+            wrap.className = 'golf-chat-msg ai';
+            wrap.innerHTML = '<div class="golf-chat-bubble"><span class="ai-icon" aria-hidden="true">✦</span><span>' + text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span></div>';
+            el.appendChild(wrap);
+        }
+
+        // Golf Hub: send message to coach API
+        var golfChatInput = document.getElementById('golfChatInput');
+        var golfChatSend = document.getElementById('golfChatSend');
+        var golfChatMessages = document.getElementById('golfChatMessages');
+        var coachApiBase = 'https://torque-ai-backend.onrender.com';
+        function showCoachLoading() {
+            var wrap = document.createElement('div');
+            wrap.className = 'golf-chat-msg ai';
+            wrap.id = 'golfCoachLoadingMsg';
+            wrap.innerHTML = '<div class="golf-chat-bubble golf-chat-loading"><span class="ai-icon" aria-hidden="true">✦</span><span>Coach is thinking...</span></div>';
+            golfChatMessages.appendChild(wrap);
+            golfChatMessages.scrollTop = golfChatMessages.scrollHeight;
+        }
+        function hideCoachLoading() {
+            var el = document.getElementById('golfCoachLoadingMsg');
+            if (el) el.remove();
+        }
+        function buildSwingDataPayload() {
+            var d = window.lastSwingData;
+            if (!d || !d.analysis) return null;
+            var a = d.analysis;
+            var diag = d.diagnosis || {};
+            var pri = diag.priority_issue;
+            var xFactor = (a.shoulder_rotation_backswing != null && a.hip_rotation_backswing != null) ? (Number(a.shoulder_rotation_backswing) - Number(a.hip_rotation_backswing)) : (a.backswing_shoulder_rotation != null && a.backswing_hip_rotation != null ? (Number(a.backswing_shoulder_rotation) - Number(a.backswing_hip_rotation)) : null);
+            var setupScore = (a.setup_spine_angle != null && Number(a.setup_spine_angle) >= 20 && Number(a.setup_spine_angle) <= 35 ? 25 : 0) + (a.setup_knee_flex != null && Number(a.setup_knee_flex) >= 150 && Number(a.setup_knee_flex) <= 170 ? 25 : 0) + (a.setup_shoulder_level != null && a.setup_shoulder_level < 0.03 ? 25 : 0) + (a.setup_hip_hinge != null && a.setup_hip_hinge >= -0.08 && a.setup_hip_hinge <= 0.08 ? 25 : 0);
+            var setupLabel = setupScore >= 85 ? 'Elite' : (setupScore >= 60 ? 'Solid Foundation' : 'Needs Attention');
+            return {
+                setup_label: setupLabel,
+                setup_spine_angle: a.setup_spine_angle != null ? Number(a.setup_spine_angle) : null,
+                setup_knee_flex: a.setup_knee_flex != null ? Number(a.setup_knee_flex) : null,
+                hip_rotation_backswing: a.hip_rotation_backswing != null ? Number(a.hip_rotation_backswing) : a.backswing_hip_rotation,
+                shoulder_rotation_backswing: a.shoulder_rotation_backswing != null ? Number(a.shoulder_rotation_backswing) : a.backswing_shoulder_rotation,
+                x_factor: xFactor != null ? Number(xFactor) : null,
+                primary_issue: pri ? (typeof pri === 'object' ? pri.issue : pri) : 'None detected'
+            };
+        }
+        function appendChatMessage(role, content) {
+            var wrap = document.createElement('div');
+            wrap.className = 'golf-chat-msg ' + role;
+            if (role === 'user') {
+                wrap.innerHTML = '<div class="golf-chat-bubble">' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') + '</div>';
+            } else {
+                wrap.innerHTML = '<div class="golf-chat-bubble"><span class="ai-icon" aria-hidden="true">✦</span><span>' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') + '</span></div>';
+            }
+            golfChatMessages.appendChild(wrap);
+            golfChatMessages.scrollTop = golfChatMessages.scrollHeight;
+        }
+        function sendGolfCoachMessage() {
+            if (!golfChatInput || !golfChatSend || !golfChatMessages) return;
+            var msg = (golfChatInput.value || '').trim();
+            if (!msg) return;
+            golfChatInput.value = '';
+            appendChatMessage('user', msg);
+            showCoachLoading();
+            var payload = { message: msg, swing_data: buildSwingDataPayload() };
+            fetch(coachApiBase + '/golf-coach', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function(r) { return r.json(); }).then(function(data) {
+                hideCoachLoading();
+                appendChatMessage('ai', data.response || 'Sorry, I couldn\'t generate a response.');
+            }).catch(function(err) {
+                hideCoachLoading();
+                appendChatMessage('ai', 'Something went wrong. Please try again.');
+            });
+        }
+        if (golfChatSend) golfChatSend.addEventListener('click', sendGolfCoachMessage);
+        if (golfChatInput) golfChatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); sendGolfCoachMessage(); } });
+
+        // Golf Hub: drill library filter
+        document.querySelectorAll('.drill-filter-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.drill-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var filter = this.getAttribute('data-filter');
+                document.querySelectorAll('#drillGrid .drill-card').forEach(function(card) {
+                    card.classList.remove('hidden');
+                    if (filter !== 'all' && card.getAttribute('data-category') !== filter) card.classList.add('hidden');
+                });
+            });
         });
 
         // Supabase auth — only updates login / My Swings / Logout visibility; does not affect switchPage or other nav
@@ -4372,6 +4615,7 @@
                 resultsVideo.src = videoPreview.src;
             }
             
+            window.lastSwingData = data;
             // Extract data
             const analysis = data.analysis || {};
             const diagnosis = data.diagnosis || {};

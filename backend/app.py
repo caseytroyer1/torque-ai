@@ -890,6 +890,57 @@ def check_session():
             'authenticated': False,
             'error': str(e)
         }), 500
+
+
+@app.route('/golf-coach', methods=['POST'])
+def golf_coach():
+    try:
+        data = request.get_json()
+        user_message = data.get('message', '')
+        swing_data = data.get('swing_data', None)
+
+        import anthropic
+        client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
+
+        # Build system prompt
+        system_prompt = """You are an expert PGA golf coach assistant built into Torque AI, a golf swing analyzer app.
+        You provide concise, practical, encouraging coaching advice.
+        Keep responses under 150 words unless a detailed explanation is truly necessary.
+        Use simple language that any golfer can understand.
+        When relevant, suggest specific drills or practice tips.
+        Always be positive and encouraging."""
+
+        # Add swing context if available
+        if swing_data:
+            system_prompt += f"""
+
+This golfer's latest swing analysis shows:
+- Setup Score: {swing_data.get('setup_label', 'N/A')}
+- Spine Angle at Address: {swing_data.get('setup_spine_angle', 'N/A')}°
+- Knee Flex: {swing_data.get('setup_knee_flex', 'N/A')}°
+- Hip Rotation (Backswing): {swing_data.get('hip_rotation_backswing', 'N/A')}°
+- Shoulder Rotation (Backswing): {swing_data.get('shoulder_rotation_backswing', 'N/A')}°
+- X-Factor: {swing_data.get('x_factor', 'N/A')}°
+- Primary Issue: {swing_data.get('primary_issue', 'None detected')}
+
+Use this data to give personalized advice when relevant. Reference their specific numbers naturally."""
+
+        message = client.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=300,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}]
+        )
+
+        return jsonify({
+            'response': message.content[0].text,
+            'success': True
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
 if __name__ == '__main__':
     init_database()
     app.run(debug=True, port=5000)

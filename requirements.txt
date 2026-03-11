@@ -5,3 +5,4 @@ mediapipe
 numpy
 werkzeug
 gunicorn
+anthropic
