@@ -954,7 +954,18 @@ def get_trivia():
         )
         
         import json
-        trivia_data = json.loads(message.content[0].text)
+        response_text = message.content[0].text
+        print(f"TRIVIA RAW RESPONSE: {response_text}")
+        
+        # Strip any markdown code blocks if present
+        response_text = response_text.strip()
+        if response_text.startswith('```'):
+            response_text = response_text.split('```')[1]
+            if response_text.startswith('json'):
+                response_text = response_text[4:]
+        response_text = response_text.strip()
+        
+        trivia_data = json.loads(response_text)
         return jsonify({'trivia': trivia_data, 'success': True})
         
     except Exception as e:
