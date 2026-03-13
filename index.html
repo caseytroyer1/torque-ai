@@ -344,94 +344,94 @@
         }
 
         /* Swing Coach Page */
-        .swing-coach-section {
-            background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
-            min-height: calc(100vh - 72px);
+        .swing-coach-hero {
+            position: relative;
+            width: 100%;
+            min-height: 220px;
+            background-image: linear-gradient(rgba(10, 37, 64, 0.7), rgba(10, 37, 64, 0.95)), url('hero-background.jpg');
+            background-size: cover;
+            background-position: center center;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 120px 20px;
+            overflow: hidden;
+        }
+        .swing-coach-hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        .swing-coach-hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin: 0 0 12px;
+        }
+        .swing-coach-hero-subtext {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            color: #B8C5D6;
+            margin: 0;
+        }
+        .swing-coach-section {
+            background: #0A2540;
+            min-height: calc(100vh - 72px);
+            padding: 48px 24px 80px;
         }
 
         .swing-coach-container {
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
-            text-align: center;
+            margin: 0 auto;
         }
 
-        .swing-coach-heading {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 56px;
-            color: #ffffff;
-            letter-spacing: -1.5px;
-            margin-bottom: 40px;
-        }
-
-        .swing-coach-subtext {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 18px;
-            color: #B8C5D6;
+        /* Tab Navigation - pill style */
+        .swing-tabs-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-bottom: 48px;
         }
-
-        /* Tab Navigation */
         .swing-tabs {
-            display: flex;
+            display: inline-flex;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 80px;
-            position: relative;
-            padding-bottom: 4px;
+            gap: 4px;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 999px;
             animation: fadeInContent 0.4s ease-out both;
         }
 
         .tab-btn {
-            background: none;
+            background: transparent;
             border: none;
-            padding: 16px 32px;
-            color: rgba(255, 255, 255, 0.5);
+            padding: 12px 24px;
+            color: rgba(255, 255, 255, 0.6);
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 17px;
+            font-size: 15px;
             font-weight: 500;
             cursor: pointer;
-            position: relative;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 8px;
+            border-radius: 999px;
+            transition: color 0.2s ease, background 0.2s ease;
         }
 
         .tab-btn:hover {
-            color: rgba(255, 255, 255, 0.8);
-            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .tab-btn.active {
             color: #ffffff;
-            background: rgba(30, 94, 255, 0.1);
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            right: 0;
-            height: 3px;
             background: #1E5EFF;
-            border-radius: 2px 2px 0 0;
-            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes slideIn {
-            from {
-                transform: scaleX(0);
-                opacity: 0;
-            }
-            to {
-                transform: scaleX(1);
-                opacity: 1;
-            }
+        .swing-tabs-separator {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            margin-top: 24px;
+            margin-bottom: 0;
         }
 
         .tab-pane {
@@ -460,194 +460,151 @@
             }
         }
 
-        /* Upload Card Container */
+        /* Upload layout - two columns */
         .upload-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 60px 80px;
             max-width: 1000px;
             margin: 0 auto;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
         }
-
-        .upload-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        .upload-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: start;
         }
-
-        /* Filming Instructions */
-        .filming-instructions {
-            max-width: 700px;
-            margin: 80px auto 60px auto;
-            text-align: center;
+        .before-upload-column {
+            padding: 0;
         }
-
-        .filming-instructions-heading {
+        .before-upload-heading {
             font-family: 'Space Grotesk', sans-serif;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 16px;
+            color: #ffffff;
+            margin: 0 0 24px;
         }
-
-        .filming-instructions-text {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 16px;
-            color: #B8C5D6;
-            line-height: 1.6;
-        }
-
-        .filming-example-placeholder {
-            height: 200px;
-            width: 350px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            margin: 24px auto 0 auto;
+        .tip-card {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 12px;
         }
-
-        .filming-example-placeholder-text {
+        .tip-card-icon {
+            font-size: 20px;
+            line-height: 1;
+            flex-shrink: 0;
+            color: #1E5EFF;
+        }
+        .tip-card-text {
             font-family: 'Inter', sans-serif;
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.4);
+            color: #B8C5D6;
+            line-height: 1.5;
+            margin: 0;
         }
-
+        .upload-column {
+            min-height: 280px;
+        }
         .upload-zone {
-            width: 600px;
-            height: 450px;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
+            width: 100%;
+            min-height: 280px;
+            border: 2px dashed rgba(30, 94, 255, 0.4);
             border-radius: 16px;
-            background: rgba(26, 58, 82, 0.5);
+            background: rgba(13, 33, 55, 0.5);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 80px auto;
+            padding: 32px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
             position: relative;
         }
-
         .upload-zone:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(26, 58, 82, 0.7);
+            border-color: rgba(30, 94, 255, 0.7);
+            box-shadow: 0 0 0 1px rgba(30, 94, 255, 0.3), 0 4px 24px rgba(30, 94, 255, 0.15);
+            background: rgba(13, 33, 55, 0.7);
         }
-
         .upload-zone.dragover {
             border-color: #1E5EFF;
-            background: rgba(30, 94, 255, 0.2);
+            background: rgba(30, 94, 255, 0.12);
+            animation: uploadPulse 1.5s ease-in-out infinite;
         }
-
+        .upload-zone:hover {
+            animation: uploadPulse 2s ease-in-out infinite;
+        }
+        @keyframes uploadPulse {
+            0%, 100% { box-shadow: 0 0 0 1px rgba(30, 94, 255, 0.2); }
+            50% { box-shadow: 0 0 0 3px rgba(30, 94, 255, 0.25), 0 4px 24px rgba(30, 94, 255, 0.12); }
+        }
+        .upload-zone.hidden {
+            display: none;
+        }
         .upload-icon {
-            font-size: 64px;
+            width: 48px;
+            height: 48px;
             margin-bottom: 20px;
-            animation: iconFloat 3s ease-in-out infinite;
+            color: #1E5EFF;
         }
-
-        @keyframes iconFloat {
-            0%, 100% {
-                transform: translateY(-5px);
-            }
-            50% {
-                transform: translateY(5px);
-            }
+        .upload-icon svg {
+            width: 100%;
+            height: 100%;
         }
-
-        .upload-zone:hover .upload-icon {
-            animation: iconPulseFloat 2s ease-in-out infinite;
-        }
-
-        @keyframes iconPulseFloat {
-            0%, 100% {
-                transform: scale(1) translateY(-5px);
-            }
-            50% {
-                transform: scale(1.05) translateY(5px);
-            }
-        }
-
         .upload-text {
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 20px;
-            color: #ffffff;
-            margin-bottom: 12px;
-        }
-
-        .upload-or {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 14px;
-            color: #B8C5D6;
-            margin-bottom: 20px;
-        }
-
-        .browse-button {
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             font-size: 16px;
             color: #ffffff;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .upload-or {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #B8C5D6;
+            margin-bottom: 16px;
+        }
+        .browse-button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #ffffff;
             background: #1E5EFF;
             border: none;
-            padding: 16px 32px;
-            border-radius: 50px;
+            padding: 12px 24px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: background 0.2s ease, transform 0.1s ease;
         }
-
         .browse-button:hover {
             background: #3D7AFF;
-            transform: scale(1.02);
-            filter: brightness(1.1);
-            box-shadow: 0 4px 12px rgba(30, 94, 255, 0.4);
         }
-
         .browse-button:active {
             transform: scale(0.98);
         }
-
         .file-hint {
             font-family: 'Inter', sans-serif;
-            font-weight: 400;
             font-size: 12px;
-            color: rgba(184, 197, 214, 0.7);
+            color: #B8C5D6;
             margin-top: 16px;
             text-align: center;
         }
-
-        .upload-microcopy {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-            text-align: center;
-            margin-top: 8px;
-            margin-bottom: 16px;
-        }
-
         .file-input {
             display: none;
         }
-
         .file-selected {
             display: none;
-            margin-top: 24px;
-            padding: 20px;
+            margin-top: 16px;
+            padding: 16px;
             background: rgba(30, 94, 255, 0.1);
             border-radius: 12px;
-            border: 1px solid rgba(30, 94, 255, 0.3);
+            border: 1px solid rgba(30, 94, 255, 0.25);
         }
-
         .file-selected.active {
             display: block;
         }
-
         .file-name {
             font-family: 'Inter', sans-serif;
             font-weight: 500;
@@ -2168,55 +2125,49 @@
 
         /* Mobile Responsive for Swing Coach */
         @media (max-width: 968px) {
-            .swing-coach-section {
-                padding: 80px 20px;
-            }
-
-            .swing-coach-heading {
+            .swing-coach-hero-title {
                 font-size: 36px;
             }
-
-            .upload-zone {
-                width: 100%;
-                max-width: 600px;
-                height: 350px;
+            .swing-coach-hero-subtext {
+                font-size: 16px;
             }
-
+            .swing-coach-section {
+                padding: 40px 20px 60px;
+            }
+            .upload-layout {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            .before-upload-column {
+                order: 1;
+            }
+            .upload-column {
+                order: 2;
+            }
             .video-preview {
                 width: 100%;
                 max-width: 600px;
             }
         }
 
-        @media (max-width: 480px) {
-            .swing-coach-section {
-                padding: 60px 20px;
-            }
-
-            .swing-coach-heading {
+        @media (max-width: 600px) {
+            .swing-coach-hero-title {
                 font-size: 32px;
             }
-
-            .swing-coach-subtext {
-                font-size: 16px;
+            .swing-coach-hero-subtext {
+                font-size: 15px;
             }
-
+            .swing-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .tab-btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
             .upload-zone {
-                height: 300px;
+                min-height: 240px;
             }
-
-            .upload-icon {
-                font-size: 48px;
-            }
-
-            .upload-text {
-                font-size: 18px;
-            }
-
-            .video-preview {
-                width: 100%;
-            }
-
             .analyze-button {
                 padding: 18px 40px;
                 font-size: 16px;
@@ -3317,45 +3268,62 @@
 
     <!-- Swing Coach Page -->
     <div id="swing-coach-page" class="page-section">
+        <div class="swing-coach-hero">
+            <div class="swing-coach-hero-content">
+                <h1 class="swing-coach-hero-title">Analyze Your Swing</h1>
+                <p class="swing-coach-hero-subtext">Upload your swing video and get instant AI-powered biomechanical analysis</p>
+            </div>
+        </div>
         <section class="swing-coach-section">
             <div class="swing-coach-container">
-                <h1 class="swing-coach-heading">Analyze Your Swing</h1>
-                
                 <!-- Tabs -->
-                <div class="swing-tabs">
-                    <button class="tab-btn active" onclick="switchTab('analyze', event)">Analyze</button>
-                    <button class="tab-btn" onclick="switchTab('myswings', event)">My Swings</button>
-                    <button class="tab-btn" onclick="switchTab('guide', event)">Guide</button>
+                <div class="swing-tabs-wrap">
+                    <div class="swing-tabs">
+                        <button class="tab-btn active" onclick="switchTab('analyze', event)">Analyze</button>
+                        <button class="tab-btn" onclick="switchTab('myswings', event)">My Swings</button>
+                        <button class="tab-btn" onclick="switchTab('guide', event)">Guide</button>
+                    </div>
+                    <div class="swing-tabs-separator"></div>
                 </div>
 
                 <!-- Content Areas -->
                 <div id="analyze" class="tab-pane active">
-                    <!-- Upload Card -->
+                    <!-- Upload Card - two columns -->
                     <div class="upload-card">
-                        <!-- Filming Instructions -->
-                        <div class="filming-instructions">
-                            <h2 class="filming-instructions-heading">How to Film Your Swing</h2>
-                            <p class="filming-instructions-text">For best results, record from a down-the-line angle with the full swing visible. Make sure lighting is good and the camera is stable.</p>
-                            <div class="filming-example-placeholder">
-                                <span class="filming-example-placeholder-text">Example filming angle (coming soon)</span>
+                        <div class="upload-layout">
+                            <div class="before-upload-column">
+                                <h2 class="before-upload-heading">Before You Upload</h2>
+                                <div class="tip-card">
+                                    <span class="tip-card-icon" aria-hidden="true">📍</span>
+                                    <p class="tip-card-text">Film from down-the-line — camera behind you facing the target</p>
+                                </div>
+                                <div class="tip-card">
+                                    <span class="tip-card-icon" aria-hidden="true">⏱️</span>
+                                    <p class="tip-card-text">Keep it 5-10 seconds — just the swing, nothing extra</p>
+                                </div>
+                                <div class="tip-card">
+                                    <span class="tip-card-icon" aria-hidden="true">☀️</span>
+                                    <p class="tip-card-text">Good lighting — outdoors or well-lit area works best</p>
+                                </div>
+                                <div class="tip-card">
+                                    <span class="tip-card-icon" aria-hidden="true">📱</span>
+                                    <p class="tip-card-text">Normal speed — avoid slow motion mode</p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="upload-zone" id="uploadZone">
-                            <div class="upload-icon">📤</div>
-                            <div class="upload-microcopy">Drag & drop or click to upload</div>
-                            <div class="upload-text">Drag and drop your video here</div>
-                            <div class="upload-or">or</div>
-                            <button class="browse-button" id="browseButton">Browse Files</button>
-                        </div>
-                        
-                        <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
-                        
-                        <div class="file-hint">Supports MP4, MOV • Max 50MB</div>
-                        
-                        <div class="file-selected" id="fileSelected">
-                            <div class="file-name" id="fileName"></div>
-                            <div class="file-size" id="fileSize"></div>
+                            <div class="upload-column">
+                                <div class="upload-zone" id="uploadZone">
+                                    <div class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+                                    <div class="upload-text">Drop your swing video here</div>
+                                    <div class="upload-or">or</div>
+                                    <button type="button" class="browse-button" id="browseButton">Browse Files</button>
+                                </div>
+                                <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
+                                <div class="file-hint">MP4, MOV up to 100MB</div>
+                                <div class="file-selected" id="fileSelected">
+                                    <div class="file-name" id="fileName"></div>
+                                    <div class="file-size" id="fileSize"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -3424,7 +3392,7 @@
                 </div>
 
                 <div id="guide" class="tab-pane">
-                    <p style="color: white; text-align: center; padding: 60px;">Filming guide coming soon</p>
+                    <p style="color: #B8C5D6; text-align: center; padding: 60px; font-family: Inter, sans-serif;">Filming guide</p>
                 </div>
             </div>
         </section>
