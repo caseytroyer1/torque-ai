@@ -109,7 +109,13 @@
             margin: 0 auto;
         }
 
-        /* Daily Trivia Card */
+        /* Daily Trivia Card - at bottom of Golf Hub */
+        .trivia-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 48px 0 32px;
+        }
         .trivia-card {
             width: 100%;
             background: #0d2137;
@@ -120,39 +126,45 @@
         }
         .trivia-card-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 12px;
         }
-        .trivia-card-title-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .trivia-card-trophy { font-size: 24px; line-height: 1; }
-        .trivia-card-label {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #1E5EFF;
-        }
-        .trivia-new-btn {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 13px;
-            color: #1E5EFF;
-            background: transparent;
-            border: 1px solid #1E5EFF;
-            border-radius: 8px;
-            padding: 8px 14px;
-            cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease;
-        }
-        .trivia-new-btn:hover {
-            background: #1E5EFF;
+        .trivia-card-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
             color: #ffffff;
+            margin: 0 0 4px;
+        }
+        .trivia-card-subtext {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #B8C5D6;
+            margin: 0;
+        }
+        .trivia-progress {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #1E5EFF;
+            flex-shrink: 0;
+        }
+        .trivia-score-line {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 16px;
+            min-height: 18px;
+        }
+        .trivia-question-counter {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #1E5EFF;
+            text-align: center;
+            margin-bottom: 12px;
         }
         .trivia-loading {
             font-family: 'Inter', sans-serif;
@@ -248,8 +260,40 @@
         .trivia-card-body[data-state="answered"] .trivia-question-wrap { display: block; }
         .trivia-answered-wrap { display: none; }
         .trivia-card-body[data-state="answered"] .trivia-answered-wrap { display: block; }
+        .trivia-completed-wrap {
+            display: none;
+            text-align: center;
+            padding: 32px 20px;
+        }
+        .trivia-card-body[data-state="completed"] .trivia-completed-wrap { display: block; }
+        .trivia-card-body[data-state="completed"] .trivia-loading,
+        .trivia-card-body[data-state="completed"] .trivia-question-wrap,
+        .trivia-card-body[data-state="completed"] .trivia-answered-wrap { display: none !important; }
+        .trivia-completed-trophy { font-size: 48px; display: block; margin-bottom: 16px; }
+        .trivia-completed-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: #ffffff;
+            margin: 0 0 8px;
+        }
+        .trivia-completed-subtext {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #B8C5D6;
+            margin: 0 0 16px;
+        }
+        .trivia-completed-score {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #eab308;
+            margin: 0;
+        }
         @media (max-width: 600px) {
             .trivia-options-grid { grid-template-columns: 1fr; }
+            .trivia-card-header { flex-direction: column; align-items: stretch; }
+            .trivia-progress { text-align: right; }
         }
 
         .golf-coach-header { text-align: center; margin-bottom: 40px; }
@@ -3555,31 +3599,6 @@
         </div>
         <section class="golf-hub-section">
             <div class="golf-hub-container">
-                <!-- Daily Trivia Card -->
-                <div class="trivia-card" id="triviaCard">
-                    <div class="trivia-card-header">
-                        <div class="trivia-card-title-wrap">
-                            <span class="trivia-card-trophy" aria-hidden="true">🏆</span>
-                            <span class="trivia-card-label">Daily Trivia</span>
-                        </div>
-                        <button type="button" class="trivia-new-btn" id="triviaNewBtn">New Question →</button>
-                    </div>
-                    <div class="trivia-card-body" id="triviaCardBody" data-state="loading">
-                        <div class="trivia-loading" id="triviaLoading">Loading today's trivia...</div>
-                        <div class="trivia-question-wrap" id="triviaQuestionWrap">
-                            <div class="trivia-question-text" id="triviaQuestionText"></div>
-                            <div class="trivia-options-grid" id="triviaOptionsGrid"></div>
-                        </div>
-                        <div class="trivia-answered-wrap" id="triviaAnsweredWrap">
-                            <div class="trivia-fun-fact" id="triviaFunFact">
-                                <span class="trivia-fun-fact-icon" aria-hidden="true">💡</span>
-                                <p class="trivia-fun-fact-text" id="triviaFunFactText"></p>
-                            </div>
-                            <button type="button" class="trivia-next-btn" id="triviaNextBtn">Next Question</button>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Section 1: Personal Coach -->
                 <div class="golf-coach-header">
                     <div class="golf-coach-label">POWERED BY AI</div>
@@ -3686,6 +3705,40 @@
                             <h3 class="drill-card-name">One Hand Putting</h3>
                             <p class="drill-card-desc">Practice putting with only your lead hand, then only your trail hand. This builds feel and exposes weaknesses in your putting stroke. Do 10 putts each hand before every practice session.</p>
                             <span class="drill-card-difficulty">Beginner</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Challenge (Trivia) - after Drill Library -->
+                <div class="trivia-divider"></div>
+                <div class="trivia-card" id="triviaCard">
+                    <div class="trivia-card-header">
+                        <div class="trivia-card-header-left">
+                            <h3 class="trivia-card-heading">Daily Challenge</h3>
+                            <p class="trivia-card-subtext">5 questions per day — come back tomorrow for more!</p>
+                        </div>
+                        <div class="trivia-progress" id="triviaProgress">Question 1 of 5</div>
+                    </div>
+                    <div class="trivia-score-line" id="triviaScoreLine"></div>
+                    <div class="trivia-card-body" id="triviaCardBody" data-state="loading">
+                        <div class="trivia-loading" id="triviaLoading">Loading today's trivia...</div>
+                        <div class="trivia-question-wrap" id="triviaQuestionWrap">
+                            <div class="trivia-question-counter" id="triviaQuestionCounter">Question 1 of 5</div>
+                            <div class="trivia-question-text" id="triviaQuestionText"></div>
+                            <div class="trivia-options-grid" id="triviaOptionsGrid"></div>
+                        </div>
+                        <div class="trivia-answered-wrap" id="triviaAnsweredWrap">
+                            <div class="trivia-fun-fact" id="triviaFunFact">
+                                <span class="trivia-fun-fact-icon" aria-hidden="true">💡</span>
+                                <p class="trivia-fun-fact-text" id="triviaFunFactText"></p>
+                            </div>
+                            <button type="button" class="trivia-next-btn" id="triviaNextBtn">Next Question</button>
+                        </div>
+                        <div class="trivia-completed-wrap" id="triviaCompletedWrap">
+                            <span class="trivia-completed-trophy" aria-hidden="true">🏆</span>
+                            <h3 class="trivia-completed-heading">You've completed today's challenge!</h3>
+                            <p class="trivia-completed-subtext">Come back tomorrow for 5 new questions</p>
+                            <p class="trivia-completed-score" id="triviaCompletedScore">You got 0/5 correct</p>
                         </div>
                     </div>
                 </div>
@@ -3842,20 +3895,76 @@
             el.appendChild(wrap);
         }
 
-        // Golf Hub: Daily Trivia
+        // Golf Hub: Daily Trivia (5/day, localStorage)
         var triviaApiBase = 'https://torque-ai-backend.onrender.com';
         var currentTrivia = null;
+        function getTriviaDate() {
+            var d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+        function getTriviaStorage() {
+            var today = getTriviaDate();
+            var stored = localStorage.getItem('trivia_date');
+            var count = parseInt(localStorage.getItem('trivia_count') || '0', 10);
+            var correct = parseInt(localStorage.getItem('trivia_correct') || '0', 10);
+            if (stored !== today) {
+                localStorage.setItem('trivia_date', today);
+                localStorage.setItem('trivia_count', '0');
+                localStorage.setItem('trivia_correct', '0');
+                count = 0;
+                correct = 0;
+            }
+            return { count: count, correct: correct };
+        }
+        function setTriviaCount(c) {
+            localStorage.setItem('trivia_count', String(c));
+        }
+        function setTriviaCorrect(c) {
+            localStorage.setItem('trivia_correct', String(c));
+        }
+        function updateTriviaProgress() {
+            var s = getTriviaStorage();
+            var n = s.count + 1;
+            var progressEl = document.getElementById('triviaProgress');
+            var counterEl = document.getElementById('triviaQuestionCounter');
+            var label = 'Question ' + Math.min(n, 5) + ' of 5';
+            if (progressEl) progressEl.textContent = label;
+            if (counterEl) counterEl.textContent = label;
+        }
+        function updateTriviaScoreLine() {
+            var s = getTriviaStorage();
+            var line = document.getElementById('triviaScoreLine');
+            if (!line) return;
+            if (s.count === 0) { line.textContent = ''; return; }
+            line.textContent = s.correct + '/5 correct so far';
+        }
+        function showTriviaCompleted() {
+            var s = getTriviaStorage();
+            var body = document.getElementById('triviaCardBody');
+            var scoreEl = document.getElementById('triviaCompletedScore');
+            var progressEl = document.getElementById('triviaProgress');
+            var scoreLine = document.getElementById('triviaScoreLine');
+            if (body) body.setAttribute('data-state', 'completed');
+            if (scoreEl) scoreEl.textContent = 'You got ' + s.correct + '/5 correct';
+            if (progressEl) progressEl.textContent = 'Completed';
+            if (scoreLine) scoreLine.style.display = 'none';
+        }
         function loadTrivia() {
             var body = document.getElementById('triviaCardBody');
             var loading = document.getElementById('triviaLoading');
             var questionText = document.getElementById('triviaQuestionText');
             var optionsGrid = document.getElementById('triviaOptionsGrid');
-            var funFactText = document.getElementById('triviaFunFactText');
             if (!body) return;
+            var s = getTriviaStorage();
+            if (s.count >= 5) {
+                showTriviaCompleted();
+                return;
+            }
             body.setAttribute('data-state', 'loading');
             if (loading) loading.textContent = "Loading today's trivia...";
             optionsGrid.innerHTML = '';
-            body.querySelectorAll('.trivia-option-btn').forEach(function(btn) { btn.remove(); });
+            updateTriviaProgress();
+            updateTriviaScoreLine();
             fetch(triviaApiBase + '/trivia', { method: 'GET' })
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
@@ -3887,6 +3996,7 @@
             if (!currentTrivia) return;
             var body = document.getElementById('triviaCardBody');
             var answer = currentTrivia.answer || '';
+            var correct = clickedOption.getAttribute('data-option') === answer;
             var btns = body.querySelectorAll('.trivia-option-btn');
             btns.forEach(function(btn) {
                 btn.disabled = true;
@@ -3895,12 +4005,25 @@
             });
             var funFactText = document.getElementById('triviaFunFactText');
             if (funFactText) funFactText.textContent = currentTrivia.fun_fact || '';
+            var s = getTriviaStorage();
+            var newCount = s.count + 1;
+            var newCorrect = s.correct + (correct ? 1 : 0);
+            setTriviaCount(newCount);
+            setTriviaCorrect(newCorrect);
+            updateTriviaScoreLine();
             body.setAttribute('data-state', 'answered');
+        }
+        function onTriviaNext() {
+            var s = getTriviaStorage();
+            if (s.count >= 5) {
+                showTriviaCompleted();
+                return;
+            }
+            loadTrivia();
         }
         (function initTriviaListeners() {
             var body = document.getElementById('triviaCardBody');
             var optionsGrid = document.getElementById('triviaOptionsGrid');
-            var newBtn = document.getElementById('triviaNewBtn');
             var nextBtn = document.getElementById('triviaNextBtn');
             if (optionsGrid) {
                 optionsGrid.addEventListener('click', function(e) {
@@ -3909,8 +4032,7 @@
                     onTriviaAnswer(btn);
                 });
             }
-            if (newBtn) newBtn.addEventListener('click', loadTrivia);
-            if (nextBtn) nextBtn.addEventListener('click', loadTrivia);
+            if (nextBtn) nextBtn.addEventListener('click', onTriviaNext);
         })();
 
         // Golf Hub: send message to coach API
