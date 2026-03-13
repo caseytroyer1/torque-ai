@@ -348,9 +348,7 @@
             position: relative;
             width: 100%;
             min-height: 220px;
-            background-image: linear-gradient(rgba(10, 37, 64, 0.7), rgba(10, 37, 64, 0.95)), url('hero-background.jpg');
-            background-size: cover;
-            background-position: center center;
+            background: linear-gradient(rgba(10, 37, 64, 0.7), rgba(10, 37, 64, 0.95)), url('hero-background.jpg') center center / cover no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -620,12 +618,14 @@
             color: #B8C5D6;
         }
 
-        /* Video Preview Section */
-        .video-preview-section {
+        /* Video preview wrapper - inside right column, replaces upload zone when file selected */
+        .video-preview-wrapper {
             display: none;
+            width: 100%;
+            min-height: 280px;
         }
 
-        .video-preview-section.active {
+        .video-preview-wrapper.active {
             display: block;
         }
 
@@ -637,8 +637,32 @@
             display: none;
         }
 
+        .upload-actions {
+            display: none;
+            width: 100%;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+
+        .upload-actions.active {
+            display: block;
+        }
+
+        .analyze-button-fullwidth {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 0;
+        }
+
+        .upload-different-link {
+            display: inline-block;
+            margin-top: 16px;
+        }
+
         .video-preview {
-            width: 600px;
+            width: 100%;
             max-width: 100%;
             height: auto;
             border-radius: 16px;
@@ -1399,26 +1423,6 @@
         .ask-personal-coach-btn:hover {
             background: #1E5EFF;
             color: #ffffff;
-        }
-        .follow-through-placeholder {
-            background: rgba(26, 58, 82, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 48px 32px;
-            text-align: center;
-        }
-        .follow-through-placeholder h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 22px;
-            color: #ffffff;
-            margin-bottom: 12px;
-        }
-        .follow-through-placeholder p {
-            font-family: 'Inter', sans-serif;
-            font-size: 16px;
-            color: #B8C5D6;
-            line-height: 1.5;
         }
         @media (max-width: 600px) {
             .setup-metrics-grid {
@@ -3319,42 +3323,42 @@
                                 </div>
                                 <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
                                 <div class="file-hint">MP4, MOV up to 100MB</div>
+                                <div class="video-preview-wrapper" id="videoPreviewSection">
+                                    <div style="position: relative;">
+                                        <video id="videoPreview" class="video-preview" controls></video>
+                                        <div class="processing-overlay" id="processingOverlay">
+                                            <div class="processing-content">
+                                                <div class="processing-spinner"></div>
+                                                <h3 class="processing-heading">Analyzing your swing...</h3>
+                                                <div class="processing-checklist">
+                                                    <div class="processing-step" id="step1">
+                                                        <div class="step-spinner"></div>
+                                                        <span class="step-text">Detecting body position...</span>
+                                                    </div>
+                                                    <div class="processing-step" id="step2">
+                                                        <div class="step-spinner"></div>
+                                                        <span class="step-text">Measuring swing angles...</span>
+                                                    </div>
+                                                    <div class="processing-step" id="step3">
+                                                        <div class="step-spinner"></div>
+                                                        <span class="step-text">Analyzing biomechanics...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="video-file-info" id="videoFileInfo"></div>
+                                </div>
                                 <div class="file-selected" id="fileSelected">
                                     <div class="file-name" id="fileName"></div>
                                     <div class="file-size" id="fileSize"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Video Preview Section -->
-                    <div class="video-preview-section" id="videoPreviewSection">
-                        <div style="position: relative;">
-                            <video id="videoPreview" class="video-preview" controls></video>
-                            <div class="processing-overlay" id="processingOverlay">
-                                <div class="processing-content">
-                                    <div class="processing-spinner"></div>
-                                    <h3 class="processing-heading">Analyzing your swing...</h3>
-                                    <div class="processing-checklist">
-                                        <div class="processing-step" id="step1">
-                                            <div class="step-spinner"></div>
-                                            <span class="step-text">Detecting body position...</span>
-                                        </div>
-                                        <div class="processing-step" id="step2">
-                                            <div class="step-spinner"></div>
-                                            <span class="step-text">Measuring swing angles...</span>
-                                        </div>
-                                        <div class="processing-step" id="step3">
-                                            <div class="step-spinner"></div>
-                                            <span class="step-text">Analyzing biomechanics...</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="upload-actions" id="uploadActions">
+                            <button class="analyze-button analyze-button-fullwidth" id="analyzeButton">Analyze Swing</button>
+                            <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
                         </div>
-                        <div class="video-file-info" id="videoFileInfo"></div>
-                        <button class="analyze-button" id="analyzeButton">Analyze Swing</button>
-                        <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
                     </div>
 
                     <!-- Split View Results Container -->
@@ -3909,11 +3913,14 @@
         const fileHint = document.querySelector('.file-hint');
         const uploadDifferentLink = document.getElementById('uploadDifferentLink');
 
+        const uploadActions = document.getElementById('uploadActions');
+
         // Function to reset to upload screen
         function resetUploadScreen() {
             uploadZone.classList.remove('hidden');
             if (fileHint) fileHint.classList.remove('hidden');
             videoPreviewSection.classList.remove('active');
+            if (uploadActions) uploadActions.classList.remove('active');
             fileSelected.classList.remove('active');
             videoFileInput.value = '';
             if (videoPreview) {
@@ -3929,7 +3936,6 @@
             if (resultsSplitContainer) {
                 resultsSplitContainer.classList.remove('active');
             }
-            // Show upload card and filming instructions again
             const uploadCard = document.querySelector('.upload-card');
             if (uploadCard) {
                 uploadCard.style.display = '';
@@ -3970,11 +3976,12 @@
                     videoFileInfo.textContent = `${file.name} • ${fileSizeMB} MB`;
                 }
 
-                // Hide upload zone and show video preview
+                // Hide upload zone and show video preview in right column; show actions below
                 uploadZone.classList.add('hidden');
                 if (fileHint) fileHint.classList.add('hidden');
                 fileSelected.classList.remove('active');
                 videoPreviewSection.classList.add('active');
+                if (uploadActions) uploadActions.classList.add('active');
             }
         }
 
@@ -4760,7 +4767,6 @@
                 <div class="results-tabs" role="tablist">
                     <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
                     <button type="button" class="tab-btn" data-tab="backswing" role="tab" aria-selected="false">Mechanics</button>
-                    <button type="button" class="tab-btn" data-tab="followthrough" role="tab" aria-selected="false">Follow Through</button>
                 </div>
             </div>
             <div class="results-tab-content">`;
@@ -4921,14 +4927,6 @@
                 html += `</div>`;
             }
             html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach About This Swing →</button>
-            </div>`;
-            
-            // FOLLOW THROUGH TAB
-            html += `<div class="tab-panel" id="tab-followthrough" role="tabpanel">
-                <div class="follow-through-placeholder">
-                    <h3>Follow Through Analysis</h3>
-                    <p>Coming soon — we're working on analyzing your finish position and balance.</p>
-                </div>
             </div>`;
             
             html += `</div>`;
