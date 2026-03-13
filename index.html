@@ -109,6 +109,149 @@
             margin: 0 auto;
         }
 
+        /* Daily Trivia Card */
+        .trivia-card {
+            width: 100%;
+            background: #0d2137;
+            border-left: 4px solid #1E5EFF;
+            border-radius: 0 12px 12px 0;
+            padding: 24px 28px 28px;
+            margin-bottom: 48px;
+        }
+        .trivia-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .trivia-card-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .trivia-card-trophy { font-size: 24px; line-height: 1; }
+        .trivia-card-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #1E5EFF;
+        }
+        .trivia-new-btn {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: #1E5EFF;
+            background: transparent;
+            border: 1px solid #1E5EFF;
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .trivia-new-btn:hover {
+            background: #1E5EFF;
+            color: #ffffff;
+        }
+        .trivia-loading {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #B8C5D6;
+            padding: 24px 0;
+            text-align: center;
+            animation: triviaPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes triviaPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        .trivia-question-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .trivia-options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .trivia-option-btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #ffffff;
+            background: rgba(26, 58, 82, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 14px 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+        }
+        .trivia-option-btn:hover:not(:disabled) {
+            background: rgba(30, 94, 255, 0.2);
+            border-color: rgba(30, 94, 255, 0.5);
+        }
+        .trivia-option-btn:disabled {
+            cursor: default;
+        }
+        .trivia-option-btn.correct {
+            background: rgba(34, 197, 94, 0.35);
+            border-color: #22c55e;
+        }
+        .trivia-option-btn.wrong {
+            background: rgba(239, 68, 68, 0.35);
+            border-color: #ef4444;
+        }
+        .trivia-fun-fact {
+            margin-top: 20px;
+            padding: 16px 18px;
+            background: rgba(30, 94, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(30, 94, 255, 0.3);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .trivia-fun-fact-icon { font-size: 20px; flex-shrink: 0; }
+        .trivia-fun-fact-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #B8C5D6;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .trivia-next-btn {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: #ffffff;
+            background: #1E5EFF;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s ease;
+        }
+        .trivia-next-btn:hover {
+            background: #3D7AFF;
+        }
+        .trivia-loading { display: none; }
+        .trivia-card-body[data-state="loading"] .trivia-loading { display: block; }
+        .trivia-question-wrap { display: none; }
+        .trivia-card-body[data-state="question"] .trivia-question-wrap,
+        .trivia-card-body[data-state="answered"] .trivia-question-wrap { display: block; }
+        .trivia-answered-wrap { display: none; }
+        .trivia-card-body[data-state="answered"] .trivia-answered-wrap { display: block; }
+        @media (max-width: 600px) {
+            .trivia-options-grid { grid-template-columns: 1fr; }
+        }
+
         .golf-coach-header { text-align: center; margin-bottom: 40px; }
         .golf-coach-label {
             font-family: 'Inter', sans-serif;
@@ -3412,6 +3555,31 @@
         </div>
         <section class="golf-hub-section">
             <div class="golf-hub-container">
+                <!-- Daily Trivia Card -->
+                <div class="trivia-card" id="triviaCard">
+                    <div class="trivia-card-header">
+                        <div class="trivia-card-title-wrap">
+                            <span class="trivia-card-trophy" aria-hidden="true">🏆</span>
+                            <span class="trivia-card-label">Daily Trivia</span>
+                        </div>
+                        <button type="button" class="trivia-new-btn" id="triviaNewBtn">New Question →</button>
+                    </div>
+                    <div class="trivia-card-body" id="triviaCardBody" data-state="loading">
+                        <div class="trivia-loading" id="triviaLoading">Loading today's trivia...</div>
+                        <div class="trivia-question-wrap" id="triviaQuestionWrap">
+                            <div class="trivia-question-text" id="triviaQuestionText"></div>
+                            <div class="trivia-options-grid" id="triviaOptionsGrid"></div>
+                        </div>
+                        <div class="trivia-answered-wrap" id="triviaAnsweredWrap">
+                            <div class="trivia-fun-fact" id="triviaFunFact">
+                                <span class="trivia-fun-fact-icon" aria-hidden="true">💡</span>
+                                <p class="trivia-fun-fact-text" id="triviaFunFactText"></p>
+                            </div>
+                            <button type="button" class="trivia-next-btn" id="triviaNextBtn">Next Question</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Section 1: Personal Coach -->
                 <div class="golf-coach-header">
                     <div class="golf-coach-label">POWERED BY AI</div>
@@ -3609,7 +3777,10 @@
 
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (pageId === 'golf-hub') ensureGolfCoachWelcome();
+            if (pageId === 'golf-hub') {
+                ensureGolfCoachWelcome();
+                if (typeof loadTrivia === 'function') loadTrivia();
+            }
         }
 
         // Add click listeners for nav links with data-page (Home, Golf Hub, Contact Us). Swing Coach is handled in auth IIFE (requires login).
@@ -3670,6 +3841,77 @@
             wrap.innerHTML = '<div class="golf-chat-bubble"><span class="ai-icon" aria-hidden="true">✦</span><span>' + formatCoachMarkdown(text) + '</span></div>';
             el.appendChild(wrap);
         }
+
+        // Golf Hub: Daily Trivia
+        var triviaApiBase = 'https://torque-ai-backend.onrender.com';
+        var currentTrivia = null;
+        function loadTrivia() {
+            var body = document.getElementById('triviaCardBody');
+            var loading = document.getElementById('triviaLoading');
+            var questionText = document.getElementById('triviaQuestionText');
+            var optionsGrid = document.getElementById('triviaOptionsGrid');
+            var funFactText = document.getElementById('triviaFunFactText');
+            if (!body) return;
+            body.setAttribute('data-state', 'loading');
+            if (loading) loading.textContent = "Loading today's trivia...";
+            optionsGrid.innerHTML = '';
+            body.querySelectorAll('.trivia-option-btn').forEach(function(btn) { btn.remove(); });
+            fetch(triviaApiBase + '/trivia', { method: 'GET' })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.success || !data.trivia) {
+                        body.setAttribute('data-state', 'loading');
+                        if (loading) loading.textContent = 'Could not load trivia. Try again.';
+                        return;
+                    }
+                    currentTrivia = data.trivia;
+                    var t = data.trivia;
+                    questionText.textContent = t.question || '';
+                    optionsGrid.innerHTML = '';
+                    var options = t.options || [];
+                    options.forEach(function(opt) {
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'trivia-option-btn';
+                        btn.textContent = opt;
+                        btn.setAttribute('data-option', opt);
+                        optionsGrid.appendChild(btn);
+                    });
+                    body.setAttribute('data-state', 'question');
+                })
+                .catch(function() {
+                    if (loading) loading.textContent = 'Could not load trivia. Try again.';
+                });
+        }
+        function onTriviaAnswer(clickedOption) {
+            if (!currentTrivia) return;
+            var body = document.getElementById('triviaCardBody');
+            var answer = currentTrivia.answer || '';
+            var btns = body.querySelectorAll('.trivia-option-btn');
+            btns.forEach(function(btn) {
+                btn.disabled = true;
+                if (btn.getAttribute('data-option') === answer) btn.classList.add('correct');
+                else if (btn === clickedOption) btn.classList.add('wrong');
+            });
+            var funFactText = document.getElementById('triviaFunFactText');
+            if (funFactText) funFactText.textContent = currentTrivia.fun_fact || '';
+            body.setAttribute('data-state', 'answered');
+        }
+        (function initTriviaListeners() {
+            var body = document.getElementById('triviaCardBody');
+            var optionsGrid = document.getElementById('triviaOptionsGrid');
+            var newBtn = document.getElementById('triviaNewBtn');
+            var nextBtn = document.getElementById('triviaNextBtn');
+            if (optionsGrid) {
+                optionsGrid.addEventListener('click', function(e) {
+                    var btn = e.target.closest('.trivia-option-btn');
+                    if (!btn || btn.disabled || body.getAttribute('data-state') !== 'question') return;
+                    onTriviaAnswer(btn);
+                });
+            }
+            if (newBtn) newBtn.addEventListener('click', loadTrivia);
+            if (nextBtn) nextBtn.addEventListener('click', loadTrivia);
+        })();
 
         // Golf Hub: send message to coach API
         var golfChatInput = document.getElementById('golfChatInput');
