@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 import os
+import base64
+import math
 from werkzeug.utils import secure_filename
 import cv2
 import mediapipe as mp
@@ -87,6 +89,56 @@ def calculate_angle_3d(point1, point2, point3):
     cos_angle = dot / (mag1 * mag2)
     cos_angle = max(-1, min(1, cos_angle))  # Clamp to [-1, 1]
     return math.degrees(math.acos(cos_angle))
+
+
+def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle, max_width=640):
+    """Extract one frame from video, draw skeleton overlay, return base64 JPEG string (RGB)."""
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        return None
+    cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+    ret, frame = cap.read()
+    cap.release()
+    if not ret or frame is None:
+        return None
+    h, w = frame.shape[:2]
+    if w > max_width:
+        scale = max_width / w
+        new_w = max_width
+        new_h = int(h * scale)
+        frame = cv2.resize(frame, (new_w, new_h))
+    else:
+        new_w, new_h = w, h
+
+    def to_px(lm):
+        return (int(lm.x * new_w), int(lm.y * new_h))
+
+    BLUE_BGR = (255, 94, 30)  # #1E5EFF
+    WHITE = (255, 255, 255)
+    GREEN = (0, 255, 0)
+    RADIUS = 4
+    THICKNESS_LINE = 2
+
+    if landmarks and len(landmarks) > 28:
+        for lm in landmarks:
+            cv2.circle(frame, to_px(lm), RADIUS, BLUE_BGR, -1)
+        # Shoulders, hips, arms, legs
+        line_pairs = [(11, 12), (23, 24), (11, 13), (13, 15), (12, 14), (14, 16), (23, 25), (25, 27), (24, 26), (26, 28)]
+        for i, j in line_pairs:
+            if i < len(landmarks) and j < len(landmarks):
+                cv2.line(frame, to_px(landmarks[i]), to_px(landmarks[j]), WHITE, THICKNESS_LINE)
+        # Spine: midpoint shoulders to midpoint hips (white)
+        shoulder_mid = (int((landmarks[11].x + landmarks[12].x) / 2 * new_w), int((landmarks[11].y + landmarks[12].y) / 2 * new_h))
+        hip_mid = (int((landmarks[23].x + landmarks[24].x) / 2 * new_w), int((landmarks[23].y + landmarks[24].y) / 2 * new_h))
+        cv2.line(frame, shoulder_mid, hip_mid, WHITE, THICKNESS_LINE)
+        # Spine angle line in green (hip midpoint extending toward shoulder at spine angle)
+        cv2.line(frame, hip_mid, shoulder_mid, GREEN, 3)
+        if spine_angle is not None:
+            cv2.putText(frame, f"{spine_angle:.0f}\u00b0", (hip_mid[0] + 10, hip_mid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, GREEN, 2)
+
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    _, buf = cv2.imencode('.jpg', rgb)
+    return base64.b64encode(buf.tobytes()).decode('utf-8')
 
 
 def analyze_video_with_mediapipe(video_path):
@@ -440,7 +492,25 @@ def analyze_video_with_mediapipe(video_path):
             'setup_hip_hinge': setup_hip_hinge,
             'setup_grade': setup_grade
         }
-        
+
+        # Extract key frames as images with skeleton overlay and add to response
+        spine_angle_backswing = calculate_spine_angle(key_frames['backswing']) if key_frames['backswing'] else None
+        try:
+            analysis['address_frame_image'] = _extract_and_annotate_frame(
+                video_path, address_frame_idx, key_frames['address'], spine_angle_address
+            )
+            analysis['backswing_frame_image'] = _extract_and_annotate_frame(
+                video_path, backswing_frame_idx, key_frames['backswing'], spine_angle_backswing
+            )
+            analysis['impact_frame_image'] = _extract_and_annotate_frame(
+                video_path, impact_frame_idx, key_frames['impact'], spine_angle_impact
+            )
+        except Exception as frame_err:
+            print(f"[Frame extraction] Error: {frame_err}")
+            analysis['address_frame_image'] = None
+            analysis['backswing_frame_image'] = None
+            analysis['impact_frame_image'] = None
+
         return analysis, None
         
     except Exception as e:
