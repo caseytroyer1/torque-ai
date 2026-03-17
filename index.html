@@ -5320,42 +5320,20 @@
                 ? (backswingShoulderRotation - backswingHipRotation) : null;
             
             // Setup metrics from analysis
-            const setupGrade = analysis.setup_grade || 'D';
             const setupSpineAngle = analysis.setup_spine_angle != null ? analysis.setup_spine_angle : analysis.spine_angle_address;
             const setupKneeFlex = analysis.setup_knee_flex;
             const setupShoulderLevel = analysis.setup_shoulder_level;
             const setupHipHinge = analysis.setup_hip_hinge;
-            const setupIssueFromDiagnosis = issuesDetected.find(i => i.category === 'Setup');
-            const getSetupSpineStatus = (v) => {
-                if (v == null) return '';
-                const n = Number(v);
-                if (Number.isNaN(n)) return '';
-                if (n >= 20 && n <= 35) return 'status-good';
-                if ((n >= 15 && n < 20) || (n > 35 && n <= 40)) return 'status-moderate';
-                return 'status-needs-attention';
-            };
-            const getSetupKneeStatus = (v) => {
-                if (v == null) return ''; if (v >= 150 && v <= 170) return 'status-good'; if ((v >= 145 && v < 150) || (v > 170 && v <= 175)) return 'status-moderate'; return 'status-needs-attention';
-            };
-            const getSetupShoulderStatus = (v) => {
-                if (v == null) return ''; if (v < 0.03) return 'status-good'; if (v <= 0.06) return 'status-moderate'; return 'status-needs-attention';
-            };
-            const getSetupHipStatus = (hinge) => {
-                if (hinge == null) return ''; if (hinge >= -0.08 && hinge <= 0.08) return 'status-good'; return 'status-moderate';
-            };
-            const hasIssues = issuesDetected.length > 0;
-            const secondaryIssues = priorityIssue ? issuesDetected.filter(issue => issue.issue !== priorityIssue.issue) : issuesDetected;
 
             let html = '';
-            const useClaudeLayout = claude && claude.address && claude.backswing && claude.impact && claude.overall && addressFrameB64 && backswingFrameB64 && impactFrameB64;
-
-            if (useClaudeLayout) {
-                // ——— NEW: Claude Vision + annotated frames layout (3 tabs) ———
-                const o = claude.overall;
-                const addr = claude.address;
-                const back = claude.backswing;
-                const imp = claude.impact;
-                html += `<div class="results-analysis-header">
+            const o = claude && claude.overall ? claude.overall : null;
+            const addr = claude && claude.address ? claude.address : {};
+            const back = claude && claude.backswing ? claude.backswing : {};
+            const imp = claude && claude.impact ? claude.impact : {};
+            const frameImg = (b64, alt) => (b64
+                ? `<img class="results-frame-img" src="data:image/jpeg;base64,${b64}" alt="${alt}" />`
+                : `<div class="results-frame-img" style="display:flex;align-items:center;justify-content:center;color:#8892b0;font-size:12px;min-height:120px;border:1px solid rgba(136,146,176,0.3);border-radius:10px;">Frame unavailable</div>`);
+            html += `<div class="results-analysis-header">
                     <h2>Your Swing Analysis</h2>
                     <div class="results-tabs" role="tablist">
                         <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
@@ -5382,7 +5360,7 @@
                 const spineAngleVal = setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : (addr.spine_angle != null ? addr.spine_angle + '°' : 'N/A');
                 const shoulderLevelSub = setupShoulderLevel != null ? 'diff: ' + Number(setupShoulderLevel).toFixed(3) : '';
                 html += `<div class="tab-panel active" id="tab-setup" role="tabpanel"><div class="results-tab-two-col">`;
-                html += `<div class="results-frame-col"><img class="results-frame-img" src="data:image/jpeg;base64,${addressFrameB64}" alt="Address position" /></div>`;
+                html += `<div class="results-frame-col">${frameImg(addressFrameB64, 'Address position')}</div>`;
                 html += `<div class="results-metrics-col">`;
                 const setupLabel = (addr.overall_setup != null) ? escapeHtml(addr.overall_setup) : 'Setup';
                 html += `<div class="results-overall-label ${getTierClass(addr.overall_setup)}"><span aria-hidden="true">✦</span> ${setupLabel}</div>`;
@@ -5403,7 +5381,7 @@
                 const hipAssessmentLabel = hipRotationStatus === 'status-good' ? 'Good' : (hipRotationStatus === 'status-moderate' ? 'Moderate' : 'Needs work');
                 const shoulderAssessmentLabel = shoulderRotationStatus === 'status-good' ? 'Good' : (shoulderRotationStatus === 'status-moderate' ? 'Moderate' : 'Needs work');
                 html += `<div class="tab-panel" id="tab-mechanics" role="tabpanel"><div class="results-tab-two-col">`;
-                html += `<div class="results-frame-col"><img class="results-frame-img" src="data:image/jpeg;base64,${backswingFrameB64}" alt="Backswing top" /></div>`;
+                html += `<div class="results-frame-col">${frameImg(backswingFrameB64, 'Backswing top')}</div>`;
                 html += `<div class="results-metrics-col">`;
                 const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
                 html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
@@ -5422,7 +5400,7 @@
 
                 // TAB 3 - IMPACT
                 html += `<div class="tab-panel" id="tab-impact" role="tabpanel"><div class="results-tab-two-col">`;
-                html += `<div class="results-frame-col"><img class="results-frame-img" src="data:image/jpeg;base64,${impactFrameB64}" alt="Impact" /></div>`;
+                html += `<div class="results-frame-col">${frameImg(impactFrameB64, 'Impact')}</div>`;
                 html += `<div class="results-metrics-col">`;
                 const impactLabel = (imp.overall_impact != null) ? escapeHtml(imp.overall_impact) : 'Impact';
                 html += `<div class="results-overall-label ${getTierClass(imp.overall_impact)}"><span aria-hidden="true">✦</span> ${impactLabel}</div>`;
@@ -5437,117 +5415,6 @@
                 html += `</div></div></div>`;
 
                 html += `</div>`;
-            } else {
-                // ——— FALLBACK: existing display when no Claude/frames ———
-                html += `<div class="results-analysis-header">
-                <h2>Your Swing Analysis</h2>
-                <div class="results-tabs" role="tablist">
-                    <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
-                    <button type="button" class="tab-btn" data-tab="backswing" role="tab" aria-selected="false">Mechanics</button>
-                </div>
-            </div>
-            <div class="results-tab-content">`;
-            
-            // SETUP TAB - score 0-100 from 4 metrics (25 pts each)
-            const spineInRange = setupSpineAngle != null && (n => { const x = Number(n); return !Number.isNaN(x) && x >= 20 && x <= 35; })(setupSpineAngle);
-            const kneeInRange = setupKneeFlex != null && (n => { const x = Number(n); return !Number.isNaN(x) && x >= 150 && x <= 170; })(setupKneeFlex);
-            const shoulderInRange = setupShoulderLevel != null && setupShoulderLevel < 0.03;
-            const hipGood = setupHipHinge != null && setupHipHinge >= -0.08 && setupHipHinge <= 0.08;
-            const setupScore = (spineInRange ? 25 : 0) + (kneeInRange ? 25 : 0) + (shoulderInRange ? 25 : 0) + (hipGood ? 25 : 0);
-            const setupTier = setupScore >= 85 ? 'elite' : (setupScore >= 60 ? 'solid' : 'needs');
-            const setupLabel = setupScore >= 85 ? 'Elite' : (setupScore >= 60 ? 'Solid Foundation' : 'Needs Attention');
-            html += `<div class="tab-panel active" id="tab-setup" role="tabpanel">
-                <div class="setup-grade-card">
-                    <div class="setup-grade-content">
-                        <span class="setup-grade-icon tier-${setupTier}" aria-hidden="true">✦</span>
-                        <span class="setup-grade-label tier-${setupTier}">${escapeHtml(setupLabel)}</span>
-                        <span class="setup-grade-subtitle">Setup & Posture Analysis</span>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
-            html += metricCardHtml(getMetricBorderColor(getSetupSpineStatus(setupSpineAngle)), 'Spine Angle at Address', setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : 'N/A', 'Target: 20–35°', 'setupSpineAngle');
-            html += metricCardHtml(getMetricBorderColor(getSetupKneeStatus(setupKneeFlex)), 'Knee Flex', setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : 'N/A', 'Target: 150–170°', 'setupKneeFlex');
-            const shoulderDisplay = setupShoulderLevel == null ? 'N/A' : (setupShoulderLevel < 0.03 ? 'Level ✓' : (setupShoulderLevel <= 0.06 ? 'Slightly Uneven' : 'Uneven'));
-            html += metricCardHtml(getMetricBorderColor(getSetupShoulderStatus(setupShoulderLevel)), 'Shoulder Level', shoulderDisplay, 'Level at address', 'setupShoulderLevel');
-            const hipLabel = setupHipHinge != null ? (setupHipHinge >= -0.08 && setupHipHinge <= 0.08 ? 'Good' : 'Needs Work') : 'N/A';
-            html += metricCardHtml(getMetricBorderColor(getSetupHipStatus(setupHipHinge)), 'Hip Hinge', hipLabel, 'Slight forward lean', 'setupHipHinge');
-            html += `</div>`;
-            const setupTip = setupScore < 60 && setupIssueFromDiagnosis
-                ? escapeHtml(setupIssueFromDiagnosis.description)
-                : 'Great setup! Focus on your backswing mechanics.';
-            html += `<div class="setup-coaching-tip">${setupTip}</div>
-            <button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>
-            <button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach About This Swing →</button>
-            </div>`;
-            
-            // BACKSWING TAB
-            html += `<div class="tab-panel" id="tab-backswing" role="tabpanel">`;
-            html += `<div class="hero-summary-card">
-                <div class="hero-summary-icon ${hasIssues ? 'warn' : 'ok'}">${hasIssues ? '⚠️' : '✅'}</div>
-                <h2 class="hero-summary-headline">Your Swing Analysis</h2>
-                <p class="hero-summary-subtext">${strengths.length} strength${strengths.length !== 1 ? 's' : ''} · ${issuesDetected.length} area${issuesDetected.length !== 1 ? 's' : ''} to focus on</p>
-            </div>`;
-            const hasAnyMetric = backswingHipRotation !== undefined || impactHipRotation !== undefined ||
-                backswingShoulderRotation !== undefined || impactShoulderRotation !== undefined ||
-                spineAngleAddress !== undefined || spineAngleImpact !== undefined ||
-                spineAngleChange !== undefined || xFactor !== null;
-            if (hasAnyMetric) {
-                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
-                if (backswingHipRotation !== undefined) {
-                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(backswingHipRotation, [30, 60], [25, 65])), 'Hip Rotation Backswing', formatAngle(backswingHipRotation), 'Target: 30–60°', 'hipBackswing');
-                }
-                if (impactHipRotation !== undefined) {
-                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(impactHipRotation, [30, 45], [25, 50])), 'Hip Rotation Impact', formatAngle(impactHipRotation), 'Target: 30–45°', 'hipImpact');
-                }
-                if (backswingShoulderRotation !== undefined) {
-                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(backswingShoulderRotation, [80, 110], [70, 120])), 'Shoulder Rotation Backswing', formatAngle(backswingShoulderRotation), 'Target: 80–110°', 'shoulderBackswing');
-                }
-                if (impactShoulderRotation !== undefined) {
-                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(impactShoulderRotation, [0, 10], [0, 15])), 'Shoulder Rotation Impact', formatAngle(impactShoulderRotation), 'Target: 0–10°', 'shoulderImpact');
-                }
-                if (spineAngleAddress !== undefined) {
-                    html += metricCardHtml('#8892b0', 'Spine Angle Address', formatAngle(spineAngleAddress), 'Maintain from address', 'spineAddress');
-                }
-                if (spineAngleImpact !== undefined) {
-                    html += metricCardHtml('#8892b0', 'Spine Angle Impact', formatAngle(spineAngleImpact), 'Maintain from address', 'spineImpact');
-                }
-                if (spineAngleChange !== undefined) {
-                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(Math.abs(spineAngleChange), [0, 10], [10, 15])), 'Spine Angle Change', formatAngle(spineAngleChange), 'Target: &lt;10°', 'spineChange');
-                }
-                if (xFactor !== null) {
-                    html += metricCardHtml('#8892b0', 'X-Factor', formatAngle(xFactor), 'Shoulder − hip backswing', 'xFactor');
-                }
-                html += `</div>`;
-            }
-            if (priorityIssue) {
-                html += `<div class="primary-focus-callout">
-                    <div class="focus-label">Primary Focus Area</div>
-                    <h3 class="focus-name">${escapeHtml(priorityIssue.issue)}</h3>
-                    <p class="focus-description">${escapeHtml(priorityIssue.description)}</p>
-                </div>`;
-            }
-            if (strengths.length > 0) {
-                html += `<div class="strengths-grid">`;
-                strengths.forEach(s => {
-                    html += `<div class="strength-card"><span class="strength-check">✓</span><span class="strength-label">${escapeHtml(s)}</span></div>`;
-                });
-                html += `</div>`;
-            }
-            if (secondaryIssues.length > 0) {
-                html += `<div class="additional-issues-section"><div class="section-title">Additional areas to work on</div>`;
-                secondaryIssues.forEach(issue => {
-                    html += `<div class="issue-card">
-                        <div class="issue-icon">⚠️</div>
-                        <div><div class="issue-name">${escapeHtml(issue.issue)}</div><div class="issue-description">${escapeHtml(issue.description || '')}</div></div>
-                    </div>`;
-                });
-                html += `</div>`;
-            }
-            html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach About This Swing →</button>
-            </div>`;
-            
-            html += `</div>`;
-            }
 
             resultsAnalysisPanel.innerHTML = html;
             
@@ -5572,7 +5439,7 @@
             const viewMechanicsBtn = resultsAnalysisPanel.querySelector('.view-mechanics-btn');
             if (viewMechanicsBtn) {
                 viewMechanicsBtn.addEventListener('click', function() {
-                    switchToTab(useClaudeLayout ? 'mechanics' : 'backswing');
+                    switchToTab('mechanics');
                 });
             }
             resultsAnalysisPanel.querySelectorAll('.ask-personal-coach-btn').forEach(function(btn) {
