@@ -1431,7 +1431,6 @@
             padding: 40px 20px;
             overflow-x: hidden;
             box-sizing: border-box;
-            border-right: none;
         }
 
         .results-split-container.active {
@@ -1468,7 +1467,6 @@
             overflow: visible;
             max-width: 100%;
             min-width: 0;
-            border-right: none;
         }
         .results-analysis-header {
             margin-bottom: 20px;
@@ -1765,6 +1763,20 @@
             line-height: 1.5;
         }
         .results-coaching-tip-card .tip-icon { font-size: 20px; color: #1E5EFF; }
+        @media (min-width: 768px) {
+            .results-metrics-grid-claude,
+            .results-analysis-panel .metrics-dashboard,
+            .setup-metrics-grid {
+                grid-template-columns: repeat(2, minmax(140px, 1fr));
+            }
+            .results-analysis-panel .metric-card {
+                padding: 14px;
+                min-width: 140px;
+            }
+            .results-analysis-panel .metric-card .metric-value {
+                font-size: 20px;
+            }
+        }
         @media (max-width: 968px) {
             .results-tab-two-col {
                 grid-template-columns: 1fr;
@@ -2097,7 +2109,8 @@
             font-weight: 700;
             font-size: 28px;
             color: #ffffff;
-            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .results-analysis-panel .metric-card .metric-target {
             font-family: 'Inter', sans-serif;
