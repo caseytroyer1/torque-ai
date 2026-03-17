@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import os
 import base64
+import json
 import math
 from werkzeug.utils import secure_filename
 import cv2
@@ -139,6 +140,104 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     _, buf = cv2.imencode('.jpg', rgb)
     return base64.b64encode(buf.tobytes()).decode('utf-8')
+
+
+def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64):
+    """Send the three key frames to Claude Vision for golf swing analysis. Returns parsed JSON or None."""
+    if not address_frame_b64 or not backswing_frame_b64 or not impact_frame_b64:
+        return None
+    api_key = os.environ.get('ANTHROPIC_API_KEY')
+    if not api_key:
+        return None
+    import anthropic
+    client = anthropic.Anthropic(api_key=api_key)
+    prompt_json = '''{
+  "address": {
+    "spine_angle": "estimated degrees from vertical (number only)",
+    "spine_assessment": "good/slightly off/needs work",
+    "knee_flex": "appropriate/too bent/too straight",
+    "knee_flex_degrees": "estimated degrees (number only)",
+    "shoulder_level": "level/slightly uneven/uneven",
+    "posture": "good/needs work",
+    "weight_distribution": "balanced/too much on heels/too much on toes",
+    "overall_setup": "Elite/Solid Foundation/Needs Attention",
+    "coaching_note": "one specific actionable tip about setup in 15 words or less"
+  },
+  "backswing": {
+    "shoulder_rotation": "estimated degrees (number only)",
+    "hip_rotation": "estimated degrees (number only)",
+    "hip_shoulder_separation": "good/needs more/excessive",
+    "spine_angle_maintained": "yes/slightly lost/significantly lost",
+    "left_arm": "straight/slightly bent/too bent",
+    "weight_transfer": "good/minimal/reverse pivot",
+    "overall_backswing": "Elite/Solid Foundation/Needs Attention",
+    "coaching_note": "one specific actionable tip about backswing in 15 words or less"
+  },
+  "impact": {
+    "hip_clearance": "good/needs more/excessive",
+    "shoulder_position": "square/open/closed",
+    "spine_angle_maintained": "yes/slightly lost/significantly lost",
+    "head_position": "steady/moved forward/moved back",
+    "weight_transfer": "good/minimal/reversed",
+    "overall_impact": "Elite/Solid Foundation/Needs Attention",
+    "coaching_note": "one specific actionable tip about impact in 15 words or less"
+  },
+  "overall": {
+    "biggest_strength": "one sentence about the best part of this swing",
+    "primary_focus": "the single most important thing to work on",
+    "summary": "2-3 sentence overall assessment like a real golf coach would give"
+  }
+}'''
+    message = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=1024,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "You are an expert PGA golf instructor analyzing a golf swing. I am sending you 3 key frames from a golf swing video: Frame 1 is ADDRESS (setup position), Frame 2 is BACKSWING TOP, Frame 3 is IMPACT. Analyze each frame carefully and return ONLY a JSON object with no extra text, no markdown, no code blocks. Use exactly this format:"
+                    },
+                    {"type": "text", "text": prompt_json},
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": address_frame_b64
+                        }
+                    },
+                    {"type": "text", "text": "Frame 2 - BACKSWING TOP:"},
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": backswing_frame_b64
+                        }
+                    },
+                    {"type": "text", "text": "Frame 3 - IMPACT:"},
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": impact_frame_b64
+                        }
+                    }
+                ]
+            }
+        ]
+    )
+    response_text = message.content[0].text.strip()
+    if response_text.startswith('```'):
+        response_text = response_text.split('```')[1]
+        if response_text.startswith('json'):
+            response_text = response_text[4:]
+    response_text = response_text.strip()
+    claude_analysis = json.loads(response_text)
+    return claude_analysis
 
 
 def analyze_video_with_mediapipe(video_path):
@@ -510,6 +609,22 @@ def analyze_video_with_mediapipe(video_path):
             analysis['address_frame_image'] = None
             analysis['backswing_frame_image'] = None
             analysis['impact_frame_image'] = None
+
+        try:
+            if analysis.get('address_frame_image') and analysis.get('backswing_frame_image') and analysis.get('impact_frame_image'):
+                claude_analysis = analyze_frames_with_claude(
+                    analysis['address_frame_image'],
+                    analysis['backswing_frame_image'],
+                    analysis['impact_frame_image']
+                )
+                analysis['claude_vision_analysis'] = claude_analysis
+                if claude_analysis is not None:
+                    print("Claude Vision analysis complete")
+            else:
+                analysis['claude_vision_analysis'] = None
+        except Exception as e:
+            print(f"Claude Vision error: {str(e)}")
+            analysis['claude_vision_analysis'] = None
 
         return analysis, None
         
