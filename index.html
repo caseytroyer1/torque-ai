@@ -5277,6 +5277,18 @@
                 if (v.includes('solid') || v.includes('slightly') || v === 'minimal') return 'status-moderate';
                 return 'status-needs-attention';
             };
+            const getMetricBorderColor = (sc) => {
+                if (!sc) return '#8892b0';
+                if (sc === 'status-good') return '#22c55e';
+                if (sc === 'status-moderate') return '#f59e0b';
+                if (sc === 'status-needs-attention') return '#ef4444';
+                return '#8892b0';
+            };
+            const metricCardHtml = (borderColor, name, value, subtext, infoKey) => {
+                const btn = infoKey ? `<button type="button" class="metric-info-btn" data-metric-key="${infoKey}" aria-label="More info">ⓘ</button>` : '';
+                const sub = subtext != null && subtext !== '' ? `<div style="font-size: 11px; color: #8892b0;">${escapeHtml(subtext)}</div>` : '<div style="font-size: 11px; color: #8892b0;">&nbsp;</div>';
+                return `<div style="background: #112240; border-radius: 10px; padding: 16px; border-left: 3px solid ${borderColor}; min-width: 0; position: relative;">${btn}<div style="font-size: 11px; color: #8892b0; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.08em;">${escapeHtml(name)}</div><div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 4px;">${escapeHtml(value)}</div>${sub}</div>`;
+            };
 
             // Extract rotation delta values (change from address, not absolute angles)
             const backswingHipRotation = analysis.hip_rotation_backswing || analysis.backswing_hip_rotation;
@@ -5374,12 +5386,12 @@
                 html += `<div class="results-metrics-col">`;
                 const setupLabel = (addr.overall_setup != null) ? escapeHtml(addr.overall_setup) : 'Setup';
                 html += `<div class="results-overall-label ${getTierClass(addr.overall_setup)}"><span aria-hidden="true">✦</span> ${setupLabel}</div>`;
-                html += `<div class="results-metrics-grid-claude">`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.spine_assessment)}"><button type="button" class="metric-info-btn" data-metric-key="setupSpineAngle" aria-label="More info">ⓘ</button><div class="metric-name">Spine Angle</div><div class="metric-value">${escapeHtml(spineAngleVal)}</div><div class="metric-subtext">MediaPipe measured</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.knee_flex)}"><button type="button" class="metric-info-btn" data-metric-key="setupKneeFlex" aria-label="More info">ⓘ</button><div class="metric-name">Knee Flex</div><div class="metric-value">${escapeHtml(addr.knee_flex || 'N/A')}</div>${setupKneeFlex != null ? `<div class="metric-subtext">${Number(setupKneeFlex).toFixed(1)}°</div>` : ''}</div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.shoulder_level)}"><button type="button" class="metric-info-btn" data-metric-key="setupShoulderLevel" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Level</div><div class="metric-value">${escapeHtml(addr.shoulder_level || 'N/A')}</div>${shoulderLevelSub ? `<div class="metric-subtext">${escapeHtml(shoulderLevelSub)}</div>` : ''}</div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.posture)}"><div class="metric-name">Posture</div><div class="metric-value">${escapeHtml(addr.posture || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.weight_distribution)}"><div class="metric-name">Weight Distribution</div><div class="metric-value">${escapeHtml(addr.weight_distribution || 'N/A')}</div></div>`;
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, 'MediaPipe measured', 'setupSpineAngle');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : '', 'setupKneeFlex');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', shoulderLevelSub || '', 'setupShoulderLevel');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution || 'N/A', '', null);
                 html += `</div>`;
                 if (addr.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(addr.coaching_note)}</span></div>`;
                 html += `<button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>`;
@@ -5395,14 +5407,14 @@
                 html += `<div class="results-metrics-col">`;
                 const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
                 html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
-                html += `<div class="results-metrics-grid-claude">`;
-                html += `<div class="metric-card ${hipRotationStatus}"><button type="button" class="metric-info-btn" data-metric-key="hipBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Hip Rotation</div><div class="metric-value">${escapeHtml(hipAssessmentLabel)}</div><div class="metric-subtext">${backswingHipRotation != null ? Number(backswingHipRotation).toFixed(1) + '° measured' : '—'}</div></div>`;
-                html += `<div class="metric-card ${shoulderRotationStatus}"><button type="button" class="metric-info-btn" data-metric-key="shoulderBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Rotation</div><div class="metric-value">${escapeHtml(shoulderAssessmentLabel)}</div><div class="metric-subtext">${backswingShoulderRotation != null ? Number(backswingShoulderRotation).toFixed(1) + '° measured' : '—'}</div></div>`;
-                html += `<div class="metric-card"><button type="button" class="metric-info-btn" data-metric-key="xFactor" aria-label="More info">ⓘ</button><div class="metric-name">X-Factor</div><div class="metric-value">${formatAngle(xFactor)}</div><div class="metric-subtext">shoulder-hip separation</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(back.hip_shoulder_separation)}"><div class="metric-name">Hip/Shoulder Separation</div><div class="metric-value">${escapeHtml(back.hip_shoulder_separation || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(back.left_arm)}"><div class="metric-name">Left Arm</div><div class="metric-value">${escapeHtml(back.left_arm || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(back.weight_transfer)}"><div class="metric-name">Weight Transfer</div><div class="metric-value">${escapeHtml(back.weight_transfer || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(back.spine_angle_maintained)}"><div class="metric-name">Spine Maintained</div><div class="metric-value">${escapeHtml(back.spine_angle_maintained || 'N/A')}</div></div>`;
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
+                html += metricCardHtml(getMetricBorderColor(hipRotationStatus), 'Hip Rotation', hipAssessmentLabel, backswingHipRotation != null ? Number(backswingHipRotation).toFixed(1) + '° measured' : '—', 'hipBackswing');
+                html += metricCardHtml(getMetricBorderColor(shoulderRotationStatus), 'Shoulder Rotation', shoulderAssessmentLabel, backswingShoulderRotation != null ? Number(backswingShoulderRotation).toFixed(1) + '° measured' : '—', 'shoulderBackswing');
+                html += metricCardHtml('#8892b0', 'X-Factor', formatAngle(xFactor), 'shoulder-hip separation', 'xFactor');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.hip_shoulder_separation)), 'Hip/Shoulder Separation', back.hip_shoulder_separation || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.weight_transfer)), 'Weight Transfer', back.weight_transfer || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.spine_angle_maintained)), 'Spine Maintained', back.spine_angle_maintained || 'N/A', '', null);
                 html += `</div>`;
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
                 html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach →</button>`;
@@ -5414,12 +5426,12 @@
                 html += `<div class="results-metrics-col">`;
                 const impactLabel = (imp.overall_impact != null) ? escapeHtml(imp.overall_impact) : 'Impact';
                 html += `<div class="results-overall-label ${getTierClass(imp.overall_impact)}"><span aria-hidden="true">✦</span> ${impactLabel}</div>`;
-                html += `<div class="results-metrics-grid-claude">`;
-                html += `<div class="metric-card ${getStatusFromClaude(imp.hip_clearance)}"><div class="metric-name">Hip Clearance</div><div class="metric-value">${escapeHtml(imp.hip_clearance || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(imp.shoulder_position)}"><div class="metric-name">Shoulder Position</div><div class="metric-value">${escapeHtml(imp.shoulder_position || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(imp.spine_angle_maintained)}"><div class="metric-name">Spine Maintained</div><div class="metric-value">${escapeHtml(imp.spine_angle_maintained || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(imp.head_position)}"><div class="metric-name">Head Position</div><div class="metric-value">${escapeHtml(imp.head_position || 'N/A')}</div></div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(imp.weight_transfer)}"><div class="metric-name">Weight Transfer</div><div class="metric-value">${escapeHtml(imp.weight_transfer || 'N/A')}</div></div>`;
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.hip_clearance)), 'Hip Clearance', imp.hip_clearance || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.shoulder_position)), 'Shoulder Position', imp.shoulder_position || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.spine_angle_maintained)), 'Spine Maintained', imp.spine_angle_maintained || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.head_position)), 'Head Position', imp.head_position || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.weight_transfer)), 'Weight Transfer', imp.weight_transfer || 'N/A', '', null);
                 html += `</div>`;
                 if (imp.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(imp.coaching_note)}</span></div>`;
                 html += `</div></div></div>`;
@@ -5452,33 +5464,13 @@
                         <span class="setup-grade-subtitle">Setup & Posture Analysis</span>
                     </div>
                 </div>
-                <div class="setup-metrics-grid">`;
-            html += `<div class="metric-card ${getSetupSpineStatus(setupSpineAngle)}">
-                <button type="button" class="metric-info-btn" data-metric-key="setupSpineAngle" aria-label="More info">ⓘ</button>
-                <div class="metric-name">Spine Angle at Address</div>
-                <div class="metric-value">${setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : 'N/A'}</div>
-                <div class="metric-target">Target: 20–35°</div>
-            </div>`;
-            html += `<div class="metric-card ${getSetupKneeStatus(setupKneeFlex)}">
-                <button type="button" class="metric-info-btn" data-metric-key="setupKneeFlex" aria-label="More info">ⓘ</button>
-                <div class="metric-name">Knee Flex</div>
-                <div class="metric-value">${setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : 'N/A'}</div>
-                <div class="metric-target">Target: 150–170°</div>
-            </div>`;
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
+            html += metricCardHtml(getMetricBorderColor(getSetupSpineStatus(setupSpineAngle)), 'Spine Angle at Address', setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : 'N/A', 'Target: 20–35°', 'setupSpineAngle');
+            html += metricCardHtml(getMetricBorderColor(getSetupKneeStatus(setupKneeFlex)), 'Knee Flex', setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : 'N/A', 'Target: 150–170°', 'setupKneeFlex');
             const shoulderDisplay = setupShoulderLevel == null ? 'N/A' : (setupShoulderLevel < 0.03 ? 'Level ✓' : (setupShoulderLevel <= 0.06 ? 'Slightly Uneven' : 'Uneven'));
-            html += `<div class="metric-card ${getSetupShoulderStatus(setupShoulderLevel)}">
-                <button type="button" class="metric-info-btn" data-metric-key="setupShoulderLevel" aria-label="More info">ⓘ</button>
-                <div class="metric-name">Shoulder Level</div>
-                <div class="metric-value">${escapeHtml(shoulderDisplay)}</div>
-                <div class="metric-target">Level at address</div>
-            </div>`;
+            html += metricCardHtml(getMetricBorderColor(getSetupShoulderStatus(setupShoulderLevel)), 'Shoulder Level', shoulderDisplay, 'Level at address', 'setupShoulderLevel');
             const hipLabel = setupHipHinge != null ? (setupHipHinge >= -0.08 && setupHipHinge <= 0.08 ? 'Good' : 'Needs Work') : 'N/A';
-            html += `<div class="metric-card ${getSetupHipStatus(setupHipHinge)}">
-                <button type="button" class="metric-info-btn" data-metric-key="setupHipHinge" aria-label="More info">ⓘ</button>
-                <div class="metric-name">Hip Hinge</div>
-                <div class="metric-value">${escapeHtml(hipLabel)}</div>
-                <div class="metric-target">Slight forward lean</div>
-            </div>`;
+            html += metricCardHtml(getMetricBorderColor(getSetupHipStatus(setupHipHinge)), 'Hip Hinge', hipLabel, 'Slight forward lean', 'setupHipHinge');
             html += `</div>`;
             const setupTip = setupScore < 60 && setupIssueFromDiagnosis
                 ? escapeHtml(setupIssueFromDiagnosis.description)
@@ -5500,70 +5492,30 @@
                 spineAngleAddress !== undefined || spineAngleImpact !== undefined ||
                 spineAngleChange !== undefined || xFactor !== null;
             if (hasAnyMetric) {
-                html += `<div class="metrics-dashboard">`;
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
                 if (backswingHipRotation !== undefined) {
-                    html += `<div class="metric-card ${getMetricStatusClass(backswingHipRotation, [30, 60], [25, 65])}">
-                        <button type="button" class="metric-info-btn" data-metric-key="hipBackswing" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">Hip Rotation Backswing</div>
-                        <div class="metric-value">${formatAngle(backswingHipRotation)}</div>
-                        <div class="metric-target">Target: 30–60°</div>
-                    </div>`;
+                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(backswingHipRotation, [30, 60], [25, 65])), 'Hip Rotation Backswing', formatAngle(backswingHipRotation), 'Target: 30–60°', 'hipBackswing');
                 }
                 if (impactHipRotation !== undefined) {
-                    html += `<div class="metric-card ${getMetricStatusClass(impactHipRotation, [30, 45], [25, 50])}">
-                        <button type="button" class="metric-info-btn" data-metric-key="hipImpact" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">Hip Rotation Impact</div>
-                        <div class="metric-value">${formatAngle(impactHipRotation)}</div>
-                        <div class="metric-target">Target: 30–45°</div>
-                    </div>`;
+                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(impactHipRotation, [30, 45], [25, 50])), 'Hip Rotation Impact', formatAngle(impactHipRotation), 'Target: 30–45°', 'hipImpact');
                 }
                 if (backswingShoulderRotation !== undefined) {
-                    html += `<div class="metric-card ${getMetricStatusClass(backswingShoulderRotation, [80, 110], [70, 120])}">
-                        <button type="button" class="metric-info-btn" data-metric-key="shoulderBackswing" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">Shoulder Rotation Backswing</div>
-                        <div class="metric-value">${formatAngle(backswingShoulderRotation)}</div>
-                        <div class="metric-target">Target: 80–110°</div>
-                    </div>`;
+                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(backswingShoulderRotation, [80, 110], [70, 120])), 'Shoulder Rotation Backswing', formatAngle(backswingShoulderRotation), 'Target: 80–110°', 'shoulderBackswing');
                 }
                 if (impactShoulderRotation !== undefined) {
-                    html += `<div class="metric-card ${getMetricStatusClass(impactShoulderRotation, [0, 10], [0, 15])}">
-                        <button type="button" class="metric-info-btn" data-metric-key="shoulderImpact" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">Shoulder Rotation Impact</div>
-                        <div class="metric-value">${formatAngle(impactShoulderRotation)}</div>
-                        <div class="metric-target">Target: 0–10°</div>
-                    </div>`;
+                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(impactShoulderRotation, [0, 10], [0, 15])), 'Shoulder Rotation Impact', formatAngle(impactShoulderRotation), 'Target: 0–10°', 'shoulderImpact');
                 }
                 if (spineAngleAddress !== undefined) {
-                    html += `<div class="metric-card">
-                        <button type="button" class="metric-info-btn" data-metric-key="spineAddress" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">Spine Angle Address</div>
-                        <div class="metric-value">${formatAngle(spineAngleAddress)}</div>
-                        <div class="metric-target">Maintain from address</div>
-                    </div>`;
+                    html += metricCardHtml('#8892b0', 'Spine Angle Address', formatAngle(spineAngleAddress), 'Maintain from address', 'spineAddress');
                 }
                 if (spineAngleImpact !== undefined) {
-                    html += `<div class="metric-card">
-                        <button type="button" class="metric-info-btn" data-metric-key="spineImpact" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">Spine Angle Impact</div>
-                        <div class="metric-value">${formatAngle(spineAngleImpact)}</div>
-                        <div class="metric-target">Maintain from address</div>
-                    </div>`;
+                    html += metricCardHtml('#8892b0', 'Spine Angle Impact', formatAngle(spineAngleImpact), 'Maintain from address', 'spineImpact');
                 }
                 if (spineAngleChange !== undefined) {
-                    html += `<div class="metric-card ${getMetricStatusClass(Math.abs(spineAngleChange), [0, 10], [10, 15])}">
-                        <button type="button" class="metric-info-btn" data-metric-key="spineChange" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">Spine Angle Change</div>
-                        <div class="metric-value">${formatAngle(spineAngleChange)}</div>
-                        <div class="metric-target">Target: &lt;10°</div>
-                    </div>`;
+                    html += metricCardHtml(getMetricBorderColor(getMetricStatusClass(Math.abs(spineAngleChange), [0, 10], [10, 15])), 'Spine Angle Change', formatAngle(spineAngleChange), 'Target: &lt;10°', 'spineChange');
                 }
                 if (xFactor !== null) {
-                    html += `<div class="metric-card">
-                        <button type="button" class="metric-info-btn" data-metric-key="xFactor" aria-label="More info">ⓘ</button>
-                        <div class="metric-name">X-Factor</div>
-                        <div class="metric-value">${formatAngle(xFactor)}</div>
-                        <div class="metric-target">Shoulder − hip backswing</div>
-                    </div>`;
+                    html += metricCardHtml('#8892b0', 'X-Factor', formatAngle(xFactor), 'Shoulder − hip backswing', 'xFactor');
                 }
                 html += `</div>`;
             }
