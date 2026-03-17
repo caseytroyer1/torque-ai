@@ -1431,6 +1431,7 @@
             padding: 40px 20px;
             overflow-x: hidden;
             box-sizing: border-box;
+            border-right: none;
         }
 
         .results-split-container.active {
@@ -1464,15 +1465,10 @@
             display: flex;
             flex-direction: column;
             gap: 0;
-            overflow-x: hidden;
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            overflow: visible;
             max-width: 100%;
             min-width: 0;
-        }
-        .results-analysis-panel::-webkit-scrollbar {
-            display: none;
+            border-right: none;
         }
         .results-analysis-header {
             margin-bottom: 20px;
@@ -1529,6 +1525,9 @@
             font-size: 12px;
             color: rgba(184, 197, 214, 0.6);
             margin-top: 4px;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
         .results-analysis-panel .tab-panel {
             display: none;
@@ -1577,8 +1576,9 @@
         }
         .setup-metrics-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
             margin-bottom: 24px;
         }
         .setup-coaching-tip {
@@ -1747,10 +1747,9 @@
         .results-overall-label.tier-needs { color: #ef4444; }
         .results-metrics-grid-claude {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            max-width: 100%;
-            min-width: 0;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
         }
         .results-coaching-tip-card {
             background: rgba(30, 94, 255, 0.1);
@@ -2031,8 +2030,9 @@
         }
         .results-analysis-panel .metrics-dashboard {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
             animation: resultsFadeIn 0.5s ease-out 0.08s both;
         }
         .results-analysis-panel .metric-card {
@@ -2077,14 +2077,20 @@
         .results-analysis-panel .metric-info-btn:hover {
             color: #1E5EFF;
         }
+        .results-analysis-panel .metric-card .metric-name,
+        .results-analysis-panel .metric-card .metric-value,
+        .results-analysis-panel .metric-card .metric-target,
+        .results-analysis-panel .metric-card .metric-subtext {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
         .results-analysis-panel .metric-card .metric-name {
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             font-size: 13px;
             color: #B8C5D6;
             margin-bottom: 8px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
         .results-analysis-panel .metric-card .metric-value {
             font-family: 'Space Grotesk', sans-serif;
@@ -2092,13 +2098,6 @@
             font-size: 28px;
             color: #ffffff;
             letter-spacing: -0.5px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .results-analysis-panel .metric-card .metric-target,
-        .results-analysis-panel .metric-card .metric-subtext {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
         .results-analysis-panel .metric-card .metric-target {
             font-family: 'Inter', sans-serif;
