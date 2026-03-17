@@ -1426,8 +1426,11 @@
         .results-split-container {
             display: none;
             max-width: 1400px;
+            width: 100%;
             margin: 0 auto;
             padding: 40px 20px;
+            overflow-x: hidden;
+            box-sizing: border-box;
         }
 
         .results-split-container.active {
@@ -1461,9 +1464,12 @@
             display: flex;
             flex-direction: column;
             gap: 0;
+            overflow-x: hidden;
             overflow-y: auto;
             scrollbar-width: none;
             -ms-overflow-style: none;
+            max-width: 100%;
+            min-width: 0;
         }
         .results-analysis-panel::-webkit-scrollbar {
             display: none;
@@ -1627,12 +1633,14 @@
         /* New results layout: overall summary + tabbed frames */
         .results-overall-summary-card {
             width: 100%;
+            max-width: 100%;
             margin-bottom: 32px;
             padding-bottom: 28px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
             gap: 20px;
+            min-width: 0;
         }
         .results-overall-summary-row {
             display: grid;
@@ -1692,51 +1700,26 @@
             text-align: left;
         }
         .results-summary-read-more:hover { text-decoration: underline; }
-        .raw-measurements-wrap {
-            margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .raw-measurements-toggle {
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            color: rgba(184, 197, 214, 0.6);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px 0;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .raw-measurements-toggle:hover { color: rgba(184, 197, 214, 0.9); }
-        .raw-measurements-toggle .arrow { display: inline-block; transition: transform 0.2s ease; }
-        .raw-measurements-wrap.expanded .raw-measurements-toggle .arrow { transform: rotate(180deg); }
-        .raw-measurements-grid {
-            display: none;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px 20px;
-            margin-top: 12px;
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            color: rgba(184, 197, 214, 0.7);
-        }
-        .raw-measurements-wrap.expanded .raw-measurements-grid { display: grid; }
-        .raw-measurements-grid .raw-label { color: rgba(184, 197, 214, 0.5); }
-        .raw-measurements-grid .raw-val { color: rgba(184, 197, 214, 0.85); }
         .results-tab-two-col {
             display: grid;
             grid-template-columns: 45% 1fr;
             gap: 28px;
             align-items: start;
+            max-width: 100%;
+            min-width: 0;
         }
         .results-frame-col {
             position: sticky;
             top: 20px;
+            max-width: 100%;
+            min-width: 0;
         }
         .results-frame-img {
+            max-width: 100%;
+            max-height: 300px;
             width: 100%;
             height: auto;
+            object-fit: contain;
             border-radius: 16px;
             border: 2px solid rgba(30, 94, 255, 0.4);
             display: block;
@@ -1746,6 +1729,8 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            max-width: 100%;
+            min-width: 0;
         }
         .results-overall-label {
             font-family: 'Space Grotesk', sans-serif;
@@ -1764,6 +1749,8 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
+            max-width: 100%;
+            min-width: 0;
         }
         .results-coaching-tip-card {
             background: rgba(30, 94, 255, 0.1);
@@ -2056,6 +2043,10 @@
             animation: resultsFadeIn 0.5s ease-out both;
             position: relative;
             transition: filter 0.2s ease, background 0.2s ease;
+            min-height: 72px;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
         .results-analysis-panel .metric-card:hover {
             filter: brightness(1.08);
@@ -2092,6 +2083,8 @@
             font-size: 13px;
             color: #B8C5D6;
             margin-bottom: 8px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .results-analysis-panel .metric-card .metric-value {
             font-family: 'Space Grotesk', sans-serif;
@@ -2099,6 +2092,13 @@
             font-size: 28px;
             color: #ffffff;
             letter-spacing: -0.5px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .results-analysis-panel .metric-card .metric-target,
+        .results-analysis-panel .metric-card .metric-subtext {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .results-analysis-panel .metric-card .metric-target {
             font-family: 'Inter', sans-serif;
@@ -5356,28 +5356,21 @@
 
                 // TAB 1 - SETUP
                 const spineAngleVal = setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : (addr.spine_angle != null ? addr.spine_angle + '°' : 'N/A');
-                const spineAngleSub = setupSpineAngle != null ? 'MediaPipe: ' + Number(setupSpineAngle).toFixed(1) + '°' : (addr.spine_angle != null ? '~' + addr.spine_angle + '° estimated' : '');
-                const kneeFlexSub = addr.knee_flex_degrees != null ? '~' + addr.knee_flex_degrees + '° estimated' : (setupKneeFlex != null ? 'MediaPipe: ' + Number(setupKneeFlex).toFixed(1) + '°' : '');
+                const shoulderLevelSub = setupShoulderLevel != null ? 'diff: ' + Number(setupShoulderLevel).toFixed(3) : '';
                 html += `<div class="tab-panel active" id="tab-setup" role="tabpanel"><div class="results-tab-two-col">`;
                 html += `<div class="results-frame-col"><img class="results-frame-img" src="data:image/jpeg;base64,${addressFrameB64}" alt="Address position" /></div>`;
                 html += `<div class="results-metrics-col">`;
                 const setupLabel = (addr.overall_setup != null) ? escapeHtml(addr.overall_setup) : 'Setup';
                 html += `<div class="results-overall-label ${getTierClass(addr.overall_setup)}"><span aria-hidden="true">✦</span> ${setupLabel}</div>`;
                 html += `<div class="results-metrics-grid-claude">`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.spine_assessment)}"><button type="button" class="metric-info-btn" data-metric-key="setupSpineAngle" aria-label="More info">ⓘ</button><div class="metric-name">Spine Angle</div><div class="metric-value">${escapeHtml(spineAngleVal)}</div>${spineAngleSub ? `<div class="metric-subtext">${escapeHtml(spineAngleSub)}</div>` : ''}</div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.knee_flex)}"><button type="button" class="metric-info-btn" data-metric-key="setupKneeFlex" aria-label="More info">ⓘ</button><div class="metric-name">Knee Flex</div><div class="metric-value">${escapeHtml(addr.knee_flex || 'N/A')}</div>${kneeFlexSub ? `<div class="metric-subtext">${escapeHtml(kneeFlexSub)}</div>` : ''}</div>`;
-                html += `<div class="metric-card ${getStatusFromClaude(addr.shoulder_level)}"><button type="button" class="metric-info-btn" data-metric-key="setupShoulderLevel" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Level</div><div class="metric-value">${escapeHtml(addr.shoulder_level || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.spine_assessment)}"><button type="button" class="metric-info-btn" data-metric-key="setupSpineAngle" aria-label="More info">ⓘ</button><div class="metric-name">Spine Angle</div><div class="metric-value">${escapeHtml(spineAngleVal)}</div><div class="metric-subtext">MediaPipe measured</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.knee_flex)}"><button type="button" class="metric-info-btn" data-metric-key="setupKneeFlex" aria-label="More info">ⓘ</button><div class="metric-name">Knee Flex</div><div class="metric-value">${escapeHtml(addr.knee_flex || 'N/A')}</div>${setupKneeFlex != null ? `<div class="metric-subtext">${Number(setupKneeFlex).toFixed(1)}°</div>` : ''}</div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.shoulder_level)}"><button type="button" class="metric-info-btn" data-metric-key="setupShoulderLevel" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Level</div><div class="metric-value">${escapeHtml(addr.shoulder_level || 'N/A')}</div>${shoulderLevelSub ? `<div class="metric-subtext">${escapeHtml(shoulderLevelSub)}</div>` : ''}</div>`;
                 html += `<div class="metric-card ${getStatusFromClaude(addr.posture)}"><div class="metric-name">Posture</div><div class="metric-value">${escapeHtml(addr.posture || 'N/A')}</div></div>`;
                 html += `<div class="metric-card ${getStatusFromClaude(addr.weight_distribution)}"><div class="metric-name">Weight Distribution</div><div class="metric-value">${escapeHtml(addr.weight_distribution || 'N/A')}</div></div>`;
                 html += `</div>`;
                 if (addr.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(addr.coaching_note)}</span></div>`;
                 html += `<button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>`;
-                html += `<div class="raw-measurements-wrap"><button type="button" class="raw-measurements-toggle" aria-expanded="false">Raw Measurements <span class="arrow">▼</span></button><div class="raw-measurements-grid">`;
-                html += `<span class="raw-label">Spine angle</span><span class="raw-val">${setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">Knee flex</span><span class="raw-val">${setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">Shoulder level</span><span class="raw-val">${setupShoulderLevel != null ? Number(setupShoulderLevel).toFixed(4) : '—'}</span>`;
-                html += `<span class="raw-label">Hip hinge</span><span class="raw-val">${setupHipHinge != null ? Number(setupHipHinge).toFixed(4) : '—'}</span>`;
-                html += `</div></div>`;
                 html += `</div></div></div>`;
 
                 // TAB 2 - MECHANICS
@@ -5391,9 +5384,9 @@
                 const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
                 html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
                 html += `<div class="results-metrics-grid-claude">`;
-                html += `<div class="metric-card ${hipRotationStatus}"><button type="button" class="metric-info-btn" data-metric-key="hipBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Hip Rotation</div><div class="metric-value">${escapeHtml(hipAssessmentLabel)}</div><div class="metric-subtext">${backswingHipRotation != null ? 'MediaPipe: ' + Number(backswingHipRotation).toFixed(1) + '°' : '—'}</div></div>`;
-                html += `<div class="metric-card ${shoulderRotationStatus}"><button type="button" class="metric-info-btn" data-metric-key="shoulderBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Rotation</div><div class="metric-value">${escapeHtml(shoulderAssessmentLabel)}</div><div class="metric-subtext">${backswingShoulderRotation != null ? 'MediaPipe: ' + Number(backswingShoulderRotation).toFixed(1) + '°' : '—'}</div></div>`;
-                html += `<div class="metric-card"><button type="button" class="metric-info-btn" data-metric-key="xFactor" aria-label="More info">ⓘ</button><div class="metric-name">X-Factor</div><div class="metric-value">${formatAngle(xFactor)}</div><div class="metric-subtext">shoulder − hip separation</div></div>`;
+                html += `<div class="metric-card ${hipRotationStatus}"><button type="button" class="metric-info-btn" data-metric-key="hipBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Hip Rotation</div><div class="metric-value">${escapeHtml(hipAssessmentLabel)}</div><div class="metric-subtext">${backswingHipRotation != null ? Number(backswingHipRotation).toFixed(1) + '° measured' : '—'}</div></div>`;
+                html += `<div class="metric-card ${shoulderRotationStatus}"><button type="button" class="metric-info-btn" data-metric-key="shoulderBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Rotation</div><div class="metric-value">${escapeHtml(shoulderAssessmentLabel)}</div><div class="metric-subtext">${backswingShoulderRotation != null ? Number(backswingShoulderRotation).toFixed(1) + '° measured' : '—'}</div></div>`;
+                html += `<div class="metric-card"><button type="button" class="metric-info-btn" data-metric-key="xFactor" aria-label="More info">ⓘ</button><div class="metric-name">X-Factor</div><div class="metric-value">${formatAngle(xFactor)}</div><div class="metric-subtext">shoulder-hip separation</div></div>`;
                 html += `<div class="metric-card ${getStatusFromClaude(back.hip_shoulder_separation)}"><div class="metric-name">Hip/Shoulder Separation</div><div class="metric-value">${escapeHtml(back.hip_shoulder_separation || 'N/A')}</div></div>`;
                 html += `<div class="metric-card ${getStatusFromClaude(back.left_arm)}"><div class="metric-name">Left Arm</div><div class="metric-value">${escapeHtml(back.left_arm || 'N/A')}</div></div>`;
                 html += `<div class="metric-card ${getStatusFromClaude(back.weight_transfer)}"><div class="metric-name">Weight Transfer</div><div class="metric-value">${escapeHtml(back.weight_transfer || 'N/A')}</div></div>`;
@@ -5401,12 +5394,6 @@
                 html += `</div>`;
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
                 html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach →</button>`;
-                html += `<div class="raw-measurements-wrap"><button type="button" class="raw-measurements-toggle" aria-expanded="false">Raw Measurements <span class="arrow">▼</span></button><div class="raw-measurements-grid">`;
-                html += `<span class="raw-label">Hip rotation (backswing)</span><span class="raw-val">${backswingHipRotation != null ? Number(backswingHipRotation).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">Shoulder rotation (backswing)</span><span class="raw-val">${backswingShoulderRotation != null ? Number(backswingShoulderRotation).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">X-Factor</span><span class="raw-val">${xFactor != null ? Number(xFactor).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">Spine angle (address)</span><span class="raw-val">${spineAngleAddress != null ? Number(spineAngleAddress).toFixed(1) + '°' : '—'}</span>`;
-                html += `</div></div>`;
                 html += `</div></div></div>`;
 
                 // TAB 3 - IMPACT
@@ -5423,12 +5410,6 @@
                 html += `<div class="metric-card ${getStatusFromClaude(imp.weight_transfer)}"><div class="metric-name">Weight Transfer</div><div class="metric-value">${escapeHtml(imp.weight_transfer || 'N/A')}</div></div>`;
                 html += `</div>`;
                 if (imp.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(imp.coaching_note)}</span></div>`;
-                html += `<div class="raw-measurements-wrap"><button type="button" class="raw-measurements-toggle" aria-expanded="false">Raw Measurements <span class="arrow">▼</span></button><div class="raw-measurements-grid">`;
-                html += `<span class="raw-label">Hip rotation (impact)</span><span class="raw-val">${impactHipRotation != null ? Number(impactHipRotation).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">Shoulder rotation (impact)</span><span class="raw-val">${impactShoulderRotation != null ? Number(impactShoulderRotation).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">Spine angle (impact)</span><span class="raw-val">${spineAngleImpact != null ? Number(spineAngleImpact).toFixed(1) + '°' : '—'}</span>`;
-                html += `<span class="raw-label">Spine angle change</span><span class="raw-val">${spineAngleChange != null ? Number(spineAngleChange).toFixed(1) + '°' : '—'}</span>`;
-                html += `</div></div>`;
                 html += `</div></div></div>`;
 
                 html += `</div>`;
@@ -5646,15 +5627,6 @@
                     this.textContent = expanded ? 'Read less' : 'Read more';
                 });
             });
-            resultsAnalysisPanel.querySelectorAll('.raw-measurements-toggle').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    const wrap = this.closest('.raw-measurements-wrap');
-                    if (!wrap) return;
-                    const expanded = wrap.classList.toggle('expanded');
-                    this.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-                });
-            });
-            
             // Show split view
             resultsSplitContainer.classList.add('active');
             
