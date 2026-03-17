@@ -137,8 +137,9 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
         if spine_angle is not None:
             cv2.putText(frame, f"{spine_angle:.0f}\u00b0", (hip_mid[0] + 10, hip_mid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, GREEN, 2)
 
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    _, buf = cv2.imencode('.jpg', rgb)
+    # Convert BGR to RGB before encoding to avoid orange/red tint in frontend
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    _, buf = cv2.imencode('.jpg', frame)
     return base64.b64encode(buf.tobytes()).decode('utf-8')
 
 
@@ -594,13 +595,17 @@ def analyze_video_with_mediapipe(video_path):
 
         # Extract key frames as images with skeleton overlay and add to response
         spine_angle_backswing = calculate_spine_angle(key_frames['backswing']) if key_frames['backswing'] else None
+        print(f"[Frame extraction] address_frame={address_frame_idx}, backswing_frame={backswing_frame_idx}, impact_frame={impact_frame_idx}")
         try:
+            # address_frame_image from frame index address_frame_idx
             analysis['address_frame_image'] = _extract_and_annotate_frame(
                 video_path, address_frame_idx, key_frames['address'], spine_angle_address
             )
+            # backswing_frame_image from frame index backswing_frame_idx
             analysis['backswing_frame_image'] = _extract_and_annotate_frame(
                 video_path, backswing_frame_idx, key_frames['backswing'], spine_angle_backswing
             )
+            # impact_frame_image from frame index impact_frame_idx
             analysis['impact_frame_image'] = _extract_and_annotate_frame(
                 video_path, impact_frame_idx, key_frames['impact'], spine_angle_impact
             )
