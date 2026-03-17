@@ -137,8 +137,6 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
         if spine_angle is not None:
             cv2.putText(frame, f"{spine_angle:.0f}\u00b0", (hip_mid[0] + 10, hip_mid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, GREEN, 2)
 
-    # Convert BGR to RGB before encoding to avoid orange/red tint in frontend
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     _, buf = cv2.imencode('.jpg', frame)
     return base64.b64encode(buf.tobytes()).decode('utf-8')
 
