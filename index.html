@@ -1611,6 +1611,108 @@
             background: #1E5EFF;
             color: #ffffff;
         }
+
+        /* New results layout: overall summary + tabbed frames */
+        .results-overall-summary-card {
+            width: 100%;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .results-overall-strength {
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+        .results-overall-strength .summary-icon-text { font-size: 18px; color: #22c55e; }
+        .results-overall-strength .summary-body { font-size: 15px; color: #B8C5D6; line-height: 1.5; flex: 1; }
+        .results-overall-focus {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .results-overall-focus .summary-icon-text { font-size: 18px; color: #f59e0b; }
+        .results-overall-focus .summary-body { font-size: 15px; color: #B8C5D6; line-height: 1.5; flex: 1; }
+        .results-overall-summary-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: rgba(184, 197, 214, 0.9);
+            line-height: 1.6;
+        }
+        .results-tab-two-col {
+            display: grid;
+            grid-template-columns: 45% 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+        .results-frame-col {
+            position: sticky;
+            top: 20px;
+        }
+        .results-frame-img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            border: 2px solid rgba(30, 94, 255, 0.4);
+            display: block;
+            background: #0A2540;
+        }
+        .results-metrics-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .results-overall-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .results-overall-label.tier-elite { color: #22c55e; }
+        .results-overall-label.tier-solid { color: #1E5EFF; }
+        .results-overall-label.tier-needs { color: #ef4444; }
+        .results-metrics-grid-claude {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .results-coaching-tip-card {
+            background: rgba(30, 94, 255, 0.1);
+            border: 1px solid rgba(30, 94, 255, 0.25);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: #B8C5D6;
+            line-height: 1.5;
+        }
+        .results-coaching-tip-card .tip-icon { font-size: 20px; color: #1E5EFF; }
+        @media (max-width: 968px) {
+            .results-tab-two-col {
+                grid-template-columns: 1fr;
+            }
+            .results-frame-col { position: static; }
+            .results-metrics-grid-claude {
+                grid-template-columns: 1fr;
+            }
+        }
         @media (max-width: 600px) {
             .setup-metrics-grid {
                 grid-template-columns: 1fr;
@@ -5068,7 +5170,27 @@
             const strengths = diagnosis.strengths || [];
             const priorityIssue = diagnosis.priority_issue;
             const summary = diagnosis.summary;
-            
+            const claude = analysis.claude_vision_analysis || null;
+            const addressFrameB64 = analysis.address_frame_image || null;
+            const backswingFrameB64 = analysis.backswing_frame_image || null;
+            const impactFrameB64 = analysis.impact_frame_image || null;
+
+            // Helpers for Claude-based UI
+            const getTierClass = (val) => {
+                if (!val) return 'tier-solid';
+                const v = String(val).toLowerCase();
+                if (v.includes('elite')) return 'tier-elite';
+                if (v.includes('solid')) return 'tier-solid';
+                return 'tier-needs';
+            };
+            const getStatusFromClaude = (val) => {
+                if (!val) return '';
+                const v = String(val).toLowerCase();
+                if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady') return 'status-good';
+                if (v.includes('solid') || v.includes('slightly') || v === 'minimal') return 'status-moderate';
+                return 'status-needs-attention';
+            };
+
             // Extract rotation delta values (change from address, not absolute angles)
             const backswingHipRotation = analysis.hip_rotation_backswing || analysis.backswing_hip_rotation;
             const backswingShoulderRotation = analysis.shoulder_rotation_backswing || analysis.backswing_shoulder_rotation;
@@ -5124,9 +5246,89 @@
             };
             const hasIssues = issuesDetected.length > 0;
             const secondaryIssues = priorityIssue ? issuesDetected.filter(issue => issue.issue !== priorityIssue.issue) : issuesDetected;
-            
+
             let html = '';
-            html += `<div class="results-analysis-header">
+            const useClaudeLayout = claude && claude.address && claude.backswing && claude.impact && claude.overall && addressFrameB64 && backswingFrameB64 && impactFrameB64;
+
+            if (useClaudeLayout) {
+                // ——— NEW: Claude Vision + annotated frames layout (3 tabs) ———
+                const o = claude.overall;
+                const addr = claude.address;
+                const back = claude.backswing;
+                const imp = claude.impact;
+                html += `<div class="results-analysis-header">
+                    <h2>Your Swing Analysis</h2>
+                    <div class="results-tabs" role="tablist">
+                        <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
+                        <button type="button" class="tab-btn" data-tab="mechanics" role="tab" aria-selected="false">Mechanics</button>
+                        <button type="button" class="tab-btn" data-tab="impact" role="tab" aria-selected="false">Impact</button>
+                    </div>
+                </div>`;
+                if (o) {
+                    html += `<div class="results-overall-summary-card">`;
+                    if (o.biggest_strength) html += `<div class="results-overall-strength"><span class="summary-icon-text" aria-hidden="true">✓</span><span class="summary-body">${escapeHtml(o.biggest_strength)}</span></div>`;
+                    if (o.primary_focus) html += `<div class="results-overall-focus"><span class="summary-icon-text" aria-hidden="true">⚠</span><span class="summary-body">${escapeHtml(o.primary_focus)}</span></div>`;
+                    if (o.summary) html += `<div class="results-overall-summary-text">${escapeHtml(o.summary)}</div>`;
+                    html += `</div>`;
+                }
+                html += `<div class="results-tab-content">`;
+
+                // TAB 1 - SETUP
+                html += `<div class="tab-panel active" id="tab-setup" role="tabpanel"><div class="results-tab-two-col">`;
+                html += `<div class="results-frame-col"><img class="results-frame-img" src="data:image/jpeg;base64,${addressFrameB64}" alt="Address position" /></div>`;
+                html += `<div class="results-metrics-col">`;
+                const setupLabel = (addr.overall_setup != null) ? escapeHtml(addr.overall_setup) : 'Setup';
+                html += `<div class="results-overall-label ${getTierClass(addr.overall_setup)}"><span aria-hidden="true">✦</span> ${setupLabel}</div>`;
+                html += `<div class="results-metrics-grid-claude">`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.spine_assessment)}"><button type="button" class="metric-info-btn" data-metric-key="setupSpineAngle" aria-label="More info">ⓘ</button><div class="metric-name">Spine Angle</div><div class="metric-value">${escapeHtml(addr.spine_angle != null ? addr.spine_angle + '°' : 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.knee_flex)}"><button type="button" class="metric-info-btn" data-metric-key="setupKneeFlex" aria-label="More info">ⓘ</button><div class="metric-name">Knee Flex</div><div class="metric-value">${escapeHtml(addr.knee_flex != null ? addr.knee_flex + (addr.knee_flex_degrees != null ? ' (' + addr.knee_flex_degrees + '°)' : '') : 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.shoulder_level)}"><button type="button" class="metric-info-btn" data-metric-key="setupShoulderLevel" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Level</div><div class="metric-value">${escapeHtml(addr.shoulder_level || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.posture)}"><div class="metric-name">Posture</div><div class="metric-value">${escapeHtml(addr.posture || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(addr.weight_distribution)}"><div class="metric-name">Weight Distribution</div><div class="metric-value">${escapeHtml(addr.weight_distribution || 'N/A')}</div></div>`;
+                html += `</div>`;
+                if (addr.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(addr.coaching_note)}</span></div>`;
+                html += `<button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>`;
+                html += `</div></div></div>`;
+
+                // TAB 2 - MECHANICS
+                html += `<div class="tab-panel" id="tab-mechanics" role="tabpanel"><div class="results-tab-two-col">`;
+                html += `<div class="results-frame-col"><img class="results-frame-img" src="data:image/jpeg;base64,${backswingFrameB64}" alt="Backswing top" /></div>`;
+                html += `<div class="results-metrics-col">`;
+                const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
+                html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
+                html += `<div class="results-metrics-grid-claude">`;
+                html += `<div class="metric-card ${getMetricStatusClass(backswingHipRotation, [30, 60], [25, 65])}"><button type="button" class="metric-info-btn" data-metric-key="hipBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Hip Rotation</div><div class="metric-value">${formatAngle(backswingHipRotation)}</div><div class="metric-target">${escapeHtml(back.hip_rotation != null ? 'Claude: ' + back.hip_rotation : 'Target: 30–60°')}</div></div>`;
+                html += `<div class="metric-card ${getMetricStatusClass(backswingShoulderRotation, [80, 110], [70, 120])}"><button type="button" class="metric-info-btn" data-metric-key="shoulderBackswing" aria-label="More info">ⓘ</button><div class="metric-name">Shoulder Rotation</div><div class="metric-value">${formatAngle(backswingShoulderRotation)}</div><div class="metric-target">${escapeHtml(back.shoulder_rotation != null ? 'Claude: ' + back.shoulder_rotation + '°' : 'Target: 80–110°')}</div></div>`;
+                html += `<div class="metric-card"><button type="button" class="metric-info-btn" data-metric-key="xFactor" aria-label="More info">ⓘ</button><div class="metric-name">X-Factor</div><div class="metric-value">${formatAngle(xFactor)}</div><div class="metric-target">Shoulder − hip</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(back.hip_shoulder_separation)}"><div class="metric-name">Hip/Shoulder Separation</div><div class="metric-value">${escapeHtml(back.hip_shoulder_separation || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(back.left_arm)}"><div class="metric-name">Left Arm</div><div class="metric-value">${escapeHtml(back.left_arm || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(back.weight_transfer)}"><div class="metric-name">Weight Transfer</div><div class="metric-value">${escapeHtml(back.weight_transfer || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(back.spine_angle_maintained)}"><div class="metric-name">Spine Maintained</div><div class="metric-value">${escapeHtml(back.spine_angle_maintained || 'N/A')}</div></div>`;
+                html += `</div>`;
+                if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
+                html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach →</button>`;
+                html += `</div></div></div>`;
+
+                // TAB 3 - IMPACT
+                html += `<div class="tab-panel" id="tab-impact" role="tabpanel"><div class="results-tab-two-col">`;
+                html += `<div class="results-frame-col"><img class="results-frame-img" src="data:image/jpeg;base64,${impactFrameB64}" alt="Impact" /></div>`;
+                html += `<div class="results-metrics-col">`;
+                const impactLabel = (imp.overall_impact != null) ? escapeHtml(imp.overall_impact) : 'Impact';
+                html += `<div class="results-overall-label ${getTierClass(imp.overall_impact)}"><span aria-hidden="true">✦</span> ${impactLabel}</div>`;
+                html += `<div class="results-metrics-grid-claude">`;
+                html += `<div class="metric-card ${getStatusFromClaude(imp.hip_clearance)}"><div class="metric-name">Hip Clearance</div><div class="metric-value">${escapeHtml(imp.hip_clearance || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(imp.shoulder_position)}"><div class="metric-name">Shoulder Position</div><div class="metric-value">${escapeHtml(imp.shoulder_position || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(imp.spine_angle_maintained)}"><div class="metric-name">Spine Maintained</div><div class="metric-value">${escapeHtml(imp.spine_angle_maintained || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(imp.head_position)}"><div class="metric-name">Head Position</div><div class="metric-value">${escapeHtml(imp.head_position || 'N/A')}</div></div>`;
+                html += `<div class="metric-card ${getStatusFromClaude(imp.weight_transfer)}"><div class="metric-name">Weight Transfer</div><div class="metric-value">${escapeHtml(imp.weight_transfer || 'N/A')}</div></div>`;
+                html += `</div>`;
+                if (imp.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(imp.coaching_note)}</span></div>`;
+                html += `</div></div></div>`;
+
+                html += `</div>`;
+            } else {
+                // ——— FALLBACK: existing display when no Claude/frames ———
+                html += `<div class="results-analysis-header">
                 <h2>Your Swing Analysis</h2>
                 <div class="results-tabs" role="tablist">
                     <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
@@ -5294,6 +5496,8 @@
             </div>`;
             
             html += `</div>`;
+            }
+
             resultsAnalysisPanel.innerHTML = html;
             
             // Tab switching
@@ -5317,7 +5521,7 @@
             const viewMechanicsBtn = resultsAnalysisPanel.querySelector('.view-mechanics-btn');
             if (viewMechanicsBtn) {
                 viewMechanicsBtn.addEventListener('click', function() {
-                    switchToTab('backswing');
+                    switchToTab(useClaudeLayout ? 'mechanics' : 'backswing');
                 });
             }
             resultsAnalysisPanel.querySelectorAll('.ask-personal-coach-btn').forEach(function(btn) {
