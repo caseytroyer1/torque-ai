@@ -1423,25 +1423,34 @@
             flex: 1;
         }
 
-        /* Split View Results — full viewport width (escapes .swing-coach-container 1000px cap) */
-        .results-split-container {
-            display: none;
+        /* Full-bleed only when results visible (avoids empty 100vw scrollbar) */
+        .results-split-viewport-wrap {
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            box-sizing: border-box;
+        }
+        .results-split-viewport-wrap:has(.results-split-container.active) {
             width: 100vw;
-            max-width: none;
+            max-width: 100vw;
             margin-left: calc(50% - 50vw);
             margin-right: calc(50% - 50vw);
-            padding: 24px;
+        }
+
+        .results-split-container {
+            display: none;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 48px;
             box-sizing: border-box;
-            border-right: none;
-            border-left: none;
         }
 
         .results-split-container.active {
             display: flex;
-            flex-direction: row;
             gap: 32px;
             align-items: flex-start;
-            width: 100%;
             animation: fadeIn 0.4s ease-out;
         }
 
@@ -1475,7 +1484,7 @@
             flex-direction: column;
             gap: 0;
             flex: 1;
-            min-width: 0;
+            min-width: 600px;
             max-width: none;
             overflow: visible;
             border-right: none;
@@ -1832,7 +1841,15 @@
             line-height: 1.5;
         }
         .results-coaching-tip-card .tip-icon { font-size: 20px; color: #1E5EFF; }
+        @media (max-width: 900px) {
+            .results-analysis-panel {
+                min-width: 0;
+            }
+        }
         @media (max-width: 768px) {
+            .results-split-container {
+                padding: 24px 20px;
+            }
             .results-split-container.active {
                 flex-direction: column;
                 align-items: stretch;
@@ -3793,7 +3810,8 @@
                         </div>
                     </div>
 
-                    <!-- Split View Results Container -->
+                    <!-- Split View Results (viewport wrap centers max 1400px row) -->
+                    <div class="results-split-viewport-wrap">
                     <div class="results-split-container" id="resultsSplitContainer">
                         <div class="results-video-panel">
                             <div class="results-video-wrapper">
@@ -3803,6 +3821,7 @@
                         <div class="results-analysis-panel" id="resultsAnalysisPanel">
                             <!-- Content will be dynamically inserted here -->
                         </div>
+                    </div>
                     </div>
 
                     <!-- Results Section -->
