@@ -564,6 +564,7 @@
             background: #0A2540;
             min-height: calc(100vh - 72px);
             padding: 48px 24px 80px;
+            overflow-x: clip;
         }
 
         .swing-coach-container {
@@ -1422,40 +1423,47 @@
             flex: 1;
         }
 
-        /* Split View Results */
+        /* Split View Results — full page width (breaks out of narrow container) */
         .results-split-container {
             display: none;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 40px 20px;
-            overflow-x: hidden;
+            width: 100vw;
+            max-width: 100%;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            padding: 40px clamp(20px, 4vw, 40px);
             box-sizing: border-box;
+            border-right: none;
+            border-left: none;
         }
 
         .results-split-container.active {
-            display: grid;
-            grid-template-columns: 40% 60%;
-            gap: 40px;
+            display: flex;
+            flex-direction: row;
+            gap: 32px;
+            align-items: flex-start;
             animation: fadeIn 0.4s ease-out;
         }
 
         .results-video-panel {
             position: sticky;
             top: 100px;
-            height: fit-content;
+            flex: 0 0 300px;
+            width: 300px;
+            max-width: 300px;
+            min-width: 0;
         }
 
         .results-video-wrapper {
             background: rgba(26, 58, 82, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             backdrop-filter: blur(10px);
         }
 
         .results-video {
             width: 100%;
+            max-width: 100%;
             border-radius: 12px;
             display: block;
         }
@@ -1464,9 +1472,11 @@
             display: flex;
             flex-direction: column;
             gap: 0;
-            overflow: visible;
-            max-width: 100%;
+            flex: 1;
             min-width: 0;
+            max-width: none;
+            overflow: visible;
+            border-right: none;
         }
         .results-analysis-header {
             margin-bottom: 20px;
@@ -1481,10 +1491,10 @@
         }
         .results-tabs {
             display: flex;
+            flex-wrap: wrap;
             gap: 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            overflow-x: visible;
         }
         .results-tabs .tab-btn {
             font-family: 'Inter', sans-serif;
@@ -1516,7 +1526,8 @@
         }
         .results-tab-content {
             padding-top: 20px;
-            min-height: 200px;
+            min-width: 0;
+            max-width: 100%;
         }
         .results-analysis-panel .metric-card .metric-subtext {
             font-family: 'Inter', sans-serif;
@@ -1644,6 +1655,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
+            min-width: 0;
         }
         @media (max-width: 768px) {
             .results-overall-summary-row {
@@ -1653,31 +1665,38 @@
         .results-overall-strength {
             background: rgba(34, 197, 94, 0.12);
             border: 1px solid rgba(34, 197, 94, 0.35);
-            border-radius: 16px;
-            padding: 20px 24px;
+            border-radius: 10px;
+            padding: 16px;
             display: flex;
             align-items: flex-start;
             gap: 12px;
             font-family: 'Inter', sans-serif;
+            min-width: 0;
         }
         .results-overall-strength .summary-icon-text { font-size: 18px; color: #22c55e; }
-        .results-overall-strength .summary-body { font-size: 15px; color: #B8C5D6; line-height: 1.5; flex: 1; }
+        .results-overall-strength .summary-body { font-size: 15px; color: #B8C5D6; line-height: 1.5; flex: 1; min-width: 0; max-width: 100%; word-break: break-word; }
         .results-overall-focus {
             background: rgba(245, 158, 11, 0.12);
             border: 1px solid rgba(245, 158, 11, 0.35);
-            border-radius: 16px;
-            padding: 20px 24px;
+            border-radius: 10px;
+            padding: 16px;
             display: flex;
             align-items: flex-start;
             gap: 12px;
+            min-width: 0;
         }
         .results-overall-focus .summary-icon-text { font-size: 18px; color: #f59e0b; }
-        .results-overall-focus .summary-body { font-size: 15px; color: #B8C5D6; line-height: 1.5; flex: 1; }
+        .results-overall-focus .summary-body { font-size: 15px; color: #B8C5D6; line-height: 1.5; flex: 1; min-width: 0; max-width: 100%; word-break: break-word; }
         .results-overall-summary-text {
             font-family: 'Inter', sans-serif;
             font-size: 15px;
             color: rgba(184, 197, 214, 0.9);
             line-height: 1.6;
+            max-width: 100%;
+            white-space: normal;
+            overflow: hidden;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
         .results-overall-summary-text.summary-clamped {
             display: -webkit-box;
@@ -1700,8 +1719,8 @@
         .results-summary-read-more:hover { text-decoration: underline; }
         .results-tab-two-col {
             display: grid;
-            grid-template-columns: 45% 1fr;
-            gap: 28px;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
             align-items: start;
             max-width: 100%;
             min-width: 0;
@@ -1709,17 +1728,21 @@
         .results-frame-col {
             position: sticky;
             top: 20px;
+            max-width: 280px;
+            min-width: 200px;
+            width: 100%;
+        }
+        .results-frame-col .results-frame-img {
             max-width: 100%;
-            min-width: 0;
+            width: 100%;
         }
         .results-frame-img {
-            max-width: 100%;
-            max-height: 300px;
+            max-width: 280px;
             width: 100%;
             height: auto;
             object-fit: contain;
-            border-radius: 16px;
-            border: 2px solid rgba(30, 94, 255, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(30, 94, 255, 0.35);
             display: block;
             background: #0A2540;
         }
@@ -1727,8 +1750,52 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            max-width: 100%;
+            flex: 1;
             min-width: 0;
+            max-width: 100%;
+        }
+        .results-tab-metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            min-width: 0;
+        }
+        .results-metric-card {
+            background: #112240;
+            border-radius: 10px;
+            padding: 14px 16px;
+            min-width: 0;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .results-metric-card .results-metric-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8892b0;
+            margin-bottom: 6px;
+        }
+        .results-metric-card .results-metric-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+            line-height: 1.25;
+            word-break: break-word;
+        }
+        .results-metric-card .results-metric-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            color: #8892b0;
+            line-height: 1.35;
+            word-break: break-word;
+        }
+        .results-metric-card .metric-info-btn {
+            top: 10px;
+            right: 10px;
         }
         .results-overall-label {
             font-family: 'Space Grotesk', sans-serif;
@@ -1763,25 +1830,34 @@
             line-height: 1.5;
         }
         .results-coaching-tip-card .tip-icon { font-size: 20px; color: #1E5EFF; }
-        @media (min-width: 768px) {
-            .results-metrics-grid-claude,
-            .results-analysis-panel .metrics-dashboard,
-            .setup-metrics-grid {
-                grid-template-columns: repeat(2, minmax(140px, 1fr));
+        @media (max-width: 768px) {
+            .results-split-container.active {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 24px;
             }
-            .results-analysis-panel .metric-card {
-                padding: 14px;
-                min-width: 140px;
+            .results-video-panel {
+                position: relative;
+                top: 0;
+                width: 100%;
+                max-width: 100%;
+                flex: none;
             }
-            .results-analysis-panel .metric-card .metric-value {
-                font-size: 20px;
-            }
-        }
-        @media (max-width: 968px) {
             .results-tab-two-col {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
-            .results-frame-col { position: static; }
+            .results-frame-col {
+                position: static;
+                max-width: 100%;
+                min-width: 0;
+            }
+            .results-frame-img {
+                max-width: 100%;
+            }
+            .results-tab-metrics-grid {
+                grid-template-columns: 1fr;
+            }
             .results-metrics-grid-claude {
                 grid-template-columns: 1fr;
             }
@@ -2055,7 +2131,6 @@
             animation: resultsFadeIn 0.5s ease-out both;
             position: relative;
             transition: filter 0.2s ease, background 0.2s ease;
-            min-height: 72px;
             max-width: 100%;
             min-width: 0;
             box-sizing: border-box;
@@ -2350,17 +2425,6 @@
                 font-size: 24px;
             }
 
-            .results-split-container.active {
-                grid-template-columns: 1fr;
-                gap: 24px;
-                padding: 20px;
-            }
-
-            .results-video-panel {
-                position: relative;
-                top: 0;
-            }
-
             .quick-summary-card,
             .primary-focus-card {
                 padding: 24px;
@@ -2474,16 +2538,6 @@
 
             .summary-text {
                 font-size: 14px;
-            }
-
-            .results-split-container.active {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-
-            .results-video-panel {
-                position: relative;
-                top: 0;
             }
 
             .processing-content {
@@ -5260,8 +5314,6 @@
             const claude = analysis.claude_vision_analysis || null;
             const addressFrameB64 = analysis.address_frame_image || null;
             const backswingFrameB64 = analysis.backswing_frame_image || null;
-            const impactFrameB64 = analysis.impact_frame_image || null;
-
             // Helpers for Claude-based UI
             const getTierClass = (val) => {
                 if (!val) return 'tier-solid';
@@ -5286,18 +5338,13 @@
             };
             const metricCardHtml = (borderColor, name, value, subtext, infoKey) => {
                 const btn = infoKey ? `<button type="button" class="metric-info-btn" data-metric-key="${infoKey}" aria-label="More info">ⓘ</button>` : '';
-                const sub = subtext != null && subtext !== '' ? `<div style="font-size: 11px; color: #8892b0;">${escapeHtml(subtext)}</div>` : '<div style="font-size: 11px; color: #8892b0;">&nbsp;</div>';
-                return `<div style="background: #112240; border-radius: 10px; padding: 16px; border-left: 3px solid ${borderColor}; min-width: 0; position: relative;">${btn}<div style="font-size: 11px; color: #8892b0; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.08em;">${escapeHtml(name)}</div><div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 4px;">${escapeHtml(value)}</div>${sub}</div>`;
+                const sub = subtext != null && subtext !== '' ? `<div class="results-metric-sub">${escapeHtml(subtext)}</div>` : '<div class="results-metric-sub">&nbsp;</div>';
+                return `<div class="results-metric-card">${btn}<div class="results-metric-label">${escapeHtml(name)}</div><div class="results-metric-value">${escapeHtml(value)}</div>${sub}</div>`;
             };
 
             // Extract rotation delta values (change from address, not absolute angles)
             const backswingHipRotation = analysis.hip_rotation_backswing || analysis.backswing_hip_rotation;
             const backswingShoulderRotation = analysis.shoulder_rotation_backswing || analysis.backswing_shoulder_rotation;
-            const impactHipRotation = analysis.hip_rotation_impact || analysis.impact_hip_rotation;
-            const impactShoulderRotation = analysis.shoulder_rotation_impact || analysis.impact_shoulder_rotation;
-            const spineAngleAddress = analysis.spine_angle_address;
-            const spineAngleImpact = analysis.spine_angle_impact;
-            const spineAngleChange = analysis.spine_angle_change;
             
             const formatAngle = (angle) => {
                 if (angle === null || angle === undefined) return 'N/A';
@@ -5329,16 +5376,14 @@
             const o = claude && claude.overall ? claude.overall : null;
             const addr = claude && claude.address ? claude.address : {};
             const back = claude && claude.backswing ? claude.backswing : {};
-            const imp = claude && claude.impact ? claude.impact : {};
             const frameImg = (b64, alt) => (b64
                 ? `<img class="results-frame-img" src="data:image/jpeg;base64,${b64}" alt="${alt}" />`
-                : `<div class="results-frame-img" style="display:flex;align-items:center;justify-content:center;color:#8892b0;font-size:12px;min-height:120px;border:1px solid rgba(136,146,176,0.3);border-radius:10px;">Frame unavailable</div>`);
+                : `<div class="results-frame-img" style="display:flex;align-items:center;justify-content:center;color:#8892b0;font-size:12px;padding:24px;border:1px solid rgba(136,146,176,0.3);border-radius:10px;">Frame unavailable</div>`);
             html += `<div class="results-analysis-header">
                     <h2>Your Swing Analysis</h2>
                     <div class="results-tabs" role="tablist">
                         <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
                         <button type="button" class="tab-btn" data-tab="mechanics" role="tab" aria-selected="false">Mechanics</button>
-                        <button type="button" class="tab-btn" data-tab="impact" role="tab" aria-selected="false">Impact</button>
                     </div>
                 </div>`;
                 if (o) {
@@ -5364,7 +5409,7 @@
                 html += `<div class="results-metrics-col">`;
                 const setupLabel = (addr.overall_setup != null) ? escapeHtml(addr.overall_setup) : 'Setup';
                 html += `<div class="results-overall-label ${getTierClass(addr.overall_setup)}"><span aria-hidden="true">✦</span> ${setupLabel}</div>`;
-                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
+                html += `<div class="results-tab-metrics-grid">`;
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, 'MediaPipe measured', 'setupSpineAngle');
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', setupKneeFlex != null ? Number(setupKneeFlex).toFixed(1) + '°' : '', 'setupKneeFlex');
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', shoulderLevelSub || '', 'setupShoulderLevel');
@@ -5385,7 +5430,7 @@
                 html += `<div class="results-metrics-col">`;
                 const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
                 html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
-                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
+                html += `<div class="results-tab-metrics-grid">`;
                 html += metricCardHtml(getMetricBorderColor(hipRotationStatus), 'Hip Rotation', hipAssessmentLabel, backswingHipRotation != null ? Number(backswingHipRotation).toFixed(1) + '° measured' : '—', 'hipBackswing');
                 html += metricCardHtml(getMetricBorderColor(shoulderRotationStatus), 'Shoulder Rotation', shoulderAssessmentLabel, backswingShoulderRotation != null ? Number(backswingShoulderRotation).toFixed(1) + '° measured' : '—', 'shoulderBackswing');
                 html += metricCardHtml('#8892b0', 'X-Factor', formatAngle(xFactor), 'shoulder-hip separation', 'xFactor');
@@ -5396,22 +5441,6 @@
                 html += `</div>`;
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
                 html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach →</button>`;
-                html += `</div></div></div>`;
-
-                // TAB 3 - IMPACT
-                html += `<div class="tab-panel" id="tab-impact" role="tabpanel"><div class="results-tab-two-col">`;
-                html += `<div class="results-frame-col">${frameImg(impactFrameB64, 'Impact')}</div>`;
-                html += `<div class="results-metrics-col">`;
-                const impactLabel = (imp.overall_impact != null) ? escapeHtml(imp.overall_impact) : 'Impact';
-                html += `<div class="results-overall-label ${getTierClass(imp.overall_impact)}"><span aria-hidden="true">✦</span> ${impactLabel}</div>`;
-                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">`;
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.hip_clearance)), 'Hip Clearance', imp.hip_clearance || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.shoulder_position)), 'Shoulder Position', imp.shoulder_position || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.spine_angle_maintained)), 'Spine Maintained', imp.spine_angle_maintained || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.head_position)), 'Head Position', imp.head_position || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(imp.weight_transfer)), 'Weight Transfer', imp.weight_transfer || 'N/A', '', null);
-                html += `</div>`;
-                if (imp.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(imp.coaching_note)}</span></div>`;
                 html += `</div></div></div>`;
 
                 html += `</div>`;
