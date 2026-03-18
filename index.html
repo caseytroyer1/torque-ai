@@ -1792,10 +1792,10 @@
             font-family: 'Inter', sans-serif;
             font-size: 17px;
             font-weight: 600;
+            color: #ffffff;
             margin-bottom: 4px;
             line-height: 1.25;
             word-break: break-word;
-            text-transform: capitalize;
         }
         .results-metric-card .results-metric-sub {
             font-family: 'Inter', sans-serif;
@@ -5357,21 +5357,27 @@
                 if (sc === 'status-needs-attention') return '#ef4444';
                 return '#8892b0';
             };
-            function getValueColor(value) {
-                if (!value && value !== 0) return '#ffffff';
+            function getMetricCardBorderLeftColor(value) {
+                if (value == null || value === '') return '#8892b0';
                 const v = String(value).toLowerCase().trim();
-                if (v === 'n/a' || v === '—' || v === '-') return '#ffffff';
+                if (v === 'n/a' || v === '—' || v === '-') return '#8892b0';
                 if (v.includes('slightly') || v.includes('moderate') || v.includes('needs more') || v.includes('solid')) return '#f59e0b';
                 if (v.includes('needs work') || v.includes('needs attention') || v.includes('uneven') || v.includes('too') || v.includes('lost') || v.includes('poor') || v.includes('reversed')) return '#ef4444';
-                if (v.includes('good') || v.includes('appropriate') || v === 'yes' || v.includes('level') || v.includes('balanced') || v.includes('maintained') || v.includes('steady') || v.includes('straight') || v.includes('elite')) return '#22c55e';
-                return '#ffffff';
+                if (v.includes('good') || v.includes('appropriate') || v === 'yes' || v.includes('balanced') || v.includes('maintained') || v.includes('steady') || v.includes('straight') || v.includes('elite')) return '#22c55e';
+                return '#8892b0';
+            }
+            function formatMetricCardValueText(value) {
+                const s = value == null || value === '' ? 'N/A' : String(value);
+                if (s.length === 0) return 'N/A';
+                return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
             }
             const metricCardHtml = (borderColor, name, value, subtext, infoKey) => {
                 const btn = infoKey ? `<button type="button" class="metric-info-btn" data-metric-key="${infoKey}" aria-label="More info">ⓘ</button>` : '';
                 const sub = subtext != null && subtext !== '' ? `<div class="results-metric-sub">${escapeHtml(subtext)}</div>` : '<div class="results-metric-sub">&nbsp;</div>';
-                const displayVal = value == null || value === '' ? 'N/A' : String(value);
-                const valColor = getValueColor(displayVal);
-                return `<div class="results-metric-card">${btn}<div class="results-metric-label">${escapeHtml(name)}</div><div class="results-metric-value" style="color: ${valColor};">${escapeHtml(displayVal)}</div>${sub}</div>`;
+                const rawVal = value == null || value === '' ? 'N/A' : String(value);
+                const borderCol = getMetricCardBorderLeftColor(rawVal);
+                const displayText = formatMetricCardValueText(rawVal);
+                return `<div class="results-metric-card" style="border-left: 4px solid ${borderCol};">${btn}<div class="results-metric-label">${escapeHtml(name)}</div><div class="results-metric-value">${escapeHtml(displayText)}</div>${sub}</div>`;
             };
 
             // Extract rotation delta values (change from address, not absolute angles)
