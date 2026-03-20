@@ -4162,6 +4162,56 @@
         // Golf Hub: Daily Trivia (5/day, localStorage)
         var triviaApiBase = 'https://torque-ai-backend.onrender.com';
         var currentTrivia = null;
+        var lastTriviaSuggestedTopic = null;
+        var triviaTopics = [
+            'Masters Tournament history',
+            'PGA Tour records',
+            'golf equipment and technology',
+            'famous golf courses',
+            'Ryder Cup history',
+            'golf rules and etiquette',
+            'LPGA history',
+            'amateur golf',
+            'golf Olympics',
+            'British Open history',
+            'US Open history',
+            'famous golf shots',
+            'golf course architecture',
+            'golf scoring records',
+            'PGA Championship history',
+            'golf legends biography',
+            'modern PGA Tour players',
+            'golf training and technique',
+            'golf betting and odds history',
+            'golf TV and media history'
+        ];
+        function getTriviaAskedTopics() {
+            try {
+                var raw = localStorage.getItem('trivia_asked_topics');
+                if (!raw) return [];
+                var arr = JSON.parse(raw);
+                return Array.isArray(arr) ? arr : [];
+            } catch (e) { return []; }
+        }
+        function setTriviaAskedTopics(arr) {
+            localStorage.setItem('trivia_asked_topics', JSON.stringify(arr || []));
+        }
+        function pushTriviaAskedTopic(topic) {
+            if (!topic) return;
+            var t = String(topic).trim();
+            if (!t) return;
+            var a = getTriviaAskedTopics();
+            if (a.indexOf(t) === -1) a.push(t);
+            setTriviaAskedTopics(a);
+        }
+        function pickRandomTriviaCategory(asked) {
+            asked = asked || [];
+            var available = triviaTopics.filter(function(topic) { return asked.indexOf(topic) === -1; });
+            if (available.length === 0) {
+                available = triviaTopics.slice();
+            }
+            return available[Math.floor(Math.random() * available.length)];
+        }
         function getTriviaDate() {
             var d = new Date();
             return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -4175,6 +4225,7 @@
                 localStorage.setItem('trivia_date', today);
                 localStorage.setItem('trivia_count', '0');
                 localStorage.setItem('trivia_correct', '0');
+                setTriviaAskedTopics([]);
                 count = 0;
                 correct = 0;
             }
@@ -4229,7 +4280,19 @@
             optionsGrid.innerHTML = '';
             updateTriviaProgress();
             updateTriviaScoreLine();
-            fetch(triviaApiBase + '/trivia', { method: 'GET' })
+            var askedTopics = getTriviaAskedTopics();
+            var questionNumber = Math.min(s.count + 1, 5);
+            var suggestedTopic = pickRandomTriviaCategory(askedTopics);
+            lastTriviaSuggestedTopic = suggestedTopic;
+            fetch(triviaApiBase + '/trivia', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question_number: questionNumber,
+                    asked_topics: askedTopics,
+                    suggested_topic: suggestedTopic
+                })
+            })
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
                     if (!data.success || !data.trivia) {
@@ -4269,6 +4332,8 @@
             });
             var funFactText = document.getElementById('triviaFunFactText');
             if (funFactText) funFactText.textContent = currentTrivia.fun_fact || '';
+            var topicRecorded = (currentTrivia.topic && String(currentTrivia.topic).trim()) || lastTriviaSuggestedTopic;
+            if (topicRecorded) pushTriviaAskedTopic(topicRecorded);
             var s = getTriviaStorage();
             var newCount = s.count + 1;
             var newCorrect = s.correct + (correct ? 1 : 0);
