@@ -2,7 +2,7 @@ services:
   - type: web
     name: torque-ai-backend
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: apt-get update -y && apt-get install -y libgl1-mesa-glx libglib2.0-0 libgles2-mesa && pip install -r requirements.txt
     startCommand: gunicorn --chdir backend --timeout 120 --workers 1 app:app
     envVars:
       - key: PYTHON_VERSION
