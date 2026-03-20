@@ -1119,50 +1119,6 @@ def golf_coach():
         return jsonify({'error': str(e), 'success': False}), 500
 
 
-@app.route('/trivia', methods=['GET'])
-def get_trivia():
-    try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
-        
-        message = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=300,
-            system="""You are a golf trivia expert. Generate a single golf trivia question. 
-            Respond ONLY with a JSON object in this exact format with no extra text:
-            {
-                "question": "the trivia question here",
-                "options": ["A) option1", "B) option2", "C) option3", "D) option4"],
-                "answer": "A) option1",
-                "fun_fact": "A short interesting explanation about the answer in 1-2 sentences"
-            }
-            Make questions about golf history, rules, famous players, courses, or technique.
-            Vary the difficulty. Never repeat obvious questions.""",
-            messages=[{"role": "user", "content": "Generate a golf trivia question"}]
-        )
-        
-        import json
-        response_text = message.content[0].text
-        print(f"TRIVIA RAW RESPONSE: {response_text}")
-        
-        # Strip any markdown code blocks if present
-        response_text = response_text.strip()
-        if response_text.startswith('```'):
-            response_text = response_text.split('```')[1]
-            if response_text.startswith('json'):
-                response_text = response_text[4:]
-        response_text = response_text.strip()
-        
-        trivia_data = json.loads(response_text)
-        return jsonify({'trivia': trivia_data, 'success': True})
-        
-    except Exception as e:
-        import traceback
-        print(f"TRIVIA ERROR: {str(e)}")
-        print(traceback.format_exc())
-        return jsonify({'error': str(e), 'success': False}), 500
-
-
 if __name__ == '__main__':
     init_database()
     app.run(debug=True, port=5000)
