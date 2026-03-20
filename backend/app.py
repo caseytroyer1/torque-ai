@@ -3,8 +3,6 @@ import os
 import base64
 import json
 import math
-import random
-import datetime
 from werkzeug.utils import secure_filename
 import cv2
 import mediapipe as mp
@@ -1125,82 +1123,43 @@ def golf_coach():
         return jsonify({'error': str(e), 'success': False}), 500
 
 
-@app.route('/trivia', methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/trivia', methods=['GET'])
 def get_trivia():
-    if request.method == 'OPTIONS':
-        return '', 204
-
-    question_number = 1
-    asked_topics = []
-    suggested_topic = ''
-
-    if request.method == 'POST' and request.is_json:
-        data = request.get_json(silent=True) or {}
-        question_number = data.get('question_number', 1)
-        asked_topics = data.get('asked_topics', [])
-        suggested_topic = (data.get('suggested_topic') or '').strip()
-
-    try:
-        qn = int(question_number)
-    except (TypeError, ValueError):
-        qn = 1
-    qn = max(1, min(5, qn))
-
-    if not isinstance(asked_topics, list):
-        asked_topics = []
-    asked_topics = [str(t).strip() for t in asked_topics if str(t).strip()]
-    asked_topics_display = ', '.join(asked_topics) if asked_topics else '(none yet)'
-
-    seed = random.randint(1, 9999)
-    day = datetime.datetime.now().strftime('%Y-%m-%d')
-
-    user_message = (
-        f"Question {qn} of 5. Day: {day}. Seed: {seed}. "
-        f"Topics to AVOID: {asked_topics_display}. "
-        f"Generate a completely different golf trivia question about a topic not in the avoid list."
-    )
-    if suggested_topic:
-        user_message += f" Focus this question on: {suggested_topic}."
-
-    system_prompt = (
-        f"You are a golf trivia expert. Generate a UNIQUE golf trivia question. "
-        f"You must NOT repeat these topics already used: {asked_topics_display}. "
-        f"This is question {qn} of 5 for today.\n"
-        "Respond ONLY with a JSON object in this exact format with no extra text:\n"
-        "{\n"
-        '    "topic": "short category label for this question (e.g. Masters Tournament history)",\n'
-        '    "question": "the trivia question here",\n'
-        '    "options": ["A) option1", "B) option2", "C) option3", "D) option4"],\n'
-        '    "answer": "A) option1",\n'
-        '    "fun_fact": "A short interesting explanation about the answer in 1-2 sentences"\n'
-        "}\n"
-        "The topic field must reflect the theme you used and must not duplicate any avoided topic."
-    )
-
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
-
+        
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=400,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_message}],
+            max_tokens=300,
+            system="""You are a golf trivia expert. Generate a single golf trivia question. 
+            Respond ONLY with a JSON object in this exact format with no extra text:
+            {
+                "question": "the trivia question here",
+                "options": ["A) option1", "B) option2", "C) option3", "D) option4"],
+                "answer": "A) option1",
+                "fun_fact": "A short interesting explanation about the answer in 1-2 sentences"
+            }
+            Make questions about golf history, rules, famous players, courses, or technique.
+            Vary the difficulty. Never repeat obvious questions.""",
+            messages=[{"role": "user", "content": "Generate a golf trivia question"}]
         )
-
+        
+        import json
         response_text = message.content[0].text
         print(f"TRIVIA RAW RESPONSE: {response_text}")
-
+        
+        # Strip any markdown code blocks if present
         response_text = response_text.strip()
         if response_text.startswith('```'):
             response_text = response_text.split('```')[1]
             if response_text.startswith('json'):
                 response_text = response_text[4:]
         response_text = response_text.strip()
-
+        
         trivia_data = json.loads(response_text)
         return jsonify({'trivia': trivia_data, 'success': True})
-
+        
     except Exception as e:
         import traceback
         print(f"TRIVIA ERROR: {str(e)}")
