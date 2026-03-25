@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ ./backend/
 
-CMD ["gunicorn", "--chdir", "backend", "--timeout", "120", "--workers", "1", "app:app"]
+CMD ["gunicorn", "--chdir", "backend", "--timeout", "120", "--workers", "1", "--bind", "0.0.0.0:10000", "app:app"]
