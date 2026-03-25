@@ -4160,7 +4160,7 @@
         }
 
         // Golf Hub: Daily Trivia (5/day, localStorage)
-        var triviaApiBase = 'https://torque-ai-backend.onrender.com';
+        var triviaApiBase = 'https://torque-ai-docker.onrender.com';
         var currentTrivia = null;
         function getTriviaDate() {
             var d = new Date();
@@ -4303,7 +4303,7 @@
         var golfChatInput = document.getElementById('golfChatInput');
         var golfChatSend = document.getElementById('golfChatSend');
         var golfChatMessages = document.getElementById('golfChatMessages');
-        var coachApiBase = 'https://torque-ai-backend.onrender.com';
+        var coachApiBase = 'https://torque-ai-docker.onrender.com';
         function showCoachLoading() {
             var wrap = document.createElement('div');
             wrap.className = 'golf-chat-msg ai';
@@ -4975,10 +4975,10 @@
                 // Create FormData to send file
                 const formData = new FormData();
                 formData.append('file', file);
-                console.log('FormData created, sending request to https://torque-ai-backend.onrender.com/analyze-swing');
+                console.log('FormData created, sending request to https://torque-ai-docker.onrender.com/analyze-swing');
                 
                 // Send POST request to Flask backend
-                const response = await fetch('https://torque-ai-backend.onrender.com/analyze-swing', {
+                const response = await fetch('https://torque-ai-docker.onrender.com/analyze-swing', {
                     method: 'POST',
                     body: formData
                 });
