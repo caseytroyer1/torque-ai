@@ -303,7 +303,7 @@ def analyze_video_with_mediapipe(video_path):
         # STEP 2: Find swing window and key frames intelligently
         MOTION_THRESHOLD = 0.015  # normalized Y change (tune for sensitivity)
         CONSECUTIVE_MOTION_FRAMES = 2  # require N frames above threshold
-        ADDRESS_WINDOW = 10  # frames before movement to pick address from
+        ADDRESS_PRE_SWING_BUFFER = 30  # exclude this many frames before swing start from address search
         
         swing_start_frame = None
         address_frame_idx = None
@@ -338,10 +338,15 @@ def analyze_video_with_mediapipe(video_path):
                 break
         
         if swing_start_frame is not None:
-            # ADDRESS: last "still" frame before movement - most stable of the 10 frames before swing start
-            window_start = max(0, swing_start_frame - ADDRESS_WINDOW)
+            # ADDRESS: most stable wrist_y in early video; exclude last BUFFER frames before swing start when possible
+            if swing_start_frame >= ADDRESS_PRE_SWING_BUFFER:
+                window_start = 0
+                window_end = swing_start_frame - ADDRESS_PRE_SWING_BUFFER
+            else:
+                window_start = 0
+                window_end = swing_start_frame
             address_candidates = []
-            for idx in range(window_start, swing_start_frame):
+            for idx in range(window_start, window_end):
                 if frame_data[idx] is not None and frame_data[idx][1] is not None:
                     address_candidates.append((idx, frame_data[idx][1]))
             if address_candidates:
@@ -350,7 +355,7 @@ def analyze_video_with_mediapipe(video_path):
                 median_y = sorted(wrist_ys)[len(wrist_ys) // 2]
                 address_frame_idx = min(address_candidates, key=lambda c: abs(c[1] - median_y))[0]
                 address_wrist_y = frame_data[address_frame_idx][1]
-                print(f"[Address] Frame {address_frame_idx} (most stable of frames {window_start}-{swing_start_frame - 1}, wrist_y={address_wrist_y:.4f})")
+                print(f"[Address] Frame {address_frame_idx} (most stable of frames {window_start}-{window_end}, pre-swing buffer {ADDRESS_PRE_SWING_BUFFER}, wrist_y={address_wrist_y:.4f})")
             
             # BACKSWING TOP: right wrist at highest position (min Y) in swing window
             backswing_candidates = [(idx, frame_data[idx][1]) for idx in range(swing_start_frame, total_frames)
