@@ -380,7 +380,6 @@ def analyze_video_with_mediapipe(video_path):
             min_pose_detection_confidence=0.5,
             min_tracking_confidence=0.5,
             output_segmentation_masks=False,
-            output_pose_world_landmarks=True,
         )
         
         detector = vision.PoseLandmarker.create_from_options(options)
@@ -431,8 +430,12 @@ def analyze_video_with_mediapipe(video_path):
                 poses_detected += 1
                 landmarks = detection_result.pose_landmarks[0]
                 world_landmarks = None
-                if getattr(detection_result, 'pose_world_landmarks', None) and len(detection_result.pose_world_landmarks) > 0:
-                    world_landmarks = detection_result.pose_world_landmarks[0]
+                try:
+                    pwl = detection_result.pose_world_landmarks
+                except AttributeError:
+                    pwl = None
+                if pwl is not None and len(pwl) > 0:
+                    world_landmarks = pwl[0]
                 if world_landmarks is not None:
                     frames_with_world += 1
                 if len(landmarks) > RIGHT_WRIST:
