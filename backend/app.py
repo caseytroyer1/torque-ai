@@ -243,6 +243,85 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     return claude_analysis
 
 
+def detect_camera_angle(landmarks):
+    """
+    Classify camera as face-on vs down-the-line using pose landmarks.
+    Primary: shoulder width (X spread) / torso height.
+    Secondary: nose lateral offset from hip midpoint, normalized by shoulder width.
+    """
+    NOSE = 0
+    LEFT_SHOULDER, RIGHT_SHOULDER = 11, 12
+    LEFT_HIP, RIGHT_HIP = 23, 24
+    default = {
+        'angle': 'unknown',
+        'confidence': 'low',
+        'shoulder_width_ratio': 0.0,
+        'nose_offset_normalized': 0.0,
+        'message': 'Insufficient pose landmarks for camera angle.',
+    }
+    if not landmarks or len(landmarks) <= max(LEFT_HIP, RIGHT_HIP, RIGHT_SHOULDER, NOSE):
+        return default
+
+    try:
+        ls = landmarks[LEFT_SHOULDER]
+        rs = landmarks[RIGHT_SHOULDER]
+        lh = landmarks[LEFT_HIP]
+        rh = landmarks[RIGHT_HIP]
+        nose = landmarks[NOSE]
+    except (IndexError, TypeError, AttributeError):
+        return default
+
+    shoulder_width = abs(rs.x - ls.x)
+    shoulder_mid_y = (ls.y + rs.y) / 2
+    hip_mid_x = (lh.x + rh.x) / 2
+    hip_mid_y = (lh.y + rh.y) / 2
+    torso_height = max(abs(hip_mid_y - shoulder_mid_y), 1e-6)
+    shoulder_width_ratio = shoulder_width / torso_height
+
+    nose_offset_lateral = nose.x - hip_mid_x
+    nose_offset_normalized = nose_offset_lateral / max(shoulder_width, 1e-6)
+
+    if shoulder_width_ratio > 0.55:
+        angle = 'face_on'
+    elif shoulder_width_ratio < 0.35:
+        angle = 'down_the_line'
+    else:
+        angle = 'unknown'
+
+    # Confidence: primary clarity + secondary (nose vs hips alignment)
+    abs_nose = abs(nose_offset_normalized)
+    if angle == 'face_on':
+        if abs_nose < 0.3:
+            confidence = 'high'
+        elif abs_nose < 0.55:
+            confidence = 'medium'
+        else:
+            confidence = 'low'
+    elif angle == 'down_the_line':
+        if abs_nose > 0.12:
+            confidence = 'high'
+        elif abs_nose > 0.06:
+            confidence = 'medium'
+        else:
+            confidence = 'low'
+    else:
+        confidence = 'low'
+
+    message = (
+        f"Shoulder width / torso height = {shoulder_width_ratio:.2f} "
+        f"(face-on if >0.55, down-the-line if <0.35); "
+        f"nose offset (normalized) = {nose_offset_normalized:.2f}. "
+        f"Estimated: {angle} ({confidence} confidence)."
+    )
+    return {
+        'angle': angle,
+        'confidence': confidence,
+        'shoulder_width_ratio': float(round(shoulder_width_ratio, 4)),
+        'nose_offset_normalized': float(round(nose_offset_normalized, 4)),
+        'message': message,
+    }
+
+
 def analyze_video_with_mediapipe(video_path):
     """Analyze golf swing video using MediaPipe Pose detection"""
     try:
@@ -395,7 +474,10 @@ def analyze_video_with_mediapipe(video_path):
             'impact': get_landmarks(impact_frame_idx)
         }
         print(f"[Key frames] address={address_frame_idx}, backswing={backswing_frame_idx}, impact={impact_frame_idx}")
-        
+
+        cam_info = detect_camera_angle(key_frames['address'])
+        print(f"[Camera angle] {cam_info['message']}")
+
         # Calculate angles for key frames
         # MediaPipe pose landmark indices
         LEFT_SHOULDER = 11
@@ -597,7 +679,11 @@ def analyze_video_with_mediapipe(video_path):
             'setup_knee_flex_right': setup_knee_flex_right,
             'setup_shoulder_level': setup_shoulder_level,
             'setup_hip_hinge': setup_hip_hinge,
-            'setup_grade': setup_grade
+            'setup_grade': setup_grade,
+            'camera_angle': cam_info['angle'],
+            'camera_angle_confidence': cam_info['confidence'],
+            'camera_angle_message': cam_info['message'],
+            'shoulder_width_ratio': cam_info['shoulder_width_ratio'],
         }
 
         # Extract key frames as images with skeleton overlay and add to response
@@ -826,7 +912,23 @@ def diagnose_swing(analysis_data):
         summary = f"Analysis identified {len(issues_detected)} area(s) that may benefit from improvement. Focused practice on these fundamentals can help enhance your swing."
     else:
         summary = "Analysis complete. Continue working on maintaining consistent fundamentals."
-    
+
+    camera_angle = analysis_data.get('camera_angle') or 'unknown'
+    camera_angle_confidence = (analysis_data.get('camera_angle_confidence') or 'low')
+    if str(camera_angle_confidence).lower() not in ('high', 'medium', 'low'):
+        camera_angle_confidence = 'low'
+    cam_note = (
+        " Note: camera angle may affect rotation accuracy — for best results, film face-on or down-the-line."
+    )
+    if (camera_angle == 'unknown' or camera_angle_confidence == 'low') and issues_detected:
+        for issue in issues_detected:
+            cat = issue.get('category', '')
+            iss = (issue.get('issue') or '').lower()
+            if cat in ('Hip Rotation', 'Shoulder Rotation'):
+                issue['description'] = issue['description'].rstrip() + cam_note
+            elif cat == 'Impact Position' and ('hip' in iss or 'shoulder' in iss):
+                issue['description'] = issue['description'].rstrip() + cam_note
+
     diagnosis = {
         'issues_detected': issues_detected,
         'strengths': strengths,
