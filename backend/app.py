@@ -1,5 +1,9 @@
 from flask import Flask, request, jsonify
 import os
+
+os.environ['MEDIAPIPE_DISABLE_GPU'] = '1'
+os.environ['EGL_PLATFORM'] = 'surfaceless'
+
 import base64
 import json
 import math
