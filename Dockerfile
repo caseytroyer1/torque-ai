@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     libgles2 \
     libglx-mesa0 \
+    libegl1 \
+    libegl-mesa0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
