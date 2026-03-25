@@ -322,6 +322,46 @@ def detect_camera_angle(landmarks):
     }
 
 
+def calculate_rotation_degrees(world_landmarks_a, world_landmarks_b, joint='hip'):
+    """
+    Rotation in degrees between two poses in the horizontal (X–Z) plane.
+    Uses vector from right to left hip (or shoulder); heading = atan2(vx, vz) per frame;
+    returns smallest angle between headings in [0, 180].
+    """
+    LEFT_HIP, RIGHT_HIP = 23, 24
+    LEFT_SHOULDER, RIGHT_SHOULDER = 11, 12
+    if joint == 'hip':
+        li, ri = LEFT_HIP, RIGHT_HIP
+    else:
+        li, ri = LEFT_SHOULDER, RIGHT_SHOULDER
+    if not world_landmarks_a or not world_landmarks_b:
+        return None
+    try:
+        n = max(li, ri) + 1
+        if len(world_landmarks_a) < n or len(world_landmarks_b) < n:
+            return None
+    except (TypeError, AttributeError):
+        return None
+
+    def heading(wl):
+        left = wl[li]
+        right = wl[ri]
+        vx = left.x - right.x
+        vz = left.z - right.z
+        mag = math.sqrt(vx * vx + vz * vz)
+        if mag < 1e-9:
+            return None
+        return math.degrees(math.atan2(vx, vz))
+
+    h1 = heading(world_landmarks_a)
+    h2 = heading(world_landmarks_b)
+    if h1 is None or h2 is None:
+        return None
+    diff = abs(h1 - h2)
+    diff = min(diff, 360.0 - diff)
+    return round(float(diff), 1)
+
+
 def analyze_video_with_mediapipe(video_path):
     """Analyze golf swing video using MediaPipe Pose detection"""
     try:
@@ -338,7 +378,9 @@ def analyze_video_with_mediapipe(video_path):
             running_mode=vision.RunningMode.VIDEO,
             num_poses=1,
             min_pose_detection_confidence=0.5,
-            min_tracking_confidence=0.5
+            min_tracking_confidence=0.5,
+            output_segmentation_masks=False,
+            output_pose_world_landmarks=True,
         )
         
         detector = vision.PoseLandmarker.create_from_options(options)
@@ -353,8 +395,8 @@ def analyze_video_with_mediapipe(video_path):
         print(f"[Video] total_frames={total_frames}, fps={fps}")
         RIGHT_WRIST = 16
         
-        # STEP 1: First pass - collect pose and right wrist Y for every frame
-        # frame_data[i] = (landmarks, wrist_y) or None
+        # STEP 1: First pass - collect pose, right wrist Y, and world landmarks per frame
+        # frame_data[i] = (landmarks, wrist_y, world_landmarks) or None
         frame_data = [None] * total_frames
         poses_detected = 0
         
@@ -370,11 +412,14 @@ def analyze_video_with_mediapipe(video_path):
             if detection_result.pose_landmarks and len(detection_result.pose_landmarks) > 0:
                 poses_detected += 1
                 landmarks = detection_result.pose_landmarks[0]
+                world_landmarks = None
+                if getattr(detection_result, 'pose_world_landmarks', None) and len(detection_result.pose_world_landmarks) > 0:
+                    world_landmarks = detection_result.pose_world_landmarks[0]
                 if len(landmarks) > RIGHT_WRIST:
                     wrist_y = landmarks[RIGHT_WRIST].y
-                    frame_data[frame_count] = (landmarks, wrist_y)
+                    frame_data[frame_count] = (landmarks, wrist_y, world_landmarks)
                 else:
-                    frame_data[frame_count] = (landmarks, None)
+                    frame_data[frame_count] = (landmarks, None, world_landmarks)
         
         cap.release()
         detector.close()
@@ -467,7 +512,15 @@ def analyze_video_with_mediapipe(video_path):
                 return None
             entry = frame_data[idx]
             return entry[0] if entry is not None else None
-        
+
+        def get_world_landmarks(idx):
+            if idx is None or total_frames == 0 or idx < 0 or idx >= total_frames:
+                return None
+            entry = frame_data[idx]
+            if entry is None or len(entry) < 3:
+                return None
+            return entry[2]
+
         key_frames = {
             'address': get_landmarks(address_frame_idx),
             'backswing': get_landmarks(backswing_frame_idx),
@@ -484,26 +537,6 @@ def analyze_video_with_mediapipe(video_path):
         RIGHT_SHOULDER = 12
         LEFT_HIP = 23
         RIGHT_HIP = 24
-        
-        def calculate_hip_z_rotation(landmarks):
-            """Calculate hip rotation using Z-axis depth difference (frontal plane rotation)"""
-            if not landmarks or len(landmarks) <= max(LEFT_HIP, RIGHT_HIP):
-                return None
-            left_hip = landmarks[LEFT_HIP]
-            right_hip = landmarks[RIGHT_HIP]
-            # Z-axis depth difference: positive when right hip is forward (toward camera)
-            hip_z_rotation = (right_hip.z - left_hip.z) * 100
-            return hip_z_rotation
-        
-        def calculate_shoulder_z_rotation(landmarks):
-            """Calculate shoulder rotation using Z-axis depth difference (frontal plane rotation)"""
-            if not landmarks or len(landmarks) <= max(LEFT_SHOULDER, RIGHT_SHOULDER):
-                return None
-            left_shoulder = landmarks[LEFT_SHOULDER]
-            right_shoulder = landmarks[RIGHT_SHOULDER]
-            # Z-axis depth difference: positive when right shoulder is forward (toward camera)
-            shoulder_z_rotation = (right_shoulder.z - left_shoulder.z) * 100
-            return shoulder_z_rotation
         
         def calculate_spine_angle(landmarks):
             """Calculate spine angle (angle from hip midpoint to shoulder midpoint relative to vertical)"""
@@ -552,38 +585,21 @@ def analyze_video_with_mediapipe(video_path):
             cos_a = max(-1, min(1, dot / (mag1 * mag2)))
             return round(math.degrees(math.acos(cos_a)), 1)
         
-        # Calculate Z-axis depth differences at ADDRESS (baseline)
-        baseline_hip_z = calculate_hip_z_rotation(key_frames['address']) if key_frames['address'] else None
-        baseline_shoulder_z = calculate_shoulder_z_rotation(key_frames['address']) if key_frames['address'] else None
-        
-        # Calculate Z-axis depth differences at BACKSWING
-        backswing_hip_z = calculate_hip_z_rotation(key_frames['backswing']) if key_frames['backswing'] else None
-        backswing_shoulder_z = calculate_shoulder_z_rotation(key_frames['backswing']) if key_frames['backswing'] else None
-        
-        # Calculate Z-axis depth differences at IMPACT
-        impact_hip_z = calculate_hip_z_rotation(key_frames['impact']) if key_frames['impact'] else None
-        impact_shoulder_z = calculate_shoulder_z_rotation(key_frames['impact']) if key_frames['impact'] else None
-        
-        # Calculate rotation amounts (delta from baseline using Z-axis depth)
-        backswing_hip_rotation = round(abs(backswing_hip_z - baseline_hip_z), 1) if baseline_hip_z is not None and backswing_hip_z is not None else None
-        print(f"DEBUG Hip Rotation Calculation (Z-axis):")
-        print(f"  baseline_hip_z: {baseline_hip_z}")
-        print(f"  backswing_hip_z: {backswing_hip_z}")
-        print(f"  backswing_hip_rotation (delta): {backswing_hip_rotation}°")
-        print(f"  Expected: 30-60°")
-        print("=" * 50)
-        
-        backswing_shoulder_rotation = round(abs(backswing_shoulder_z - baseline_shoulder_z), 1) if baseline_shoulder_z is not None and backswing_shoulder_z is not None else None
-        print(f"DEBUG Shoulder Rotation Calculation (Z-axis):")
-        print(f"  baseline_shoulder_z: {baseline_shoulder_z}")
-        print(f"  backswing_shoulder_z: {backswing_shoulder_z}")
-        print(f"  backswing_shoulder_rotation (delta): {backswing_shoulder_rotation}°")
-        print(f"  Expected: 80-110°")
-        print("=" * 50)
-        
-        impact_hip_rotation = round(abs(impact_hip_z - baseline_hip_z), 1) if baseline_hip_z is not None and impact_hip_z is not None else None
-        impact_shoulder_rotation = round(abs(impact_shoulder_z - baseline_shoulder_z), 1) if baseline_shoulder_z is not None and impact_shoulder_z is not None else None
-        
+        # Hip/shoulder rotation (degrees) from world landmarks: address vs backswing / impact (X–Z plane)
+        wl_address = get_world_landmarks(address_frame_idx)
+        wl_backswing = get_world_landmarks(backswing_frame_idx)
+        wl_impact = get_world_landmarks(impact_frame_idx)
+
+        backswing_hip_rotation = calculate_rotation_degrees(wl_address, wl_backswing, 'hip')
+        backswing_shoulder_rotation = calculate_rotation_degrees(wl_address, wl_backswing, 'shoulder')
+        impact_hip_rotation = calculate_rotation_degrees(wl_address, wl_impact, 'hip')
+        impact_shoulder_rotation = calculate_rotation_degrees(wl_address, wl_impact, 'shoulder')
+
+        print(
+            f"[Rotation world] hip backswing={backswing_hip_rotation}° shoulder backswing={backswing_shoulder_rotation}° "
+            f"hip impact={impact_hip_rotation}° shoulder impact={impact_shoulder_rotation}°"
+        )
+
         # Calculate spine angle (unchanged - this is still a valid measurement)
         spine_angle_address = calculate_spine_angle(key_frames['address']) if key_frames['address'] else None
         spine_angle_impact = calculate_spine_angle(key_frames['impact']) if key_frames['impact'] else None
@@ -635,14 +651,6 @@ def analyze_video_with_mediapipe(video_path):
         else:
             setup_grade = 'D'
         
-        # Log rotation values for debugging
-        print("=== Rotation Calculation (Z-axis Depth - Frontal Plane) ===")
-        print(f"Hip Z-values - Address: {baseline_hip_z}, Backswing: {backswing_hip_z}, Impact: {impact_hip_z}")
-        print(f"Hip ROTATION (delta) - Backswing: {backswing_hip_rotation}°, Impact: {impact_hip_rotation}°")
-        print(f"Shoulder Z-values - Address: {baseline_shoulder_z}, Backswing: {backswing_shoulder_z}, Impact: {impact_shoulder_z}")
-        print(f"Shoulder ROTATION (delta) - Backswing: {backswing_shoulder_rotation}°, Impact: {impact_shoulder_rotation}°")
-        print("============================================================")
-        
         # Return analysis
         analysis = {
             'frames_analyzed': frame_count,
@@ -661,13 +669,13 @@ def analyze_video_with_mediapipe(video_path):
             'backswing_shoulder_rotation': backswing_shoulder_rotation,
             'impact_hip_rotation': impact_hip_rotation,
             'impact_shoulder_rotation': impact_shoulder_rotation,
-            # Legacy fields for backward compatibility (using ROTATION values, not absolute angles)
-            'address_hip_angle': baseline_hip_z,  # This is the baseline Z-axis depth value
-            'backswing_hip_angle': backswing_hip_rotation,  # This is ROTATION (delta)
-            'impact_hip_angle': impact_hip_rotation,  # This is ROTATION (delta)
-            'address_shoulder_angle': baseline_shoulder_z,  # This is the baseline Z-axis depth value
-            'backswing_shoulder_angle': backswing_shoulder_rotation,  # This is ROTATION (delta)
-            'impact_shoulder_angle': impact_shoulder_rotation,  # This is ROTATION (delta)
+            # Legacy fields: rotation deltas are degrees (world X–Z); address_* no longer Z-proxy
+            'address_hip_angle': None,
+            'backswing_hip_angle': backswing_hip_rotation,
+            'impact_hip_angle': impact_hip_rotation,
+            'address_shoulder_angle': None,
+            'backswing_shoulder_angle': backswing_shoulder_rotation,
+            'impact_shoulder_angle': impact_shoulder_rotation,
             # Spine angle measurements (unchanged)
             'spine_angle_address': spine_angle_address,
             'spine_angle_impact': spine_angle_impact,
