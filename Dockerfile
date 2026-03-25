@@ -1,12 +1,11 @@
-FROM python:3.11-slim
+FROM python:3.11-bullseye
 
 RUN apt-get update && apt-get install -y \
-    libgl1 \
+    libgl1-mesa-glx \
     libglib2.0-0 \
-    libgles2 \
-    libglx-mesa0 \
-    libegl1 \
-    libegl-mesa0 \
+    libgles2-mesa \
+    libegl1-mesa \
+    libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
