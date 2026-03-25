@@ -396,14 +396,32 @@ def analyze_video_with_mediapipe(video_path):
         RIGHT_WRIST = 16
         
         # STEP 1: First pass - collect pose, right wrist Y, and world landmarks per frame
-        # frame_data[i] = (landmarks, wrist_y, world_landmarks) or None
+        # frame_data[i] = (landmarks, wrist_y, world_landmarks) or None — always use helpers below
         frame_data = [None] * total_frames
         poses_detected = 0
-        
+        frames_with_world = 0
+
+        def _entry_landmarks(entry):
+            if not entry:
+                return None
+            return entry[0] if len(entry) >= 1 else None
+
+        def _entry_wrist_y(entry):
+            if not entry or len(entry) < 2:
+                return None
+            return entry[1]
+
+        def _entry_world(entry):
+            if not entry or len(entry) < 3:
+                return None
+            return entry[2]
+
+        frames_read = 0
         for frame_count in range(total_frames):
             ret, frame = cap.read()
             if not ret:
                 break
+            frames_read += 1
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             timestamp_ms = int((frame_count / fps) * 1000) if fps > 0 else frame_count * 33
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
@@ -415,6 +433,8 @@ def analyze_video_with_mediapipe(video_path):
                 world_landmarks = None
                 if getattr(detection_result, 'pose_world_landmarks', None) and len(detection_result.pose_world_landmarks) > 0:
                     world_landmarks = detection_result.pose_world_landmarks[0]
+                if world_landmarks is not None:
+                    frames_with_world += 1
                 if len(landmarks) > RIGHT_WRIST:
                     wrist_y = landmarks[RIGHT_WRIST].y
                     frame_data[frame_count] = (landmarks, wrist_y, world_landmarks)
@@ -423,6 +443,11 @@ def analyze_video_with_mediapipe(video_path):
         
         cap.release()
         detector.close()
+
+        print(
+            f"[Pose pass] frames_read={frames_read} total_frames={total_frames} poses_detected={poses_detected} "
+            f"frames_with_world={frames_with_world}"
+        )
         
         # STEP 2: Find swing window and key frames intelligently
         MOTION_THRESHOLD = 0.015  # normalized Y change (tune for sensitivity)
@@ -437,20 +462,20 @@ def analyze_video_with_mediapipe(video_path):
         
         # Find first significant motion (swing start)
         for i in range(1, total_frames):
-            if frame_data[i] is None or frame_data[i][1] is None:
+            if _entry_wrist_y(frame_data[i]) is None:
                 continue
-            if frame_data[i - 1] is None or frame_data[i - 1][1] is None:
+            if _entry_wrist_y(frame_data[i - 1]) is None:
                 continue
-            motion = abs(frame_data[i][1] - frame_data[i - 1][1])
+            motion = abs(_entry_wrist_y(frame_data[i]) - _entry_wrist_y(frame_data[i - 1]))
             if motion <= MOTION_THRESHOLD:
                 continue
             # Require CONSECUTIVE_MOTION_FRAMES above threshold
             count = 1
             j = i + 1
             while j < total_frames and count < CONSECUTIVE_MOTION_FRAMES:
-                if frame_data[j] is None or frame_data[j][1] is None or frame_data[j - 1] is None or frame_data[j - 1][1] is None:
+                if _entry_wrist_y(frame_data[j]) is None or _entry_wrist_y(frame_data[j - 1]) is None:
                     break
-                m = abs(frame_data[j][1] - frame_data[j - 1][1])
+                m = abs(_entry_wrist_y(frame_data[j]) - _entry_wrist_y(frame_data[j - 1]))
                 if m > MOTION_THRESHOLD:
                     count += 1
                     j += 1
@@ -471,33 +496,40 @@ def analyze_video_with_mediapipe(video_path):
                 window_end = swing_start_frame
             address_candidates = []
             for idx in range(window_start, window_end):
-                if frame_data[idx] is not None and frame_data[idx][1] is not None:
-                    address_candidates.append((idx, frame_data[idx][1]))
+                wy = _entry_wrist_y(frame_data[idx])
+                if wy is not None:
+                    address_candidates.append((idx, wy))
             if address_candidates:
                 # Pick frame whose wrist_y is closest to median (most typical "still" pose)
                 wrist_ys = [y for _, y in address_candidates]
                 median_y = sorted(wrist_ys)[len(wrist_ys) // 2]
                 address_frame_idx = min(address_candidates, key=lambda c: abs(c[1] - median_y))[0]
-                address_wrist_y = frame_data[address_frame_idx][1]
+                address_wrist_y = _entry_wrist_y(frame_data[address_frame_idx])
                 print(f"[Address] Frame {address_frame_idx} (most stable of frames {window_start}-{window_end}, pre-swing buffer {ADDRESS_PRE_SWING_BUFFER}, wrist_y={address_wrist_y:.4f})")
             
             # BACKSWING TOP: right wrist at highest position (min Y) in swing window
-            backswing_candidates = [(idx, frame_data[idx][1]) for idx in range(swing_start_frame, total_frames)
-                                   if frame_data[idx] is not None and frame_data[idx][1] is not None]
+            backswing_candidates = [
+                (idx, _entry_wrist_y(frame_data[idx]))
+                for idx in range(swing_start_frame, total_frames)
+                if _entry_wrist_y(frame_data[idx]) is not None
+            ]
             if backswing_candidates:
                 backswing_frame_idx = min(backswing_candidates, key=lambda c: c[1])[0]
-                print(f"[Backswing top] Frame {backswing_frame_idx} (right wrist at highest position, wrist_y={frame_data[backswing_frame_idx][1]:.4f})")
+                print(f"[Backswing top] Frame {backswing_frame_idx} (right wrist at highest position, wrist_y={_entry_wrist_y(frame_data[backswing_frame_idx]):.4f})")
             
             # IMPACT: within downswing window only (avoid picking follow-through)
             # Window = backswing_frame to backswing_frame + (backswing - address) * 3
             if backswing_frame_idx is not None and address_frame_idx is not None and address_wrist_y is not None:
                 downswing_length = int((backswing_frame_idx - address_frame_idx) * 3)
                 impact_window_end = min(total_frames, backswing_frame_idx + 1 + downswing_length)
-                impact_candidates = [(idx, frame_data[idx][1]) for idx in range(backswing_frame_idx + 1, impact_window_end)
-                                     if frame_data[idx] is not None and frame_data[idx][1] is not None]
+                impact_candidates = [
+                    (idx, _entry_wrist_y(frame_data[idx]))
+                    for idx in range(backswing_frame_idx + 1, impact_window_end)
+                    if _entry_wrist_y(frame_data[idx]) is not None
+                ]
                 if impact_candidates:
                     impact_frame_idx = min(impact_candidates, key=lambda c: abs(c[1] - address_wrist_y))[0]
-                    print(f"[Impact] Frame {impact_frame_idx} (within downswing window frames {backswing_frame_idx + 1}-{impact_window_end - 1}, wrist Y closest to address {address_wrist_y:.4f}, impact wrist_y={frame_data[impact_frame_idx][1]:.4f})")
+                    print(f"[Impact] Frame {impact_frame_idx} (within downswing window frames {backswing_frame_idx + 1}-{impact_window_end - 1}, wrist Y closest to address {address_wrist_y:.4f}, impact wrist_y={_entry_wrist_y(frame_data[impact_frame_idx]):.4f})")
         
         # STEP 3: Fallback to percentage-based frames if intelligent detection failed
         if address_frame_idx is None or backswing_frame_idx is None or impact_frame_idx is None:
@@ -506,26 +538,27 @@ def analyze_video_with_mediapipe(video_path):
             impact_frame_idx = min(int(total_frames * 0.6), total_frames - 1) if total_frames > 0 else 0
             print(f"[Fallback] Using percentage-based frames: address={address_frame_idx}, backswing={backswing_frame_idx}, impact={impact_frame_idx}")
         
-        # Build key_frames from selected indices (with bounds check)
+        # Build key_frames from normalized landmarks (tuple index 0) at selected indices
         def get_landmarks(idx):
             if idx is None or total_frames == 0 or idx < 0 or idx >= total_frames:
                 return None
-            entry = frame_data[idx]
-            return entry[0] if entry is not None else None
+            return _entry_landmarks(frame_data[idx])
 
         def get_world_landmarks(idx):
             if idx is None or total_frames == 0 or idx < 0 or idx >= total_frames:
                 return None
-            entry = frame_data[idx]
-            if entry is None or len(entry) < 3:
-                return None
-            return entry[2]
+            return _entry_world(frame_data[idx])
 
         key_frames = {
             'address': get_landmarks(address_frame_idx),
             'backswing': get_landmarks(backswing_frame_idx),
             'impact': get_landmarks(impact_frame_idx)
         }
+        print(
+            f"[Swing diag] poses_detected={poses_detected} frames_with_world={frames_with_world} "
+            f"address_frame_idx={address_frame_idx} backswing_frame_idx={backswing_frame_idx} "
+            f"impact_frame_idx={impact_frame_idx}"
+        )
         print(f"[Key frames] address={address_frame_idx}, backswing={backswing_frame_idx}, impact={impact_frame_idx}")
 
         cam_info = detect_camera_angle(key_frames['address'])
@@ -590,10 +623,14 @@ def analyze_video_with_mediapipe(video_path):
         wl_backswing = get_world_landmarks(backswing_frame_idx)
         wl_impact = get_world_landmarks(impact_frame_idx)
 
-        backswing_hip_rotation = calculate_rotation_degrees(wl_address, wl_backswing, 'hip')
-        backswing_shoulder_rotation = calculate_rotation_degrees(wl_address, wl_backswing, 'shoulder')
-        impact_hip_rotation = calculate_rotation_degrees(wl_address, wl_impact, 'hip')
-        impact_shoulder_rotation = calculate_rotation_degrees(wl_address, wl_impact, 'shoulder')
+        try:
+            backswing_hip_rotation = calculate_rotation_degrees(wl_address, wl_backswing, 'hip')
+            backswing_shoulder_rotation = calculate_rotation_degrees(wl_address, wl_backswing, 'shoulder')
+            impact_hip_rotation = calculate_rotation_degrees(wl_address, wl_impact, 'hip')
+            impact_shoulder_rotation = calculate_rotation_degrees(wl_address, wl_impact, 'shoulder')
+        except Exception as rot_err:
+            print(f"[Rotation world] Non-fatal error (using None): {rot_err}")
+            backswing_hip_rotation = backswing_shoulder_rotation = impact_hip_rotation = impact_shoulder_rotation = None
 
         print(
             f"[Rotation world] hip backswing={backswing_hip_rotation}° shoulder backswing={backswing_shoulder_rotation}° "
@@ -651,14 +688,14 @@ def analyze_video_with_mediapipe(video_path):
         else:
             setup_grade = 'D'
         
-        # Return analysis
+        # Return analysis (use frames_read — loop var frame_count is last index, not count)
         analysis = {
-            'frames_analyzed': frame_count,
+            'frames_analyzed': frames_read,
             'poses_detected': poses_detected,
-            'duration_seconds': round(frame_count / fps, 2) if fps > 0 else 0,
+            'duration_seconds': round(frames_read / fps, 2) if fps > 0 else 0,
             'fps': round(fps, 2),
-            'detection_rate': round((poses_detected / frame_count * 100), 1) if frame_count > 0 else 0,
-            'status': f'Pose detected in {poses_detected} of {frame_count} frames',
+            'detection_rate': round((poses_detected / frames_read * 100), 1) if frames_read > 0 else 0,
+            'status': f'Pose detected in {poses_detected} of {frames_read} frames',
             # Rotation amounts (DELTA/CHANGE from address, not absolute angles)
             'hip_rotation_backswing': backswing_hip_rotation,  # Should be 30-60°
             'shoulder_rotation_backswing': backswing_shoulder_rotation,  # Should be 80-110°
