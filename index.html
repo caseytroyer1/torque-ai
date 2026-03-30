@@ -109,6 +109,161 @@
             margin: 0 auto;
         }
 
+        /* My Game — rounds log (same shell as Golf Hub: hero + #0A2540 section) */
+        .my-game-section .form-input[readonly],
+        .my-game-section .form-input:read-only {
+            background: rgba(255, 255, 255, 0.06);
+            color: #B8C5D6;
+            cursor: default;
+        }
+        .my-game-form-card {
+            max-width: 720px;
+            margin: 0 auto 48px;
+            background: #0d2137;
+            border-left: 4px solid #1E5EFF;
+            border-radius: 0 12px 12px 0;
+            padding: 28px 32px 36px;
+        }
+        .my-game-form-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: #ffffff;
+            margin: 0 0 24px;
+        }
+        .my-game-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 20px;
+        }
+        .my-game-form-grid .form-group.span-2 {
+            grid-column: 1 / -1;
+        }
+        .my-game-form-grid .form-group {
+            margin-bottom: 0;
+        }
+        .my-game-form-card > .form-group {
+            margin-bottom: 16px;
+        }
+        .my-game-form-card .form-submit-button {
+            width: auto;
+            min-width: 200px;
+            margin-top: 8px;
+        }
+        .my-game-form-actions {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .my-game-msg {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: none;
+        }
+        .my-game-msg.is-success {
+            display: block;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #86efac;
+        }
+        .my-game-msg.is-error {
+            display: block;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+        select.form-input {
+            cursor: pointer;
+        }
+        .my-game-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto 40px;
+        }
+        .my-game-stat-card {
+            background: rgba(26, 58, 82, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px 22px;
+            text-align: center;
+        }
+        .my-game-stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: #1E5EFF;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .my-game-stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #ffffff;
+        }
+        .my-game-history-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: #ffffff;
+            margin: 0 0 16px;
+            text-align: center;
+        }
+        .my-game-table-wrap {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0d2137;
+        }
+        .my-game-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+        .my-game-table th {
+            text-align: left;
+            padding: 14px 16px;
+            background: rgba(30, 94, 255, 0.15);
+            color: #ffffff;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .my-game-table td {
+            padding: 12px 16px;
+            color: #B8C5D6;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .my-game-table tr:last-child td {
+            border-bottom: none;
+        }
+        .my-game-table-empty {
+            text-align: center;
+            color: #B8C5D6;
+            padding: 32px 16px !important;
+        }
+        @media (max-width: 700px) {
+            .my-game-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .my-game-form-grid .form-group.span-2 {
+                grid-column: 1;
+            }
+            .my-game-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .my-game-form-card {
+                padding: 22px 20px 28px;
+            }
+        }
+
         /* Daily Trivia Card - at bottom of Golf Hub */
         .trivia-divider {
             width: 100%;
@@ -3603,6 +3758,7 @@
                 <a href="#" class="top-nav-link active" data-page="home">Home</a>
                 <a href="#" class="top-nav-link" data-page="swing-coach">Swing Coach</a>
                 <a href="#" class="top-nav-link" data-page="golf-hub">Golf Hub</a>
+                <a href="#" class="top-nav-link" data-page="my-game">My Game</a>
                 <a href="#" class="top-nav-link" data-page="contact">Contact Us</a>
                 <div id="authLinks" class="auth-links">
                     <a href="login.html" class="top-nav-link" id="loginLink">Login</a>
@@ -3614,6 +3770,7 @@
                 <a href="#" class="top-nav-dropdown-link" data-page="home">Home</a>
                 <a href="#" class="top-nav-dropdown-link" data-page="swing-coach">Swing Coach</a>
                 <a href="#" class="top-nav-dropdown-link" data-page="golf-hub">Golf Hub</a>
+                <a href="#" class="top-nav-dropdown-link" data-page="my-game">My Game</a>
                 <a href="#" class="top-nav-dropdown-link" data-page="contact">Contact Us</a>
                 <a href="login.html" class="top-nav-dropdown-link" id="loginLinkMobile">Login</a>
                 <a href="#" class="top-nav-dropdown-link" id="mySwingsLinkMobile" style="display: none;">My Swings</a>
@@ -4010,6 +4167,117 @@
         </section>
     </div>
 
+    <!-- My Game Page -->
+    <div id="my-game-page" class="page-section">
+        <div class="golf-hub-hero">
+            <div class="golf-hub-hero-content">
+                <h1 class="golf-hub-hero-title">My Game</h1>
+                <p class="golf-hub-hero-subtext">Track your rounds and watch your progress.</p>
+            </div>
+        </div>
+        <section class="golf-hub-section my-game-section">
+            <div class="golf-hub-container">
+                <div class="my-game-form-card">
+                    <h2 class="my-game-form-title">Log a Round</h2>
+                    <form id="myGameRoundForm">
+                        <div class="my-game-form-grid">
+                            <div class="form-group span-2">
+                                <label for="myGameDate" class="form-label">Date played</label>
+                                <input type="date" id="myGameDate" name="played_at" class="form-input" required />
+                            </div>
+                            <div class="form-group span-2">
+                                <label for="myGameCourse" class="form-label">Course name</label>
+                                <input type="text" id="myGameCourse" name="course_name" class="form-input" placeholder="Search for a course..." autocomplete="off" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="myGameTees" class="form-label">Tees played</label>
+                                <select id="myGameTees" name="tees_played" class="form-input" required>
+                                    <option value="">Select tees</option>
+                                    <option value="Black">Black</option>
+                                    <option value="Blue">Blue</option>
+                                    <option value="White">White</option>
+                                    <option value="Gold">Gold</option>
+                                    <option value="Red">Red</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="myGamePar" class="form-label">Par</label>
+                                <input type="number" id="myGamePar" name="par" class="form-input" min="27" max="200" value="72" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="myGameRating" class="form-label">Course rating</label>
+                                <input type="number" id="myGameRating" name="course_rating" class="form-input" step="0.1" min="60" max="90" placeholder="e.g. 71.4" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="myGameSlope" class="form-label">Slope</label>
+                                <input type="number" id="myGameSlope" name="slope" class="form-input" min="55" max="155" placeholder="e.g. 125" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="myGameGross" class="form-label">Gross score</label>
+                                <input type="number" id="myGameGross" name="gross_score" class="form-input" min="18" max="200" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="myGamePutts" class="form-label">Putts <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
+                                <input type="number" id="myGamePutts" name="putts" class="form-input" min="0" max="200" />
+                            </div>
+                            <div class="form-group">
+                                <label for="myGameFairways" class="form-label">Fairways hit <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
+                                <input type="number" id="myGameFairways" name="fairways_hit" class="form-input" min="0" max="18" />
+                            </div>
+                            <div class="form-group">
+                                <label for="myGameGir" class="form-label">Greens in regulation <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
+                                <input type="number" id="myGameGir" name="greens_in_regulation" class="form-input" min="0" max="18" />
+                            </div>
+                            <div class="form-group span-2">
+                                <label for="myGameDifferential" class="form-label">Handicap differential</label>
+                                <input type="text" id="myGameDifferential" class="form-input" readonly value="" placeholder="Enter score, rating, and slope" />
+                            </div>
+                            <div class="form-group span-2">
+                                <label for="myGameNotes" class="form-label">Notes <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
+                                <textarea id="myGameNotes" name="notes" class="form-textarea" style="height:100px;" placeholder="Anything you want to remember about this round..."></textarea>
+                            </div>
+                        </div>
+                        <div class="my-game-form-actions">
+                            <button type="submit" class="form-submit-button" id="myGameSaveBtn">Save Round</button>
+                            <div id="myGameSaveSuccess" class="my-game-msg" role="status"></div>
+                            <div id="myGameSaveError" class="my-game-msg" role="alert"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="my-game-stats-grid" id="myGameStatsGrid">
+                    <div class="my-game-stat-card">
+                        <div class="my-game-stat-label">Rounds logged</div>
+                        <div class="my-game-stat-value" id="myGameStatRounds">0</div>
+                    </div>
+                    <div class="my-game-stat-card">
+                        <div class="my-game-stat-label">Scoring average</div>
+                        <div class="my-game-stat-value" id="myGameStatAvg">—</div>
+                    </div>
+                    <div class="my-game-stat-card">
+                        <div class="my-game-stat-label">Lowest differential</div>
+                        <div class="my-game-stat-value" id="myGameStatLowDiff">—</div>
+                    </div>
+                </div>
+                <h2 class="my-game-history-heading">Round history</h2>
+                <div class="my-game-table-wrap">
+                    <table class="my-game-table" aria-label="Past rounds">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Course</th>
+                                <th>Score</th>
+                                <th>Par</th>
+                                <th>Differential</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myGameHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <!-- Contact Page -->
     <div id="contact-page" class="page-section">
         <section class="contact-section">
@@ -4098,12 +4366,15 @@
                 ensureGolfCoachWelcome();
                 if (typeof loadTrivia === 'function') loadTrivia();
             }
+            if (pageId === 'my-game' && typeof window.loadMyGameRounds === 'function') {
+                window.loadMyGameRounds();
+            }
         }
 
-        // Add click listeners for nav links with data-page (Home, Golf Hub, Contact Us). Swing Coach is handled in auth IIFE (requires login).
+        // Add click listeners for nav links with data-page (Home, Golf Hub, Contact Us). Swing Coach & My Game are handled in auth IIFE (require login).
         topNavLinks.forEach(link => {
             const page = link.getAttribute('data-page');
-            if (page && page !== 'swing-coach') {
+            if (page && page !== 'swing-coach' && page !== 'my-game') {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     switchPage(page);
@@ -4128,7 +4399,7 @@
         // Dropdown links (home, golf-hub, contact): switch page and close
         document.querySelectorAll('.top-nav-dropdown-link[data-page]').forEach(function(link) {
             var page = link.getAttribute('data-page');
-            if (page && page !== 'swing-coach') {
+            if (page && page !== 'swing-coach' && page !== 'my-game') {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     switchPage(page);
@@ -4470,6 +4741,200 @@
             if (swingCoachLink) swingCoachLink.addEventListener('click', handleSwingCoachClick);
             var swingCoachDropdownLink = document.querySelector('.top-nav-dropdown-link[data-page="swing-coach"]');
             if (swingCoachDropdownLink) swingCoachDropdownLink.addEventListener('click', handleSwingCoachClick);
+
+            // My Game nav link (desktop and dropdown): require login, else redirect to login.html
+            function handleMyGameClick(e) {
+                e.preventDefault();
+                supabase.auth.getSession().then(function(result) {
+                    if (result.data && result.data.session) {
+                        switchPage('my-game');
+                        if (typeof closeNavDropdown === 'function') closeNavDropdown();
+                    } else {
+                        window.location.href = 'login.html';
+                    }
+                }).catch(function() {
+                    window.location.href = 'login.html';
+                });
+            }
+            var myGameLink = document.querySelector('.top-nav-link[data-page="my-game"]');
+            if (myGameLink) myGameLink.addEventListener('click', handleMyGameClick);
+            var myGameDropdownLink = document.querySelector('.top-nav-dropdown-link[data-page="my-game"]');
+            if (myGameDropdownLink) myGameDropdownLink.addEventListener('click', handleMyGameClick);
+
+            function myGameTodayISO() {
+                var d = new Date();
+                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            }
+            function myGameComputeDifferential() {
+                var grossEl = document.getElementById('myGameGross');
+                var ratingEl = document.getElementById('myGameRating');
+                var slopeEl = document.getElementById('myGameSlope');
+                var outEl = document.getElementById('myGameDifferential');
+                if (!outEl) return null;
+                var g = grossEl && grossEl.value !== '' ? parseFloat(grossEl.value) : NaN;
+                var r = ratingEl && ratingEl.value !== '' ? parseFloat(ratingEl.value) : NaN;
+                var s = slopeEl && slopeEl.value !== '' ? parseFloat(slopeEl.value) : NaN;
+                if (isNaN(g) || isNaN(r) || isNaN(s) || s === 0) {
+                    outEl.value = '';
+                    return null;
+                }
+                var diff = ((g - r) * 113) / s;
+                var rounded = Math.round(diff * 10) / 10;
+                outEl.value = String(rounded);
+                return rounded;
+            }
+            function myGameWireDifferentialInputs() {
+                ['myGameGross', 'myGameRating', 'myGameSlope'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.addEventListener('input', myGameComputeDifferential);
+                });
+            }
+            function myGameFormatDateDisplay(iso) {
+                if (!iso) return '—';
+                var part = String(iso).split('T')[0];
+                var bits = part.split('-');
+                if (bits.length !== 3) return part;
+                return bits[1] + '/' + bits[2] + '/' + bits[0];
+            }
+            function myGameEscapeHtml(s) {
+                if (s == null) return '';
+                return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+            function myGameRenderHistoryAndStats(rows) {
+                var tbody = document.getElementById('myGameHistoryBody');
+                var statRounds = document.getElementById('myGameStatRounds');
+                var statAvg = document.getElementById('myGameStatAvg');
+                var statLow = document.getElementById('myGameStatLowDiff');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                var list = rows || [];
+                if (list.length === 0) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="5" class="my-game-table-empty">No rounds logged yet</td>';
+                    tbody.appendChild(tr);
+                    if (statRounds) statRounds.textContent = '0';
+                    if (statAvg) statAvg.textContent = '—';
+                    if (statLow) statLow.textContent = '—';
+                    return;
+                }
+                if (statRounds) statRounds.textContent = String(list.length);
+                var scores = list.map(function(row) { return row.gross_score; }).filter(function(x) { return x != null && !isNaN(Number(x)); });
+                if (statAvg) {
+                    if (scores.length === 0) statAvg.textContent = '—';
+                    else {
+                        var sum = scores.reduce(function(a, b) { return a + Number(b); }, 0);
+                        statAvg.textContent = String(Math.round((sum / scores.length) * 10) / 10);
+                    }
+                }
+                var diffs = list.map(function(row) { return row.handicap_differential; }).filter(function(x) { return x != null && !isNaN(Number(x)); }).map(Number);
+                if (statLow) {
+                    if (diffs.length === 0) statLow.textContent = '—';
+                    else statLow.textContent = String(Math.min.apply(null, diffs));
+                }
+                list.forEach(function(row) {
+                    var tr = document.createElement('tr');
+                    var diffDisp = row.handicap_differential != null && !isNaN(Number(row.handicap_differential)) ? String(row.handicap_differential) : '—';
+                    tr.innerHTML =
+                        '<td>' + myGameEscapeHtml(myGameFormatDateDisplay(row.played_at)) + '</td>' +
+                        '<td>' + myGameEscapeHtml(row.course_name || '—') + '</td>' +
+                        '<td>' + myGameEscapeHtml(row.gross_score != null ? row.gross_score : '—') + '</td>' +
+                        '<td>' + myGameEscapeHtml(row.par != null ? row.par : '—') + '</td>' +
+                        '<td>' + myGameEscapeHtml(diffDisp) + '</td>';
+                    tbody.appendChild(tr);
+                });
+            }
+            function loadMyGameRounds() {
+                supabase.auth.getUser().then(function(res) {
+                    var user = res.data && res.data.user;
+                    var tbody = document.getElementById('myGameHistoryBody');
+                    if (!user) {
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            var tr = document.createElement('tr');
+                            tr.innerHTML = '<td colspan="5" class="my-game-table-empty">Sign in to see your rounds</td>';
+                            tbody.appendChild(tr);
+                        }
+                        return;
+                    }
+                    supabase.from('rounds').select('*').eq('user_id', user.id).order('played_at', { ascending: false })
+                        .then(function(r) {
+                            if (r.error) {
+                                console.error('My Game load rounds:', r.error);
+                                if (tbody) {
+                                    tbody.innerHTML = '';
+                                    var tr2 = document.createElement('tr');
+                                    tr2.innerHTML = '<td colspan="5" class="my-game-table-empty">Could not load rounds. Check Supabase table and RLS.</td>';
+                                    tbody.appendChild(tr2);
+                                }
+                                return;
+                            }
+                            myGameRenderHistoryAndStats(r.data || []);
+                        });
+                });
+            }
+            window.loadMyGameRounds = loadMyGameRounds;
+
+            var myGameForm = document.getElementById('myGameRoundForm');
+            var myGameDate = document.getElementById('myGameDate');
+            if (myGameDate) myGameDate.value = myGameTodayISO();
+            myGameWireDifferentialInputs();
+
+            if (myGameForm) {
+                myGameForm.addEventListener('submit', function(ev) {
+                    ev.preventDefault();
+                    var successEl = document.getElementById('myGameSaveSuccess');
+                    var errEl = document.getElementById('myGameSaveError');
+                    if (successEl) { successEl.textContent = ''; successEl.className = 'my-game-msg'; }
+                    if (errEl) { errEl.textContent = ''; errEl.className = 'my-game-msg'; }
+
+                    supabase.auth.getUser().then(function(res) {
+                        var user = res.data && res.data.user;
+                        if (!user) {
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        var diff = myGameComputeDifferential();
+                        var puttsV = document.getElementById('myGamePutts').value;
+                        var fwV = document.getElementById('myGameFairways').value;
+                        var girV = document.getElementById('myGameGir').value;
+                        var notesV = (document.getElementById('myGameNotes').value || '').trim();
+                        var payload = {
+                            user_id: user.id,
+                            played_at: document.getElementById('myGameDate').value,
+                            course_name: (document.getElementById('myGameCourse').value || '').trim(),
+                            tees_played: document.getElementById('myGameTees').value,
+                            par: parseInt(document.getElementById('myGamePar').value, 10),
+                            course_rating: parseFloat(document.getElementById('myGameRating').value),
+                            slope: parseInt(document.getElementById('myGameSlope').value, 10),
+                            gross_score: parseInt(document.getElementById('myGameGross').value, 10),
+                            putts: puttsV === '' ? null : parseInt(puttsV, 10),
+                            fairways_hit: fwV === '' ? null : parseInt(fwV, 10),
+                            greens_in_regulation: girV === '' ? null : parseInt(girV, 10),
+                            notes: notesV === '' ? null : notesV,
+                            handicap_differential: diff != null ? diff : null
+                        };
+                        supabase.from('rounds').insert([payload]).then(function(ins) {
+                            if (ins.error) {
+                                if (errEl) {
+                                    errEl.textContent = ins.error.message || 'Could not save round.';
+                                    errEl.className = 'my-game-msg is-error';
+                                }
+                                return;
+                            }
+                            if (successEl) {
+                                successEl.textContent = 'Round saved successfully.';
+                                successEl.className = 'my-game-msg is-success';
+                            }
+                            myGameForm.reset();
+                            if (myGameDate) myGameDate.value = myGameTodayISO();
+                            document.getElementById('myGamePar').value = '72';
+                            var diffIn = document.getElementById('myGameDifferential');
+                            if (diffIn) diffIn.value = '';
+                            loadMyGameRounds();
+                        });
+                    });
+                });
+            }
 
             // My Swings nav link (desktop and mobile): go to swing coach page then switch to myswings tab after 100ms
             function handleMySwingsClick(e) {
