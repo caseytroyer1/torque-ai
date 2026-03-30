@@ -3533,8 +3533,18 @@
 
         .top-nav-links {
             display: flex;
+            flex: 1;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 40px;
+            min-width: 0;
+        }
+
+        .top-nav-pages {
+            display: flex;
             gap: 40px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .top-nav-link {
@@ -3561,9 +3571,98 @@
 
         .auth-links {
             display: flex;
-            gap: 40px;
             align-items: center;
-            margin-left: 20px;
+            margin-left: 24px;
+            padding-left: 28px;
+            border-left: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .top-nav-profile-wrap {
+            position: relative;
+        }
+
+        .top-nav-profile-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            cursor: pointer;
+            padding: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .top-nav-profile-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .top-nav-profile-btn[aria-expanded="true"] {
+            border-color: #1E5EFF;
+            background: rgba(30, 94, 255, 0.2);
+        }
+
+        .top-nav-profile-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            min-width: 188px;
+            background: #0d2137;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 6px 0;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+            z-index: 1100;
+        }
+
+        .top-nav-profile-dropdown.open {
+            display: block;
+        }
+
+        .top-nav-profile-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #ffffff;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .top-nav-profile-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .top-nav-dropdown-logout {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 17px;
+            color: #B8C5D6;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-bottom: 12px;
+        }
+
+        .top-nav-dropdown-logout:hover {
+            color: #ffffff;
         }
 
         .top-nav-hamburger {
@@ -3755,26 +3854,36 @@
             <img src="torque-logo.png" alt="Torque AI" class="top-nav-logo">
             <button type="button" class="top-nav-hamburger" id="navHamburger" aria-label="Menu">☰</button>
             <div class="top-nav-links" id="topNavLinks">
-                <a href="#" class="top-nav-link active" data-page="home">Home</a>
-                <a href="#" class="top-nav-link" data-page="swing-coach">Swing Coach</a>
-                <a href="#" class="top-nav-link" data-page="golf-hub">Golf Hub</a>
-                <a href="#" class="top-nav-link" data-page="my-game">My Game</a>
-                <a href="#" class="top-nav-link" data-page="contact">Contact Us</a>
+                <div class="top-nav-pages">
+                    <a href="#" class="top-nav-link active" data-page="home">Home</a>
+                    <a href="#" class="top-nav-link" data-page="swing-coach">Swing Coach</a>
+                    <a href="#" class="top-nav-link" data-page="my-game">My Game</a>
+                    <a href="#" class="top-nav-link" data-page="golf-hub">Golf Hub</a>
+                </div>
                 <div id="authLinks" class="auth-links">
                     <a href="login.html" class="top-nav-link" id="loginLink">Login</a>
-                    <a href="#" class="top-nav-link" id="mySwingsLink" style="display: none;">My Swings</a>
-                    <a href="#" class="top-nav-link" id="logoutLink" style="display: none;">Logout</a>
+                    <div class="top-nav-profile-wrap" id="topNavProfileWrap" style="display: none;">
+                        <button type="button" class="top-nav-profile-btn" id="topNavProfileBtn" aria-label="Account menu" aria-expanded="false" aria-haspopup="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                                <circle cx="12" cy="9.5" r="3" fill="currentColor"/>
+                                <path d="M6.5 18.5c.8-2.8 3.2-4.5 5.5-4.5s4.7 1.7 5.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                            </svg>
+                        </button>
+                        <div class="top-nav-profile-dropdown" id="topNavProfileDropdown" role="menu">
+                            <button type="button" class="top-nav-profile-item" id="profileAccountBtn" role="menuitem">Account</button>
+                            <button type="button" class="top-nav-profile-item" id="profileLogoutBtn" role="menuitem">Logout</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="top-nav-dropdown" id="topNavDropdown">
                 <a href="#" class="top-nav-dropdown-link" data-page="home">Home</a>
                 <a href="#" class="top-nav-dropdown-link" data-page="swing-coach">Swing Coach</a>
-                <a href="#" class="top-nav-dropdown-link" data-page="golf-hub">Golf Hub</a>
                 <a href="#" class="top-nav-dropdown-link" data-page="my-game">My Game</a>
-                <a href="#" class="top-nav-dropdown-link" data-page="contact">Contact Us</a>
+                <a href="#" class="top-nav-dropdown-link" data-page="golf-hub">Golf Hub</a>
                 <a href="login.html" class="top-nav-dropdown-link" id="loginLinkMobile">Login</a>
-                <a href="#" class="top-nav-dropdown-link" id="mySwingsLinkMobile" style="display: none;">My Swings</a>
-                <a href="#" class="top-nav-dropdown-link" id="logoutLinkMobile" style="display: none;">Logout</a>
+                <button type="button" class="top-nav-dropdown-logout" id="logoutLinkMobile" style="display: none;">Logout</button>
             </div>
                         </div>
     </nav>
@@ -4371,7 +4480,7 @@
             }
         }
 
-        // Add click listeners for nav links with data-page (Home, Golf Hub, Contact Us). Swing Coach & My Game are handled in auth IIFE (require login).
+        // Add click listeners for nav links with data-page (Home, Golf Hub). Swing Coach & My Game are handled in auth IIFE (require login). Contact is footer-only.
         topNavLinks.forEach(link => {
             const page = link.getAttribute('data-page');
             if (page && page !== 'swing-coach' && page !== 'my-game') {
@@ -4396,7 +4505,7 @@
         function closeNavDropdown() {
             if (topNavDropdown) topNavDropdown.classList.remove('open');
         }
-        // Dropdown links (home, golf-hub, contact): switch page and close
+        // Dropdown links: switch page and close
         document.querySelectorAll('.top-nav-dropdown-link[data-page]').forEach(function(link) {
             var page = link.getAttribute('data-page');
             if (page && page !== 'swing-coach' && page !== 'my-game') {
@@ -4682,26 +4791,33 @@
             });
         });
 
-        // Supabase auth — only updates login / My Swings / Logout visibility; does not affect switchPage or other nav
+        // Supabase auth — login vs profile menu (desktop), login vs logout (mobile); does not affect switchPage
         (function initSupabaseAuth() {
             if (typeof window.supabase === 'undefined') return;
             const SUPABASE_URL = 'https://lfewkargttvgtndqhucv.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmZXdrYXJndHR2Z3RuZHFodWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTkyODUsImV4cCI6MjA4NzczNTI4NX0.Ij-upJUkf7j1wemFJKvf0pq9rvO0KTeBYRb1ka97EAw';
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             const loginLink = document.getElementById('loginLink');
-            const mySwingsLink = document.getElementById('mySwingsLink');
-            const logoutLink = document.getElementById('logoutLink');
             const loginLinkMobile = document.getElementById('loginLinkMobile');
-            const mySwingsLinkMobile = document.getElementById('mySwingsLinkMobile');
             const logoutLinkMobile = document.getElementById('logoutLinkMobile');
+            const topNavProfileWrap = document.getElementById('topNavProfileWrap');
+            const topNavProfileBtn = document.getElementById('topNavProfileBtn');
+            const topNavProfileDropdown = document.getElementById('topNavProfileDropdown');
+            const profileAccountBtn = document.getElementById('profileAccountBtn');
+            const profileLogoutBtn = document.getElementById('profileLogoutBtn');
+
+            function closeProfileDropdown() {
+                if (topNavProfileDropdown) topNavProfileDropdown.classList.remove('open');
+                if (topNavProfileBtn) topNavProfileBtn.setAttribute('aria-expanded', 'false');
+            }
 
             function updateAuthUI(authenticated) {
                 if (loginLink) loginLink.style.display = authenticated ? 'none' : 'block';
-                if (mySwingsLink) mySwingsLink.style.display = authenticated ? 'block' : 'none';
-                if (logoutLink) logoutLink.style.display = authenticated ? 'block' : 'none';
+                if (topNavProfileWrap) topNavProfileWrap.style.display = authenticated ? 'block' : 'none';
+                if (topNavProfileBtn) topNavProfileBtn.style.display = authenticated ? 'flex' : 'none';
                 if (loginLinkMobile) loginLinkMobile.style.display = authenticated ? 'none' : 'block';
-                if (mySwingsLinkMobile) mySwingsLinkMobile.style.display = authenticated ? 'block' : 'none';
                 if (logoutLinkMobile) logoutLinkMobile.style.display = authenticated ? 'block' : 'none';
+                if (!authenticated) closeProfileDropdown();
             }
 
             supabase.auth.getSession().then(function(result) {
@@ -4715,13 +4831,37 @@
             });
 
             function handleLogoutClick(e) {
-                e.preventDefault();
+                if (e && e.preventDefault) e.preventDefault();
+                closeProfileDropdown();
+                if (typeof closeNavDropdown === 'function') closeNavDropdown();
                 supabase.auth.signOut().then(function() {
                     window.location.reload();
                 });
             }
-            if (logoutLink) logoutLink.addEventListener('click', handleLogoutClick);
             if (logoutLinkMobile) logoutLinkMobile.addEventListener('click', handleLogoutClick);
+            if (profileLogoutBtn) profileLogoutBtn.addEventListener('click', handleLogoutClick);
+
+            if (topNavProfileBtn && topNavProfileDropdown) {
+                topNavProfileBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var isOpen = topNavProfileDropdown.classList.toggle('open');
+                    topNavProfileBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+            }
+            document.addEventListener('click', function() {
+                closeProfileDropdown();
+            });
+            if (topNavProfileWrap) {
+                topNavProfileWrap.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+            if (profileAccountBtn) {
+                profileAccountBtn.addEventListener('click', function() {
+                    closeProfileDropdown();
+                    alert('Coming soon');
+                });
+            }
 
             // Swing Coach nav link (desktop and dropdown): require login, else redirect to login.html
             function handleSwingCoachClick(e) {
@@ -4935,18 +5075,6 @@
                     });
                 });
             }
-
-            // My Swings nav link (desktop and mobile): go to swing coach page then switch to myswings tab after 100ms
-            function handleMySwingsClick(e) {
-                e.preventDefault();
-                switchPage('swing-coach');
-                setTimeout(function() {
-                    if (typeof switchTab === 'function') switchTab('myswings', null);
-                }, 100);
-                if (typeof closeNavDropdown === 'function') closeNavDropdown();
-            }
-            if (mySwingsLink) mySwingsLink.addEventListener('click', handleMySwingsClick);
-            if (mySwingsLinkMobile) mySwingsLinkMobile.addEventListener('click', handleMySwingsClick);
 
             // Try It Free and Start Analyzing Free: require login, else redirect to signup.html
             function goToSwingCoachOrSignup() {
