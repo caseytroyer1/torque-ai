@@ -111,10 +111,91 @@
 
         /* My Game — rounds log (same shell as Golf Hub: hero + #0A2540 section) */
         .my-game-section .form-input[readonly],
-        .my-game-section .form-input:read-only {
+        .my-game-section .form-input:read-only,
+        .my-game-section .form-input.my-game-api-locked {
             background: rgba(255, 255, 255, 0.06);
             color: #B8C5D6;
             cursor: default;
+        }
+        .my-game-course-field {
+            position: relative;
+        }
+        .my-game-course-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+        .my-game-course-input-row .my-game-course-input {
+            flex: 1;
+            min-width: 0;
+        }
+        .my-game-course-clear {
+            flex-shrink: 0;
+            width: 44px;
+            min-height: 48px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        .my-game-course-clear:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+        .my-game-course-dropdown {
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            z-index: 60;
+            background: #0d2137;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+        }
+        .my-game-course-dropdown.is-open {
+            display: block;
+        }
+        .my-game-course-dd-item {
+            padding: 12px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            text-align: left;
+        }
+        .my-game-course-dd-item:last-child {
+            border-bottom: none;
+        }
+        .my-game-course-dd-item:hover {
+            background: rgba(30, 94, 255, 0.2);
+        }
+        .my-game-course-dd-item-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: #ffffff;
+        }
+        .my-game-course-dd-item-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #B8C5D6;
+            margin-top: 4px;
+        }
+        .my-game-course-dd-empty {
+            padding: 14px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: rgba(184, 197, 214, 0.85);
         }
         .my-game-form-card {
             max-width: 720px;
@@ -4474,9 +4555,13 @@
                                 <label for="myGameDate" class="form-label">Date played</label>
                                 <input type="date" id="myGameDate" name="played_at" class="form-input" required />
                             </div>
-                            <div class="form-group span-2">
+                            <div class="form-group span-2 my-game-course-field">
                                 <label for="myGameCourse" class="form-label">Course name</label>
-                                <input type="text" id="myGameCourse" name="course_name" class="form-input" placeholder="Search for a course..." autocomplete="off" required />
+                                <div class="my-game-course-input-row">
+                                    <input type="text" id="myGameCourse" name="course_name" class="form-input my-game-course-input" placeholder="Search for a course..." autocomplete="off" required />
+                                    <button type="button" class="my-game-course-clear" id="myGameCourseClear" style="display: none;" aria-label="Clear course and use manual entry" title="Clear course">×</button>
+                                </div>
+                                <div id="myGameCourseDropdown" class="my-game-course-dropdown" role="listbox" aria-label="Course search results"></div>
                             </div>
                             <div class="form-group">
                                 <label for="myGameTees" class="form-label">Tees played</label>
@@ -5284,6 +5369,257 @@
                     if (el) el.addEventListener('input', myGameComputeDifferential);
                 });
             }
+
+            /* GolfCourseAPI — course search, tee sets, auto par/rating/slope */
+            (function initMyGameCourseApi() {
+                var GC_API_BASE = 'https://api.golfcourseapi.com/v1';
+                var GC_API_KEY = '4QIDOVTMO2Z4JQFBVTH5LOYBVQ';
+                var courseInput = document.getElementById('myGameCourse');
+                var courseDd = document.getElementById('myGameCourseDropdown');
+                var courseClear = document.getElementById('myGameCourseClear');
+                var teeSel = document.getElementById('myGameTees');
+                var parEl = document.getElementById('myGamePar');
+                var ratingEl = document.getElementById('myGameRating');
+                var slopeEl = document.getElementById('myGameSlope');
+                var searchTimer = null;
+                var teeList = [];
+                var courseApiActive = false;
+
+                function gcHeaders() {
+                    return { 'Authorization': 'Key ' + GC_API_KEY };
+                }
+
+                function hideCourseDropdown() {
+                    if (courseDd) {
+                        courseDd.classList.remove('is-open');
+                        courseDd.innerHTML = '';
+                    }
+                }
+
+                function setCourseApiFieldsLocked(locked) {
+                    [parEl, ratingEl, slopeEl].forEach(function(el) {
+                        if (!el) return;
+                        el.readOnly = !!locked;
+                        if (locked) el.classList.add('my-game-api-locked');
+                        else el.classList.remove('my-game-api-locked');
+                    });
+                }
+
+                function resetManualTeeSelect() {
+                    if (!teeSel) return;
+                    teeSel.innerHTML =
+                        '<option value="">Select tees</option>' +
+                        '<option value="Black">Black</option>' +
+                        '<option value="Blue">Blue</option>' +
+                        '<option value="White">White</option>' +
+                        '<option value="Gold">Gold</option>' +
+                        '<option value="Red">Red</option>';
+                    teeList = [];
+                    setCourseApiFieldsLocked(false);
+                }
+
+                function updateCourseClearVisibility() {
+                    if (courseClear) courseClear.style.display = courseApiActive ? 'flex' : 'none';
+                }
+
+                function myGameResetCourseApi() {
+                    courseApiActive = false;
+                    hideCourseDropdown();
+                    resetManualTeeSelect();
+                    updateCourseClearVisibility();
+                    if (parEl) { parEl.value = '72'; }
+                    if (ratingEl) { ratingEl.value = ''; }
+                    if (slopeEl) { slopeEl.value = ''; }
+                    myGameComputeDifferential();
+                }
+                window.myGameResetCourseApi = myGameResetCourseApi;
+
+                function courseDisplayName(c) {
+                    if (!c) return '';
+                    return (c.course_name || c.club_name || '').trim() || 'Course';
+                }
+
+                function courseLocationLine(c) {
+                    var loc = c && c.location;
+                    if (!loc) return '';
+                    var city = (loc.city || '').trim();
+                    var st = (loc.state || '').trim();
+                    if (city && st) return city + ', ' + st;
+                    return city || st || '';
+                }
+
+                function buildTeeListFromCourse(course) {
+                    var out = [];
+                    var tees = course && course.tees;
+                    if (!tees) return out;
+                    ['male', 'female'].forEach(function(gender) {
+                        var arr = tees[gender];
+                        if (!arr || !arr.length) return;
+                        arr.forEach(function(t) {
+                            out.push({ tee: t, gender: gender });
+                        });
+                    });
+                    return out;
+                }
+
+                function populateTeesFromCourse(course) {
+                    if (!teeSel) return;
+                    teeList = buildTeeListFromCourse(course);
+                    if (!teeList.length) {
+                        resetManualTeeSelect();
+                        return;
+                    }
+                    teeSel.innerHTML = '<option value="">Select tees</option>';
+                    teeList.forEach(function(entry, idx) {
+                        var t = entry.tee;
+                        var label = (t.tee_name || 'Tee') + (entry.gender === 'female' ? ' (Women)' : ' (Men)');
+                        if (t.total_yards != null) label += ' — ' + t.total_yards + ' yds';
+                        var opt = document.createElement('option');
+                        opt.value = 'api:' + idx;
+                        opt.textContent = label;
+                        teeSel.appendChild(opt);
+                    });
+                    setCourseApiFieldsLocked(false);
+                    if (parEl) parEl.value = '';
+                    if (ratingEl) ratingEl.value = '';
+                    if (slopeEl) slopeEl.value = '';
+                    myGameComputeDifferential();
+                }
+
+                function onTeeSelectChange() {
+                    if (!teeSel) return;
+                    var v = teeSel.value || '';
+                    if (v.indexOf('api:') === 0) {
+                        var idx = parseInt(v.replace(/^api:/, ''), 10);
+                        if (!isNaN(idx) && teeList[idx]) {
+                            var t = teeList[idx].tee;
+                            if (parEl) parEl.value = String(t.par_total != null ? t.par_total : 72);
+                            if (ratingEl) ratingEl.value = t.course_rating != null ? String(t.course_rating) : '';
+                            if (slopeEl) slopeEl.value = t.slope_rating != null ? String(t.slope_rating) : '';
+                            setCourseApiFieldsLocked(true);
+                            myGameComputeDifferential();
+                            return;
+                        }
+                    }
+                    setCourseApiFieldsLocked(false);
+                    myGameComputeDifferential();
+                }
+
+                if (teeSel) teeSel.addEventListener('change', onTeeSelectChange);
+
+                function renderCourseDropdown(courses, emptyMsg) {
+                    if (!courseDd) return;
+                    courseDd.innerHTML = '';
+                    if (emptyMsg) {
+                        var empty = document.createElement('div');
+                        empty.className = 'my-game-course-dd-empty';
+                        empty.textContent = emptyMsg;
+                        courseDd.appendChild(empty);
+                        courseDd.classList.add('is-open');
+                        return;
+                    }
+                    var list = (courses || []).slice(0, 6);
+                    list.forEach(function(c) {
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'my-game-course-dd-item';
+                        btn.setAttribute('role', 'option');
+                        var title = document.createElement('div');
+                        title.className = 'my-game-course-dd-item-title';
+                        title.textContent = courseDisplayName(c);
+                        btn.appendChild(title);
+                        var sub = document.createElement('div');
+                        sub.className = 'my-game-course-dd-item-sub';
+                        sub.textContent = courseLocationLine(c) || ' ';
+                        btn.appendChild(sub);
+                        btn.addEventListener('mousedown', function(e) {
+                            e.preventDefault();
+                            selectCourseById(c.id);
+                        });
+                        courseDd.appendChild(btn);
+                    });
+                    courseDd.classList.add('is-open');
+                }
+
+                function selectCourseById(courseId) {
+                    hideCourseDropdown();
+                    if (!courseId) return;
+                    if (teeSel) teeSel.disabled = true;
+                    fetch(GC_API_BASE + '/courses/' + encodeURIComponent(courseId), { headers: gcHeaders() })
+                        .then(function(r) {
+                            if (!r.ok) throw new Error('course failed');
+                            return r.json();
+                        })
+                        .then(function(data) {
+                            var course = data && data.course;
+                            if (teeSel) teeSel.disabled = false;
+                            if (!course) {
+                                resetManualTeeSelect();
+                                return;
+                            }
+                            courseApiActive = true;
+                            updateCourseClearVisibility();
+                            if (courseInput) courseInput.value = courseDisplayName(course);
+                            populateTeesFromCourse(course);
+                        })
+                        .catch(function() {
+                            if (teeSel) teeSel.disabled = false;
+                            resetManualTeeSelect();
+                            courseApiActive = false;
+                            updateCourseClearVisibility();
+                        });
+                }
+
+                function runCourseSearch(q) {
+                    if (!courseDd) return;
+                    fetch(GC_API_BASE + '/search?search_query=' + encodeURIComponent(q), { headers: gcHeaders() })
+                        .then(function(r) {
+                            if (!r.ok) throw new Error('search failed');
+                            return r.json();
+                        })
+                        .then(function(data) {
+                            var courses = data && data.courses;
+                            if (!courses || !courses.length) {
+                                renderCourseDropdown(null, 'No courses found');
+                                return;
+                            }
+                            renderCourseDropdown(courses, null);
+                        })
+                        .catch(function() {
+                            hideCourseDropdown();
+                        });
+                }
+
+                if (courseInput) {
+                    courseInput.addEventListener('input', function() {
+                        if (searchTimer) clearTimeout(searchTimer);
+                        var v = (courseInput.value || '').trim();
+                        if (v.length < 3) {
+                            hideCourseDropdown();
+                            return;
+                        }
+                        searchTimer = setTimeout(function() {
+                            runCourseSearch(v);
+                        }, 500);
+                    });
+                    courseInput.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') hideCourseDropdown();
+                    });
+                }
+
+                if (courseClear) {
+                    courseClear.addEventListener('click', function() {
+                        if (courseInput) courseInput.value = '';
+                        myGameResetCourseApi();
+                    });
+                }
+
+                document.addEventListener('click', function(e) {
+                    if (!courseDd || !courseInput) return;
+                    var wrap = courseInput.closest('.my-game-course-field');
+                    if (wrap && !wrap.contains(e.target)) hideCourseDropdown();
+                });
+            })();
             function myGameFormatDateDisplay(iso) {
                 if (!iso) return '—';
                 var part = String(iso).split('T')[0];
@@ -5422,7 +5758,7 @@
                             }
                             myGameForm.reset();
                             if (myGameDate) myGameDate.value = myGameTodayISO();
-                            document.getElementById('myGamePar').value = '72';
+                            if (typeof window.myGameResetCourseApi === 'function') window.myGameResetCourseApi();
                             var diffIn = document.getElementById('myGameDifferential');
                             if (diffIn) diffIn.value = '';
                             loadMyGameRounds();
