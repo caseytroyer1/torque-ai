@@ -4892,9 +4892,42 @@
             el.appendChild(wrap);
         }
 
-        // Golf Hub: Daily Trivia (5/day, localStorage)
-        var triviaApiBase = 'https://torque-ai-docker.onrender.com';
+        // Golf Hub: Daily Trivia (5/day, localStorage; questions from Supabase trivia_questions)
         var currentTrivia = null;
+        var triviaQuestionsCache = null;
+        var triviaQuestionsLoadPromise = null;
+        function triviaHashDay(isoDate) {
+            var h = 5381;
+            for (var i = 0; i < isoDate.length; i++) {
+                h = ((h << 5) + h) + isoDate.charCodeAt(i);
+            }
+            return Math.abs(h);
+        }
+        function ensureTriviaQuestionsLoaded() {
+            if (triviaQuestionsCache !== null) {
+                return Promise.resolve(triviaQuestionsCache);
+            }
+            if (triviaQuestionsLoadPromise) {
+                return triviaQuestionsLoadPromise;
+            }
+            var supabase = window.torqueSupabase;
+            console.log('[trivia] supabase before fetch:', supabase);
+            if (!supabase || typeof supabase.from !== 'function') {
+                return Promise.reject(new Error('Trivia: no Supabase client (window.torqueSupabase)'));
+            }
+            triviaQuestionsLoadPromise = supabase.from('trivia_questions').select('*').order('id', { ascending: true }).then(function(res) {
+                triviaQuestionsLoadPromise = null;
+                if (res.error) {
+                    return Promise.reject(res.error);
+                }
+                triviaQuestionsCache = res.data || [];
+                return triviaQuestionsCache;
+            }).catch(function(err) {
+                triviaQuestionsLoadPromise = null;
+                return Promise.reject(err);
+            });
+            return triviaQuestionsLoadPromise;
+        }
         function getTriviaDate() {
             var d = new Date();
             return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -4962,25 +4995,49 @@
             optionsGrid.innerHTML = '';
             updateTriviaProgress();
             updateTriviaScoreLine();
-            fetch(triviaApiBase + '/trivia', { method: 'GET' })
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    if (!data.success || !data.trivia) {
+            ensureTriviaQuestionsLoaded()
+                .then(function(rows) {
+                    if (!rows || !rows.length) {
                         body.setAttribute('data-state', 'loading');
                         if (loading) loading.textContent = 'Could not load trivia. Try again.';
                         return;
                     }
-                    currentTrivia = data.trivia;
-                    var t = data.trivia;
+                    var idx = s.count;
+                    var row = rows[(triviaHashDay(getTriviaDate()) + idx) % rows.length];
+                    if (!row) {
+                        body.setAttribute('data-state', 'loading');
+                        if (loading) loading.textContent = 'Could not load trivia. Try again.';
+                        return;
+                    }
+                    var choices = [
+                        { letter: 'A', text: row.option_a },
+                        { letter: 'B', text: row.option_b },
+                        { letter: 'C', text: row.option_c },
+                        { letter: 'D', text: row.option_d }
+                    ];
+                    var choicesOk = choices.every(function(c) {
+                        return c.text != null && String(c.text).trim() !== '';
+                    });
+                    var correctLetter = String(row.correct_answer != null ? row.correct_answer : '').trim().toUpperCase();
+                    var t = {
+                        question: row.question,
+                        correct_answer: correctLetter,
+                        fun_fact: row.fun_fact != null ? row.fun_fact : (row.funFact != null ? row.funFact : '')
+                    };
+                    if (!t.question || !choicesOk || !/^[ABCD]$/.test(t.correct_answer)) {
+                        body.setAttribute('data-state', 'loading');
+                        if (loading) loading.textContent = 'Could not load trivia. Try again.';
+                        return;
+                    }
+                    currentTrivia = t;
                     questionText.textContent = t.question || '';
                     optionsGrid.innerHTML = '';
-                    var options = t.options || [];
-                    options.forEach(function(opt) {
+                    choices.forEach(function(c) {
                         var btn = document.createElement('button');
                         btn.type = 'button';
                         btn.className = 'trivia-option-btn';
-                        btn.textContent = opt;
-                        btn.setAttribute('data-option', opt);
+                        btn.textContent = c.letter + ') ' + String(c.text).trim();
+                        btn.setAttribute('data-option', c.letter);
                         optionsGrid.appendChild(btn);
                     });
                     body.setAttribute('data-state', 'question');
@@ -4992,12 +5049,14 @@
         function onTriviaAnswer(clickedOption) {
             if (!currentTrivia) return;
             var body = document.getElementById('triviaCardBody');
-            var answer = currentTrivia.answer || '';
-            var correct = clickedOption.getAttribute('data-option') === answer;
+            var clickedLetter = String(clickedOption.getAttribute('data-option') || '').trim().toUpperCase();
+            var correctLetter = String(currentTrivia.correct_answer || '').trim().toUpperCase();
+            var correct = clickedLetter === correctLetter && /^[ABCD]$/.test(clickedLetter);
             var btns = body.querySelectorAll('.trivia-option-btn');
             btns.forEach(function(btn) {
                 btn.disabled = true;
-                if (btn.getAttribute('data-option') === answer) btn.classList.add('correct');
+                var letter = String(btn.getAttribute('data-option') || '').trim().toUpperCase();
+                if (letter === correctLetter) btn.classList.add('correct');
                 else if (btn === clickedOption) btn.classList.add('wrong');
             });
             var funFactText = document.getElementById('triviaFunFactText');
