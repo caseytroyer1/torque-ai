@@ -5137,7 +5137,7 @@
         });
 
         // Supabase auth — login vs profile menu (desktop), login vs logout (mobile); does not affect switchPage
-        (function initSupabaseAuth() {
+        function initSupabaseAuth() {
             if (typeof window.supabase === 'undefined') return;
             const loginLink = document.getElementById('loginLink');
             const loginLinkMobile = document.getElementById('loginLinkMobile');
@@ -5799,7 +5799,13 @@
             const startAnalyzingBtn = document.getElementById('startAnalyzingBtn');
             if (tryItFreeBtn) tryItFreeBtn.addEventListener('click', goToSwingCoachOrSignup);
             if (startAnalyzingBtn) startAnalyzingBtn.addEventListener('click', goToSwingCoachOrSignup);
-        })();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof supabase !== 'undefined' && supabase !== null) {
+                initSupabaseAuth();
+            }
+        });
 
         // Swing Coach Tab Functionality
         function switchTab(tabName, event) {
