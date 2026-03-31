@@ -4103,9 +4103,16 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-      const SUPABASE_URL = 'https://lfewkargttvgtndqhucv.supabase.co';
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmZXdrYXJndHR2Z3RuZHFodWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTkyODUsImV4cCI6MjA4NzczNTI4NX0.Ij-upJUkf7j1wemFJKvf0pq9rvO0KTeBYRb1ka97EAw';
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      (function initTorqueSupabaseClient() {
+        var SUPABASE_URL = 'https://lfewkargttvgtndqhucv.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmZXdrYXJndHR2Z3RuZHFodWN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNTkyODUsImV4cCI6MjA4NzczNTI4NX0.Ij-upJUkf7j1wemFJKvf0pq9rvO0KTeBYRb1ka97EAw';
+        window.TORQUE_SUPABASE_URL = SUPABASE_URL;
+        window.TORQUE_SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+        var lib = window.supabase;
+        if (lib && typeof lib.createClient === 'function' && SUPABASE_URL && SUPABASE_ANON_KEY) {
+          window.torqueSupabase = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+      })();
     </script>
 </head>
 <body>
@@ -4787,6 +4794,7 @@
 
     <script>
         window.lastSwingData = null;
+        var supabase = window.torqueSupabase;
         // Page navigation — runs first, does not depend on Supabase
         const topNavLinks = document.querySelectorAll('.top-nav-link');
         const pageSections = document.querySelectorAll('.page-section');
@@ -5138,7 +5146,10 @@
 
         // Supabase auth — login vs profile menu (desktop), login vs logout (mobile); does not affect switchPage
         function initSupabaseAuth() {
-            if (typeof window.supabase === 'undefined') return;
+            console.log('supabase:', supabase);
+            console.log('supabase.auth:', supabase?.auth);
+            console.log('env:', window.TORQUE_SUPABASE_URL, window.TORQUE_SUPABASE_ANON_KEY);
+            if (!supabase || typeof supabase.auth === 'undefined' || supabase.auth === null) return;
             const loginLink = document.getElementById('loginLink');
             const loginLinkMobile = document.getElementById('loginLinkMobile');
             const logoutLinkMobile = document.getElementById('logoutLinkMobile');
@@ -5802,7 +5813,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof supabase !== 'undefined' && supabase !== null) {
+            supabase = window.torqueSupabase;
+            if (supabase && supabase.auth) {
                 initSupabaseAuth();
             }
         });
