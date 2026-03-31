@@ -4911,7 +4911,6 @@
                 return triviaQuestionsLoadPromise;
             }
             var supabase = window.torqueSupabase;
-            console.log('[trivia] supabase before fetch:', supabase);
             if (!supabase || typeof supabase.from !== 'function') {
                 return Promise.reject(new Error('Trivia: no Supabase client (window.torqueSupabase)'));
             }
