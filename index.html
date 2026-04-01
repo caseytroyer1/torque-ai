@@ -3342,6 +3342,28 @@
             transform: scale(1);
         }
 
+        .form-submit-button:disabled {
+            opacity: 0.75;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .contact-form-status {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            margin: 16px 0 0;
+            min-height: 1.35em;
+        }
+
+        .contact-form-status.is-success {
+            color: #22c55e;
+        }
+
+        .contact-form-status.is-error {
+            color: #f87171;
+        }
+
         .alternative-contact {
             margin-top: 48px;
             text-align: center;
@@ -4975,6 +4997,7 @@
                         </div>
                         
                         <button type="submit" class="form-submit-button">Send Message</button>
+                        <p id="contactFormStatus" class="contact-form-status" role="status" aria-live="polite"></p>
                     </form>
                 </div>
                 
@@ -7297,22 +7320,47 @@
             analyzeButton.addEventListener('click', analyzeSwing);
         }
 
-        // Contact Form Handler
+        // Contact Form Handler (Formspree)
         const contactForm = document.getElementById('contactForm');
         if (contactForm) {
+            const contactFormStatus = document.getElementById('contactFormStatus');
+            const contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
+            const contactSubmitDefaultText = contactSubmitBtn ? contactSubmitBtn.textContent : 'Send Message';
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                // Get form values
-                const name = document.getElementById('contactName').value;
-                const email = document.getElementById('contactEmail').value;
-                const message = document.getElementById('contactMessage').value;
-                
-                // Show success message
-                alert("Thank you! We'll get back to you soon.");
-                
-                // Clear form fields
-                contactForm.reset();
+                if (!contactSubmitBtn) return;
+                if (contactFormStatus) {
+                    contactFormStatus.textContent = '';
+                    contactFormStatus.className = 'contact-form-status';
+                }
+                contactSubmitBtn.disabled = true;
+                contactSubmitBtn.textContent = 'Sending...';
+                fetch('https://formspree.io/f/mwvwbgng', {
+                    method: 'POST',
+                    body: new FormData(contactForm),
+                    headers: { Accept: 'application/json' }
+                })
+                    .then(function(response) {
+                        if (response.ok) {
+                            if (contactFormStatus) {
+                                contactFormStatus.textContent = "Thanks! We'll get back to you soon.";
+                                contactFormStatus.className = 'contact-form-status is-success';
+                            }
+                            contactForm.reset();
+                        } else {
+                            throw new Error('Formspree error');
+                        }
+                    })
+                    .catch(function() {
+                        if (contactFormStatus) {
+                            contactFormStatus.textContent = 'Something went wrong. Please try again.';
+                            contactFormStatus.className = 'contact-form-status is-error';
+                        }
+                    })
+                    .finally(function() {
+                        contactSubmitBtn.disabled = false;
+                        contactSubmitBtn.textContent = contactSubmitDefaultText;
+                    });
             });
         }
         // Metric info modal and tooltips
