@@ -3224,49 +3224,7 @@
             }
         }
 
-        /* Contact Page */
-        .contact-section {
-            background: radial-gradient(circle at center, #1a3a52 0%, #0A2540 100%);
-            min-height: calc(100vh - 72px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 20px 60px;
-        }
-
-        .contact-container {
-            max-width: 800px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .contact-heading {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 48px;
-            color: #ffffff;
-            letter-spacing: -1.5px;
-            margin-bottom: 16px;
-        }
-
-        .contact-subtext {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 18px;
-            color: #B8C5D6;
-            margin-bottom: 60px;
-        }
-
-        .contact-form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(26, 58, 82, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 48px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
+        /* Shared form controls (My Game, Account, etc.) */
         .form-group {
             margin-bottom: 24px;
             text-align: left;
@@ -3348,86 +3306,7 @@
             transform: none;
         }
 
-        .contact-form-status {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            font-weight: 500;
-            margin: 16px 0 0;
-            min-height: 1.35em;
-        }
-
-        .contact-form-status.is-success {
-            color: #22c55e;
-        }
-
-        .contact-form-status.is-error {
-            color: #f87171;
-        }
-
-        .alternative-contact {
-            margin-top: 48px;
-            text-align: center;
-        }
-
-        .alternative-contact-text {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 14px;
-            color: #B8C5D6;
-        }
-
-        .alternative-contact-email {
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 16px;
-            color: #1E5EFF;
-            margin-top: 8px;
-            display: block;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .alternative-contact-email:hover {
-            color: #3D7AFF;
-        }
-
-        /* Mobile Responsive for Contact Page */
-        @media (max-width: 968px) {
-            .contact-section {
-                padding: 80px 20px 40px;
-            }
-
-            .contact-heading {
-                font-size: 36px;
-            }
-
-            .contact-subtext {
-                font-size: 16px;
-            }
-
-            .contact-form-container {
-                padding: 40px 32px;
-            }
-        }
-
         @media (max-width: 480px) {
-            .contact-section {
-                padding: 60px 20px 40px;
-            }
-
-            .contact-heading {
-                font-size: 32px;
-            }
-
-            .contact-subtext {
-                font-size: 15px;
-                margin-bottom: 40px;
-            }
-
-            .contact-form-container {
-                padding: 32px 24px;
-            }
-
             .form-submit-button {
                 padding: 16px 40px;
                 font-size: 16px;
@@ -4275,12 +4154,40 @@
             color: #B8C5D6;
         }
 
+        .footer-end {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .footer-email-line {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: #B8C5D6;
+            margin: 0;
+        }
+
+        .footer-email-link {
+            color: #1E5EFF;
+            text-decoration: none;
+        }
+
+        .footer-email-link:hover {
+            color: #3D7AFF;
+        }
+
         /* Mobile Responsive for Footer */
         @media (max-width: 968px) {
             .footer-container {
                 flex-direction: column;
                 gap: 32px;
                 text-align: center;
+            }
+
+            .footer-end {
+                align-items: center;
             }
 
             .footer-nav {
@@ -4299,7 +4206,8 @@
             }
 
             .footer-nav-link,
-            .footer-copyright {
+            .footer-copyright,
+            .footer-email-line {
                 font-size: 12px;
             }
         }
@@ -4449,9 +4357,11 @@
                 <a href="#" class="footer-nav-link" onclick="switchPage('home'); return false;">Home</a>
                 <a href="#" class="footer-nav-link" onclick="switchPage('home'); setTimeout(function(){ document.querySelector('.features-section').scrollIntoView({behavior:'smooth'}); }, 300); return false;">Features</a>
                 <a href="#" class="footer-nav-link" onclick="switchPage('home'); return false;">About</a>
-                <a href="#" class="footer-nav-link" onclick="switchPage('contact'); return false;">Contact</a>
             </nav>
-            <div class="footer-copyright">© 2025–2026 Torque AI</div>
+            <div class="footer-end">
+                <div class="footer-copyright">© 2025–2026 Torque AI</div>
+                <p class="footer-email-line">Questions? Email us at <a href="mailto:torquesaiusa@gmail.com" class="footer-email-link">torquesaiusa@gmail.com</a></p>
+            </div>
                 </div>
     </footer>
     </div>
@@ -4952,63 +4862,6 @@
         </section>
     </div>
 
-    <!-- Contact Page -->
-    <div id="contact-page" class="page-section">
-        <section class="contact-section">
-            <div class="contact-container">
-                <h1 class="contact-heading">Get in Touch</h1>
-                <p class="contact-subtext">Have questions? We'd love to hear from you.</p>
-                
-                <div class="contact-form-container">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <label for="contactName" class="form-label">Name</label>
-                            <input 
-                                type="text" 
-                                id="contactName" 
-                                name="name" 
-                                class="form-input" 
-                                placeholder="Your name" 
-                                required
-                            />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="contactEmail" class="form-label">Email</label>
-                            <input 
-                                type="email" 
-                                id="contactEmail" 
-                                name="email" 
-                                class="form-input" 
-                                placeholder="your@email.com" 
-                                required
-                            />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="contactMessage" class="form-label">Message</label>
-                            <textarea 
-                                id="contactMessage" 
-                                name="message" 
-                                class="form-textarea" 
-                                placeholder="Tell us what's on your mind..." 
-                                required
-                            ></textarea>
-                        </div>
-                        
-                        <button type="submit" class="form-submit-button">Send Message</button>
-                        <p id="contactFormStatus" class="contact-form-status" role="status" aria-live="polite"></p>
-                    </form>
-                </div>
-                
-                <div class="alternative-contact">
-                    <p class="alternative-contact-text">Or email us directly at</p>
-                    <a href="mailto:support@torqueai.com" class="alternative-contact-email">support@torqueai.com</a>
-                </div>
-            </div>
-        </section>
-    </div>
-
     <script>
         window.lastSwingData = null;
         var supabase = window.torqueSupabase;
@@ -5051,7 +4904,7 @@
             }
         }
 
-        // Add click listeners for nav links with data-page (Home, Golf Hub). Swing Coach & My Game are handled in auth IIFE (require login). Contact is footer-only.
+        // Add click listeners for nav links with data-page (Home, Golf Hub). Swing Coach & My Game are handled in auth IIFE (require login).
         topNavLinks.forEach(link => {
             const page = link.getAttribute('data-page');
             if (page && page !== 'swing-coach' && page !== 'my-game') {
@@ -7320,49 +7173,6 @@
             analyzeButton.addEventListener('click', analyzeSwing);
         }
 
-        // Contact Form Handler (Formspree)
-        const contactForm = document.getElementById('contactForm');
-        if (contactForm) {
-            const contactFormStatus = document.getElementById('contactFormStatus');
-            const contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
-            const contactSubmitDefaultText = contactSubmitBtn ? contactSubmitBtn.textContent : 'Send Message';
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (!contactSubmitBtn) return;
-                if (contactFormStatus) {
-                    contactFormStatus.textContent = '';
-                    contactFormStatus.className = 'contact-form-status';
-                }
-                contactSubmitBtn.disabled = true;
-                contactSubmitBtn.textContent = 'Sending...';
-                fetch('https://formspree.io/f/mwvwbgng', {
-                    method: 'POST',
-                    body: new FormData(contactForm),
-                    headers: { Accept: 'application/json' }
-                })
-                    .then(function(response) {
-                        if (response.ok) {
-                            if (contactFormStatus) {
-                                contactFormStatus.textContent = "Thanks! We'll get back to you soon.";
-                                contactFormStatus.className = 'contact-form-status is-success';
-                            }
-                            contactForm.reset();
-                        } else {
-                            throw new Error('Formspree error');
-                        }
-                    })
-                    .catch(function() {
-                        if (contactFormStatus) {
-                            contactFormStatus.textContent = 'Something went wrong. Please try again.';
-                            contactFormStatus.className = 'contact-form-status is-error';
-                        }
-                    })
-                    .finally(function() {
-                        contactSubmitBtn.disabled = false;
-                        contactSubmitBtn.textContent = contactSubmitDefaultText;
-                    });
-            });
-        }
         // Metric info modal and tooltips
         const METRIC_EXPLANATIONS = {
             hipBackswing: {
