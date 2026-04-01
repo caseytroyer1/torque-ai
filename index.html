@@ -6718,8 +6718,8 @@
             const statusMessage = analysis.status || analysis.message || 'N/A';
             
             // Extract rotation delta values (change from address, not absolute angles)
-            const backswingHipRotation = analysis.hip_rotation_backswing || analysis.backswing_hip_rotation;
-            const backswingShoulderRotation = analysis.shoulder_rotation_backswing || analysis.backswing_shoulder_rotation;
+            const backswingHipRotation = analysis.hip_rotation_backswing ?? analysis.backswing_hip_rotation;
+            const backswingShoulderRotation = analysis.shoulder_rotation_backswing ?? analysis.backswing_shoulder_rotation;
             const impactHipRotation = analysis.hip_rotation_impact || analysis.impact_hip_rotation;
             const impactShoulderRotation = analysis.shoulder_rotation_impact || analysis.impact_shoulder_rotation;
             
@@ -6956,8 +6956,8 @@
                 if (value == null || value === '') return '#8892b0';
                 const v = String(value).toLowerCase().trim();
                 if (v === 'n/a' || v === '—' || v === '-') return '#8892b0';
-                if (v.includes('slightly') || v.includes('needs more') || v.includes('solid')) return '#f59e0b';
-                if (v.includes('needs work') || v.includes('needs attention') || v.includes('uneven') || v.includes('too') || v.includes('lost') || v.includes('poor') || v.includes('reversed') || v.includes('moderate')) return '#ef4444';
+                if (v === 'moderate' || v.includes('slightly') || v.includes('needs more') || v.includes('solid')) return '#f59e0b';
+                if (v.includes('needs work') || v.includes('needs attention') || v.includes('uneven') || v.includes('too') || v.includes('lost') || v.includes('poor') || v.includes('reversed')) return '#ef4444';
                 if (v.includes('good') || v.includes('appropriate') || v === 'yes' || v.includes('balanced') || v.includes('maintained') || v.includes('steady') || v.includes('straight') || v.includes('elite')) return '#22c55e';
                 return '#8892b0';
             }
@@ -6976,8 +6976,8 @@
             };
 
             // Extract rotation delta values (change from address, not absolute angles)
-            const backswingHipRotation = analysis.hip_rotation_backswing || analysis.backswing_hip_rotation;
-            const backswingShoulderRotation = analysis.shoulder_rotation_backswing || analysis.backswing_shoulder_rotation;
+            const backswingHipRotation = analysis.hip_rotation_backswing ?? analysis.backswing_hip_rotation;
+            const backswingShoulderRotation = analysis.shoulder_rotation_backswing ?? analysis.backswing_shoulder_rotation;
             
             const formatAngle = (angle) => {
                 if (angle === null || angle === undefined) return 'N/A';
@@ -6987,14 +6987,17 @@
             };
             
             const getMeasurementClass = (value, goodRange, moderateRange) => {
-                if (value === null || value === undefined) return '';
-                if (value >= goodRange[0] && value <= goodRange[1]) return 'good';
-                if (value >= moderateRange[0] && value <= moderateRange[1]) return 'moderate';
+                if (value === null || value === undefined) return null;
+                const num = Number(value);
+                if (Number.isNaN(num)) return null;
+                if (num >= goodRange[0] && num <= goodRange[1]) return 'good';
+                if (num >= moderateRange[0] && num <= moderateRange[1]) return 'moderate';
                 return 'needs-attention';
             };
             const getMetricStatusClass = (value, goodRange, moderateRange) => {
                 const c = getMeasurementClass(value, goodRange, moderateRange);
-                return c ? 'status-' + c : '';
+                if (c == null) return '';
+                return 'status-' + c;
             };
             const xFactor = (backswingShoulderRotation != null && backswingHipRotation != null)
                 ? (backswingShoulderRotation - backswingHipRotation) : null;
@@ -7056,8 +7059,8 @@
                 // TAB 2 - MECHANICS
                 const hipRotationStatus = getMetricStatusClass(backswingHipRotation, [30, 60], [25, 65]);
                 const shoulderRotationStatus = getMetricStatusClass(backswingShoulderRotation, [80, 110], [70, 120]);
-                const hipAssessmentLabel = hipRotationStatus === 'status-good' ? 'Good' : (hipRotationStatus === 'status-moderate' ? 'Moderate' : 'Needs work');
-                const shoulderAssessmentLabel = shoulderRotationStatus === 'status-good' ? 'Good' : (shoulderRotationStatus === 'status-moderate' ? 'Moderate' : 'Needs work');
+                const hipAssessmentLabel = hipRotationStatus === 'status-good' ? 'Good' : (hipRotationStatus === 'status-moderate' ? 'Moderate' : (hipRotationStatus === 'status-needs-attention' ? 'Needs work' : 'N/A'));
+                const shoulderAssessmentLabel = shoulderRotationStatus === 'status-good' ? 'Good' : (shoulderRotationStatus === 'status-moderate' ? 'Moderate' : (shoulderRotationStatus === 'status-needs-attention' ? 'Needs work' : 'N/A'));
                 html += `<div class="tab-panel" id="tab-mechanics" role="tabpanel"><div class="results-tab-two-col">`;
                 html += `<div class="results-frame-col">${frameImg(backswingFrameB64, 'Backswing top')}</div>`;
                 html += `<div class="results-metrics-col">`;

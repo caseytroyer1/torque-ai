@@ -322,6 +322,28 @@ def detect_camera_angle(landmarks):
     }
 
 
+def calculate_hip_z_rotation(landmarks):
+    """Calculate hip rotation angle in degrees using atan2"""
+    LEFT_HIP, RIGHT_HIP = 23, 24
+    if not landmarks or len(landmarks) <= max(LEFT_HIP, RIGHT_HIP):
+        return None
+    left_hip = landmarks[LEFT_HIP]
+    right_hip = landmarks[RIGHT_HIP]
+    angle = math.degrees(math.atan2(right_hip.z - left_hip.z, right_hip.x - left_hip.x))
+    return angle
+
+
+def calculate_shoulder_z_rotation(landmarks):
+    """Calculate shoulder rotation angle in degrees using atan2"""
+    LEFT_SHOULDER, RIGHT_SHOULDER = 11, 12
+    if not landmarks or len(landmarks) <= max(LEFT_SHOULDER, RIGHT_SHOULDER):
+        return None
+    left_shoulder = landmarks[LEFT_SHOULDER]
+    right_shoulder = landmarks[RIGHT_SHOULDER]
+    angle = math.degrees(math.atan2(right_shoulder.z - left_shoulder.z, right_shoulder.x - left_shoulder.x))
+    return angle
+
+
 def calculate_rotation_degrees(world_landmarks_a, world_landmarks_b, joint='hip'):
     """
     Rotation in degrees between two poses in the horizontal (X–Z) plane.
@@ -634,6 +656,28 @@ def analyze_video_with_mediapipe(video_path):
         except Exception as rot_err:
             print(f"[Rotation world] Non-fatal error (using None): {rot_err}")
             backswing_hip_rotation = backswing_shoulder_rotation = impact_hip_rotation = impact_shoulder_rotation = None
+
+        def _norm_rotation_delta(lm_addr, lm_target, joint):
+            if not lm_addr or not lm_target:
+                return None
+            if joint == 'hip':
+                h1, h2 = calculate_hip_z_rotation(lm_addr), calculate_hip_z_rotation(lm_target)
+            else:
+                h1, h2 = calculate_shoulder_z_rotation(lm_addr), calculate_shoulder_z_rotation(lm_target)
+            if h1 is None or h2 is None:
+                return None
+            diff = abs(h1 - h2)
+            diff = min(diff, 360.0 - diff)
+            return round(float(diff), 1)
+
+        if backswing_hip_rotation is None:
+            backswing_hip_rotation = _norm_rotation_delta(key_frames['address'], key_frames['backswing'], 'hip')
+        if backswing_shoulder_rotation is None:
+            backswing_shoulder_rotation = _norm_rotation_delta(key_frames['address'], key_frames['backswing'], 'shoulder')
+        if impact_hip_rotation is None:
+            impact_hip_rotation = _norm_rotation_delta(key_frames['address'], key_frames['impact'], 'hip')
+        if impact_shoulder_rotation is None:
+            impact_shoulder_rotation = _norm_rotation_delta(key_frames['address'], key_frames['impact'], 'shoulder')
 
         print(
             f"[Rotation world] hip backswing={backswing_hip_rotation}° shoulder backswing={backswing_shoulder_rotation}° "
