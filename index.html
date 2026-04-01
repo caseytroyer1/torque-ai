@@ -5258,12 +5258,12 @@
             skel.setAttribute('aria-hidden', 'false');
 
             var feeds = [
-                { rss: 'https://www.golf-monthly.co.uk/feed', source: 'Golf Monthly' },
-                { rss: 'https://feeds.bbci.co.uk/sport/golf/rss.xml', source: 'BBC Sport' }
+                { rss: 'https://golf.com/feed', source: 'Golf.com' },
+                { rss: 'https://www.nationalclubgolfer.com/feed', source: 'National Club Golfer' }
             ];
 
             function rss2jsonUrl(rssUrl) {
-                return 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl) + '&count=15';
+                return 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl) + '&api_key=mi6eizukek9ehspyxy7h89no2zjpcobp5zobnfkq&count=8';
             }
 
             function getItemThumbnail(item) {
