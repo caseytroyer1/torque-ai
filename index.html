@@ -712,6 +712,145 @@
             .trivia-progress { text-align: right; }
         }
 
+        /* Golf Hub — RSS news (rss2json) */
+        .golf-news-section {
+            margin-top: 48px;
+        }
+        .golf-news-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin: 0 0 20px;
+        }
+        .golf-news-error {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: rgba(184, 197, 214, 0.75);
+            text-align: center;
+            padding: 24px 16px;
+            display: none;
+        }
+        .golf-news-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .golf-news-grid { grid-template-columns: 1fr; }
+        }
+        .golf-news-card {
+            display: flex;
+            flex-direction: column;
+            background: #0d2137;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .golf-news-card:hover {
+            border-color: rgba(30, 94, 255, 0.45);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+        .golf-news-card-thumb {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #0a1829;
+            overflow: hidden;
+        }
+        .golf-news-card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .golf-news-card-thumb-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            background: linear-gradient(145deg, #0a1829 0%, #0d2137 100%);
+        }
+        .golf-news-card-body {
+            padding: 14px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+        .golf-news-card-badge {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #1E5EFF;
+            align-self: flex-start;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(30, 94, 255, 0.15);
+            border: 1px solid rgba(30, 94, 255, 0.25);
+        }
+        .golf-news-card-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.35;
+            color: #ffffff;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .golf-news-card-time {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #B8C5D6;
+            margin-top: auto;
+        }
+        .golf-news-skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .golf-news-skeleton-grid { grid-template-columns: 1fr; }
+        }
+        .golf-news-skeleton-card {
+            background: #0d2137;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 220px;
+            animation: golfNewsSkeletonPulse 1.4s ease-in-out infinite;
+        }
+        .golf-news-skeleton-card::before {
+            content: '';
+            display: block;
+            aspect-ratio: 16 / 9;
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .golf-news-skeleton-card::after {
+            content: '';
+            display: block;
+            margin: 14px 16px;
+            height: 14px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 28px 0 rgba(255, 255, 255, 0.05), 0 44px 0 rgba(255, 255, 255, 0.04);
+        }
+        @keyframes golfNewsSkeletonPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.72; }
+        }
+
         .golf-coach-header { text-align: center; margin-bottom: 40px; }
         .golf-coach-label {
             font-family: 'Inter', sans-serif;
@@ -4431,6 +4570,19 @@
                     </div>
                 </div>
 
+                <div class="golf-news-section" id="golfNewsSection">
+                    <div class="trivia-divider"></div>
+                    <h2 class="golf-news-heading">Golf News</h2>
+                    <p class="golf-news-error" id="golfNewsError" role="status">News unavailable — check back soon.</p>
+                    <div class="golf-news-skeleton-grid" id="golfNewsSkeleton" style="display: none;" aria-hidden="true">
+                        <div class="golf-news-skeleton-card"></div>
+                        <div class="golf-news-skeleton-card"></div>
+                        <div class="golf-news-skeleton-card"></div>
+                        <div class="golf-news-skeleton-card"></div>
+                    </div>
+                    <div class="golf-news-grid" id="golfNewsGrid" style="display: none;"></div>
+                </div>
+
                 <div class="golf-hub-more-placeholder">
                     <h2 class="golf-hub-more-heading">More Coming Soon</h2>
                     <p class="golf-hub-more-subtext">Live leaderboards, golf news, and more are on the way.</p>
@@ -4824,6 +4976,7 @@
             if (pageId === 'golf-hub') {
                 ensureGolfCoachWelcome();
                 if (typeof loadTrivia === 'function') loadTrivia();
+                if (typeof loadGolfNews === 'function') loadGolfNews();
             }
             if (pageId === 'my-game' && typeof window.loadMyGameRounds === 'function') {
                 window.loadMyGameRounds();
@@ -5089,6 +5242,138 @@
             }
             if (nextBtn) nextBtn.addEventListener('click', onTriviaNext);
         })();
+
+        // Golf Hub: Golf News (rss2json, two feeds)
+        var golfNewsRequestId = 0;
+        function loadGolfNews() {
+            var grid = document.getElementById('golfNewsGrid');
+            var skel = document.getElementById('golfNewsSkeleton');
+            var errEl = document.getElementById('golfNewsError');
+            if (!grid || !skel || !errEl) return;
+            var myId = ++golfNewsRequestId;
+            errEl.style.display = 'none';
+            grid.innerHTML = '';
+            grid.style.display = 'none';
+            skel.style.display = 'grid';
+            skel.setAttribute('aria-hidden', 'false');
+
+            var feeds = [
+                { rss: 'https://www.pgatour.com/content/pgatour/en/news.rss.xml', source: 'PGA Tour' },
+                { rss: 'https://www.golfdigest.com/rss/all-content.xml', source: 'Golf Digest' }
+            ];
+
+            function rss2jsonUrl(rssUrl) {
+                return 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl) + '&count=15';
+            }
+
+            function getItemThumbnail(item) {
+                if (item.thumbnail) return item.thumbnail;
+                if (item.enclosure && item.enclosure.link && /^image\//i.test(String(item.enclosure.type || ''))) {
+                    return item.enclosure.link;
+                }
+                var desc = item.description || '';
+                var m = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+                return m ? m[1] : '';
+            }
+
+            function normalizeItems(items, sourceName) {
+                if (!items || !items.length) return [];
+                return items.map(function(item) {
+                    var link = item.link || '';
+                    var title = item.title || '';
+                    if (!link || !title) return null;
+                    var ts = Date.parse(item.pubDate || '') || 0;
+                    return {
+                        title: title,
+                        link: link,
+                        pubDate: item.pubDate,
+                        _ts: ts,
+                        source: sourceName,
+                        thumbnail: getItemThumbnail(item)
+                    };
+                }).filter(Boolean);
+            }
+
+            function formatNewsRelativeTime(pubDateStr) {
+                var d = new Date(pubDateStr);
+                if (isNaN(d.getTime())) return '';
+                var sec = Math.floor((Date.now() - d.getTime()) / 1000);
+                if (sec < 45) return 'Just now';
+                var min = Math.floor(sec / 60);
+                if (min < 60) return min === 1 ? '1 minute ago' : min + ' minutes ago';
+                var hr = Math.floor(min / 60);
+                if (hr < 24) return hr === 1 ? '1 hour ago' : hr + ' hours ago';
+                var day = Math.floor(hr / 24);
+                if (day < 14) return day === 1 ? '1 day ago' : day + ' days ago';
+                return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: d.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined });
+            }
+
+            Promise.all(feeds.map(function(f) {
+                return fetch(rss2jsonUrl(f.rss), { mode: 'cors', credentials: 'omit' })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (!data || data.status !== 'ok' || !Array.isArray(data.items)) return [];
+                        return normalizeItems(data.items, f.source);
+                    })
+                    .catch(function() { return []; });
+            })).then(function(pairArrays) {
+                if (myId !== golfNewsRequestId) return;
+                var combined = pairArrays[0].concat(pairArrays[1]);
+                skel.style.display = 'none';
+                skel.setAttribute('aria-hidden', 'true');
+                if (combined.length === 0) {
+                    errEl.style.display = 'block';
+                    return;
+                }
+                combined.sort(function(a, b) { return b._ts - a._ts; });
+                var top8 = combined.slice(0, 8);
+                grid.style.display = 'grid';
+                top8.forEach(function(a) {
+                    var card = document.createElement('a');
+                    card.className = 'golf-news-card';
+                    card.href = a.link;
+                    card.target = '_blank';
+                    card.rel = 'noopener noreferrer';
+                    var thumb = document.createElement('div');
+                    thumb.className = 'golf-news-card-thumb';
+                    function addThumbPlaceholder() {
+                        thumb.innerHTML = '';
+                        var ph = document.createElement('div');
+                        ph.className = 'golf-news-card-thumb-placeholder';
+                        ph.setAttribute('aria-hidden', 'true');
+                        ph.textContent = '\u26F3';
+                        thumb.appendChild(ph);
+                    }
+                    if (a.thumbnail) {
+                        var img = document.createElement('img');
+                        img.src = a.thumbnail;
+                        img.alt = '';
+                        img.loading = 'lazy';
+                        img.onerror = function() { addThumbPlaceholder(); };
+                        thumb.appendChild(img);
+                    } else {
+                        addThumbPlaceholder();
+                    }
+                    var cardBody = document.createElement('div');
+                    cardBody.className = 'golf-news-card-body';
+                    var badge = document.createElement('span');
+                    badge.className = 'golf-news-card-badge';
+                    badge.textContent = a.source;
+                    var titleEl = document.createElement('h3');
+                    titleEl.className = 'golf-news-card-title';
+                    titleEl.textContent = a.title;
+                    var timeEl = document.createElement('div');
+                    timeEl.className = 'golf-news-card-time';
+                    timeEl.textContent = formatNewsRelativeTime(a.pubDate);
+                    cardBody.appendChild(badge);
+                    cardBody.appendChild(titleEl);
+                    cardBody.appendChild(timeEl);
+                    card.appendChild(thumb);
+                    card.appendChild(cardBody);
+                    grid.appendChild(card);
+                });
+            });
+        }
 
         // Golf Hub: send message to coach API
         var golfChatInput = document.getElementById('golfChatInput');
