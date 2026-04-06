@@ -5031,12 +5031,14 @@
             if (progressEl) progressEl.textContent = label;
             if (counterEl) counterEl.textContent = label;
         }
-        function updateTriviaScoreLine() {
+        function updateTriviaScoreLine(overrideCorrect, overrideCount) {
             var s = getTriviaStorage();
+            var correct = (overrideCorrect !== undefined) ? overrideCorrect : s.correct;
+            var count = (overrideCount !== undefined) ? overrideCount : s.count;
             var line = document.getElementById('triviaScoreLine');
             if (!line) return;
-            if (s.count === 0) { line.textContent = ''; return; }
-            line.textContent = s.correct + '/5 correct so far';
+            if (count === 0) { line.textContent = ''; return; }
+            line.textContent = correct + '/5 correct so far';
         }
         function showTriviaCompleted() {
             var s = getTriviaStorage();
@@ -5136,7 +5138,7 @@
             var newCorrect = s.correct + (correct ? 1 : 0);
             setTriviaCount(newCount);
             setTriviaCorrect(newCorrect);
-            updateTriviaScoreLine();
+            updateTriviaScoreLine(newCorrect, newCount);
             body.setAttribute('data-state', 'answered');
         }
         function onTriviaNext() {
