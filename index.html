@@ -4264,6 +4264,202 @@
                 padding: 12px 0 4px 0;
             }
         }
+
+        /* PGA Scoreboard Ticker */
+        .pga-ticker-bar {
+            width: 100%;
+            background: rgba(10, 20, 40, 0.95);
+            border-top: 1px solid rgba(59,130,246,0.25);
+            border-bottom: 1px solid rgba(59,130,246,0.25);
+            overflow: hidden;
+            padding: 0;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .pga-ticker-label {
+            background: #1e5eff;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0 14px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+        .pga-ticker-track-wrapper {
+            overflow: hidden;
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+        .pga-ticker-track {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            white-space: nowrap;
+            animation: tickerScroll 40s linear infinite;
+            gap: 0;
+        }
+        .pga-ticker-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .pga-ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #c8d6e8;
+            border-right: 1px solid rgba(136,146,176,0.2);
+            height: 100%;
+            flex-shrink: 0;
+        }
+        .pga-ticker-pos {
+            color: #8892b0;
+            font-size: 11px;
+            min-width: 20px;
+        }
+        .pga-ticker-name {
+            font-weight: 600;
+            color: #e8f0fe;
+        }
+        .pga-ticker-score {
+            font-weight: 700;
+            min-width: 28px;
+            text-align: right;
+        }
+        .pga-ticker-score.under { color: #22c55e; }
+        .pga-ticker-score.over { color: #ef4444; }
+        .pga-ticker-score.even { color: #8892b0; }
+        .pga-ticker-today {
+            font-size: 11px;
+            color: #8892b0;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .pga-ticker-loading {
+            font-size: 12px;
+            color: #8892b0;
+            padding: 0 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* PGA Leaderboard in Golf Hub */
+        .pga-leaderboard-section {
+            margin: 0 0 40px 0;
+        }
+        .pga-leaderboard-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 6px 0;
+        }
+        .pga-leaderboard-tournament {
+            font-size: 13px;
+            color: #8892b0;
+            margin: 0 0 18px 0;
+        }
+        .pga-leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(136,146,176,0.15);
+        }
+        .pga-leaderboard-table th {
+            font-size: 11px;
+            font-weight: 700;
+            color: #8892b0;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            padding: 10px 14px;
+            text-align: left;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(136,146,176,0.15);
+        }
+        .pga-leaderboard-table td {
+            padding: 11px 14px;
+            font-size: 14px;
+            color: #c8d6e8;
+            border-bottom: 1px solid rgba(136,146,176,0.08);
+        }
+        .pga-leaderboard-table tr:last-child td {
+            border-bottom: none;
+        }
+        .pga-leaderboard-table tr:hover td {
+            background: rgba(59,130,246,0.05);
+        }
+        .pga-lb-pos {
+            color: #8892b0;
+            font-size: 13px;
+            width: 36px;
+        }
+        .pga-lb-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .pga-lb-country {
+            font-size: 12px;
+            color: #8892b0;
+        }
+        .pga-lb-score {
+            font-weight: 700;
+            text-align: right;
+        }
+        .pga-lb-score.under { color: #22c55e; }
+        .pga-lb-score.over { color: #ef4444; }
+        .pga-lb-score.even { color: #8892b0; }
+        .pga-lb-today {
+            text-align: right;
+            font-size: 13px;
+            color: #8892b0;
+        }
+        .pga-lb-thru {
+            text-align: right;
+            font-size: 12px;
+            color: #8892b0;
+        }
+        .pga-leaderboard-loading {
+            text-align: center;
+            color: #8892b0;
+            padding: 30px;
+            font-size: 14px;
+        }
+        .pga-leaderboard-error {
+            text-align: center;
+            color: #8892b0;
+            padding: 20px;
+            font-size: 13px;
+        }
+        .pga-leaderboard-updated {
+            font-size: 11px;
+            color: #8892b0;
+            text-align: right;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            .pga-leaderboard-table th,
+            .pga-leaderboard-table td {
+                padding: 9px 10px;
+                font-size: 13px;
+            }
+            .pga-lb-country { display: none; }
+            .pga-lb-thru { display: none; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -4338,6 +4534,16 @@
                             </div>
                         </div>
     </section>
+
+    <!-- PGA Live Scoreboard Ticker -->
+    <div class="pga-ticker-bar" id="pgaTickerBar">
+        <div class="pga-ticker-label">⛳ PGA TOUR</div>
+        <div class="pga-ticker-track-wrapper">
+            <div class="pga-ticker-track" id="pgaTickerTrack">
+                <span class="pga-ticker-loading" id="pgaTickerLoading">Loading leaderboard...</span>
+            </div>
+        </div>
+    </div>
 
     <section class="how-it-works-section">
         <div class="how-it-works-container">
@@ -4613,6 +4819,16 @@
                             <p class="trivia-completed-score" id="triviaCompletedScore">You got 0/5 correct</p>
                         </div>
                     </div>
+                </div>
+
+                <!-- PGA Live Leaderboard -->
+                <div class="pga-leaderboard-section" id="pgaLeaderboardSection">
+                    <h2 class="pga-leaderboard-heading">PGA Tour Leaderboard</h2>
+                    <p class="pga-leaderboard-tournament" id="pgaTournamentName">Loading tournament...</p>
+                    <div id="pgaLeaderboardContent">
+                        <div class="pga-leaderboard-loading">Loading leaderboard data...</div>
+                    </div>
+                    <p class="pga-leaderboard-updated" id="pgaLeaderboardUpdated"></p>
                 </div>
 
                 <div class="golf-news-section" id="golfNewsSection">
@@ -5233,6 +5449,134 @@
             }
             if (nextBtn) nextBtn.addEventListener('click', onTriviaNext);
         })();
+
+        // PGA Tour Live Leaderboard via ESPN API
+        async function fetchPGALeaderboard() {
+            try {
+                const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard');
+                if (!res.ok) throw new Error('ESPN API error');
+                const data = await res.json();
+
+                const events = data.events;
+                if (!events || events.length === 0) {
+                    showLeaderboardError('No tournament in progress right now. Check back during a PGA Tour event.');
+                    return;
+                }
+
+                const event = events[0];
+                const tournamentName = event.name || 'PGA Tour Event';
+                const competitions = event.competitions || [];
+                if (competitions.length === 0) {
+                    showLeaderboardError('Leaderboard data unavailable.');
+                    return;
+                }
+
+                const competition = competitions[0];
+                const competitors = competition.competitors || [];
+
+                // Sort by sort order (position)
+                competitors.sort((a, b) => (a.sortOrder || 999) - (b.sortOrder || 999));
+                const top15 = competitors.slice(0, 15);
+
+                // Update tournament name
+                const tournEl = document.getElementById('pgaTournamentName');
+                if (tournEl) tournEl.textContent = tournamentName;
+
+                // Format score helper
+                function fmtScore(score) {
+                    if (score === null || score === undefined || score === '') return 'E';
+                    const n = Number(score);
+                    if (isNaN(n) || n === 0) return 'E';
+                    return n > 0 ? '+' + n : String(n);
+                }
+                function scoreClass(score) {
+                    const n = Number(score);
+                    if (isNaN(n) || n === 0) return 'even';
+                    return n < 0 ? 'under' : 'over';
+                }
+
+                // Build leaderboard table
+                let tableHtml = `<table class="pga-leaderboard-table">
+                    <thead><tr>
+                        <th>Pos</th>
+                        <th>Player</th>
+                        <th style="text-align:right">Total</th>
+                        <th style="text-align:right">Today</th>
+                        <th style="text-align:right">Thru</th>
+                    </tr></thead><tbody>`;
+
+                top15.forEach(player => {
+                    const pos = player.status === 'active' ? (player.position?.displayValue || '-') : (player.position?.displayValue || '-');
+                    const name = player.athlete?.displayName || 'Unknown';
+                    const country = player.athlete?.flag?.alt || '';
+                    const totalScore = player.statistics?.find(s => s.name === 'scoreToPar')?.displayValue ?? player.score ?? '';
+                    const todayScore = player.linescores?.[player.linescores.length - 1]?.displayValue ?? '';
+                    const thru = player.status === 'active' ? (player.linescores?.length ? player.linescores[player.linescores.length - 1]?.period?.number ?? 'F' : 'F') : 'F';
+                    const scoreDisplay = fmtScore(totalScore);
+                    const sc = scoreClass(totalScore);
+                    tableHtml += `<tr>
+                        <td class="pga-lb-pos">${pos}</td>
+                        <td class="pga-lb-name">${name}<br><span class="pga-lb-country">${country}</span></td>
+                        <td class="pga-lb-score ${sc}">${scoreDisplay}</td>
+                        <td class="pga-lb-today">${fmtScore(todayScore)}</td>
+                        <td class="pga-lb-thru">${thru}</td>
+                    </tr>`;
+                });
+                tableHtml += '</tbody></table>';
+
+                const contentEl = document.getElementById('pgaLeaderboardContent');
+                if (contentEl) contentEl.innerHTML = tableHtml;
+
+                const updatedEl = document.getElementById('pgaLeaderboardUpdated');
+                if (updatedEl) updatedEl.textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+                // Build ticker
+                buildTicker(top15, fmtScore, scoreClass);
+
+            } catch (err) {
+                console.error('PGA leaderboard error:', err);
+                showLeaderboardError('Leaderboard unavailable right now. Try again later.');
+                const track = document.getElementById('pgaTickerTrack');
+                if (track) track.innerHTML = '<span class="pga-ticker-loading">Leaderboard unavailable</span>';
+            }
+        }
+
+        function showLeaderboardError(msg) {
+            const contentEl = document.getElementById('pgaLeaderboardContent');
+            if (contentEl) contentEl.innerHTML = `<div class="pga-leaderboard-error">${msg}</div>`;
+            const tournEl = document.getElementById('pgaTournamentName');
+            if (tournEl) tournEl.textContent = '';
+        }
+
+        function buildTicker(players, fmtScore, scoreClass) {
+            const track = document.getElementById('pgaTickerTrack');
+            if (!track || players.length === 0) return;
+
+            let items = '';
+            players.forEach(player => {
+                const name = player.athlete?.displayName || 'Unknown';
+                const lastName = name.split(' ').slice(-1)[0];
+                const firstName = name.split(' ')[0].charAt(0) + '.';
+                const displayName = firstName + ' ' + lastName;
+                const totalScore = player.statistics?.find(s => s.name === 'scoreToPar')?.displayValue ?? player.score ?? '';
+                const pos = player.position?.displayValue || '-';
+                const scoreDisplay = fmtScore(totalScore);
+                const sc = scoreClass(totalScore);
+                items += `<span class="pga-ticker-item">
+                    <span class="pga-ticker-pos">${pos}</span>
+                    <span class="pga-ticker-name">${displayName}</span>
+                    <span class="pga-ticker-score ${sc}">${scoreDisplay}</span>
+                </span>`;
+            });
+
+            // Duplicate for seamless loop
+            track.innerHTML = items + items;
+        }
+
+        // Initialize leaderboard
+        fetchPGALeaderboard();
+        // Refresh every 5 minutes
+        setInterval(fetchPGALeaderboard, 5 * 60 * 1000);
 
         // Golf Hub: Golf News (rss2json, two feeds)
         var golfNewsRequestId = 0;
