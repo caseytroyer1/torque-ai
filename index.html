@@ -4213,6 +4213,28 @@
                 font-size: 12px;
             }
         }
+
+        .swing-selector-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(136,146,176,0.3);
+            border-radius: 20px;
+            color: #8892b0;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 7px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .swing-selector-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .swing-selector-btn.selected {
+            background: rgba(59,130,246,0.15);
+            border-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -4450,6 +4472,24 @@
                                 <div class="file-selected" id="fileSelected">
                                     <div class="file-name" id="fileName"></div>
                                     <div class="file-size" id="fileSize"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swing-selectors" id="swingSelectors" style="display:none; padding: 16px 0 4px 0;">
+                            <div style="margin-bottom: 14px;">
+                                <div style="font-size: 12px; font-weight: 600; color: #8892b0; letter-spacing: 0.08em; margin-bottom: 8px;">DOMINANT HAND</div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button type="button" class="swing-selector-btn" id="handRight" data-hand="right" onclick="selectHand('right')">Right-Handed</button>
+                                    <button type="button" class="swing-selector-btn" id="handLeft" data-hand="left" onclick="selectHand('left')">Left-Handed</button>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; font-weight: 600; color: #8892b0; letter-spacing: 0.08em; margin-bottom: 8px;">CLUB TYPE</div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button type="button" class="swing-selector-btn" id="clubDriver" data-club="driver" onclick="selectClub('driver')">Driver</button>
+                                    <button type="button" class="swing-selector-btn" id="clubFairway" data-club="fairway" onclick="selectClub('fairway')">Fairway Wood</button>
+                                    <button type="button" class="swing-selector-btn" id="clubIron" data-club="iron" onclick="selectClub('iron')">Iron</button>
+                                    <button type="button" class="swing-selector-btn" id="clubWedge" data-club="wedge" onclick="selectClub('wedge')">Wedge</button>
                                 </div>
                             </div>
                         </div>
@@ -6128,6 +6168,23 @@
         }
 
         // Swing Coach Upload Functionality
+        let selectedHand = null;
+        let selectedClub = null;
+
+        function selectHand(hand) {
+            selectedHand = hand;
+            document.querySelectorAll('[data-hand]').forEach(btn => btn.classList.remove('selected'));
+            const btn = document.getElementById('hand' + hand.charAt(0).toUpperCase() + hand.slice(1));
+            if (btn) btn.classList.add('selected');
+        }
+
+        function selectClub(club) {
+            selectedClub = club;
+            document.querySelectorAll('[data-club]').forEach(btn => btn.classList.remove('selected'));
+            const btn = document.getElementById('club' + club.charAt(0).toUpperCase() + club.slice(1));
+            if (btn) btn.classList.add('selected');
+        }
+
         const uploadZone = document.getElementById('uploadZone');
         const browseButton = document.getElementById('browseButton');
         const videoFileInput = document.getElementById('videoFileInput');
@@ -6202,6 +6259,8 @@
                 if (videoFileInfo) {
                     videoFileInfo.textContent = `${file.name} • ${fileSizeMB} MB`;
                 }
+                const swingSelectors = document.getElementById('swingSelectors');
+                if (swingSelectors) swingSelectors.style.display = 'block';
 
                 // Hide upload zone and show video preview in right column; show actions below
                 uploadZone.classList.add('hidden');
@@ -6287,6 +6346,11 @@
         if (uploadDifferentLink) {
             uploadDifferentLink.addEventListener('click', function(e) {
                 e.preventDefault();
+                selectedHand = null;
+                selectedClub = null;
+                document.querySelectorAll('.swing-selector-btn').forEach(btn => btn.classList.remove('selected'));
+                const swingSelectors = document.getElementById('swingSelectors');
+                if (swingSelectors) swingSelectors.style.display = 'none';
                 resetUploadScreen();
             });
         }
@@ -6550,6 +6614,15 @@
                 alert('Please upload a video first');
                 return;
             }
+
+            if (!selectedHand) {
+                alert('Please select your dominant hand before analyzing.');
+                return;
+            }
+            if (!selectedClub) {
+                alert('Please select your club type before analyzing.');
+                return;
+            }
             
             const file = videoFileInput.files[0];
             console.log('File selected:', file.name, 'Size:', file.size, 'bytes');
@@ -6574,6 +6647,8 @@
                 // Create FormData to send file
                 const formData = new FormData();
                 formData.append('file', file);
+                formData.append('hand', selectedHand);
+                formData.append('club', selectedClub);
                 console.log('FormData created, sending request to https://torque-ai-docker.onrender.com/analyze-swing');
                 
                 // Send POST request to Flask backend

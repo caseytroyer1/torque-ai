@@ -145,7 +145,7 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
     return base64.b64encode(buf.tobytes()).decode('utf-8')
 
 
-def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64):
+def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64, golfer_hand='right', golfer_club='iron'):
     """Send the three key frames to Claude Vision for golf swing analysis. Returns parsed JSON or None."""
     if not address_frame_b64 or not backswing_frame_b64 or not impact_frame_b64:
         return None
@@ -200,7 +200,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
                 "content": [
                     {
                         "type": "text",
-                        "text": "You are an expert PGA golf instructor analyzing a golf swing. I am sending you 3 key frames from a golf swing video: Frame 1 is ADDRESS (setup position), Frame 2 is BACKSWING TOP, Frame 3 is IMPACT. Analyze each frame carefully and return ONLY a JSON object with no extra text, no markdown, no code blocks. Use exactly this format:"
+                        "text": f"You are an expert PGA golf instructor analyzing a golf swing. The golfer is {'LEFT' if golfer_hand == 'left' else 'RIGHT'}-handed and is hitting a {'DRIVER — expect a wider stance, more spine tilt away from target, and a shallower swing arc' if golfer_club == 'driver' else 'FAIRWAY WOOD — expect a slightly narrower stance than driver with a shallow to medium swing arc' if golfer_club == 'fairway' else 'WEDGE — expect a narrow stance, upright posture, and a shorter controlled backswing' if golfer_club == 'wedge' else 'IRON — expect a standard athletic stance with a medium swing arc'}. I am sending you 3 key frames from a golf swing video: Frame 1 is ADDRESS (setup position), Frame 2 is BACKSWING TOP, Frame 3 is IMPACT. Analyze each frame carefully with the club and handedness in mind, and return ONLY a JSON object with no extra text, no markdown, no code blocks. Use exactly this format:"
                     },
                     {"type": "text", "text": prompt_json},
                     {"type": "text", "text": "Frame 1 - ADDRESS:"},
@@ -385,7 +385,7 @@ def calculate_rotation_degrees(world_landmarks_a, world_landmarks_b, joint='hip'
     return round(float(diff), 1)
 
 
-def analyze_video_with_mediapipe(video_path):
+def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='iron'):
     """Analyze golf swing video using MediaPipe Pose detection"""
     try:
         import mediapipe as mp
@@ -773,6 +773,8 @@ def analyze_video_with_mediapipe(video_path):
             'setup_shoulder_level': setup_shoulder_level,
             'setup_hip_hinge': setup_hip_hinge,
             'setup_grade': setup_grade,
+            'golfer_hand': golfer_hand,
+            'golfer_club': golfer_club,
             'camera_angle': cam_info['angle'],
             'camera_angle_confidence': cam_info['confidence'],
             'camera_angle_message': cam_info['message'],
@@ -842,7 +844,9 @@ def analyze_video_with_mediapipe(video_path):
                 claude_analysis = analyze_frames_with_claude(
                     analysis['address_frame_image'],
                     analysis['backswing_frame_image'],
-                    analysis['impact_frame_image']
+                    analysis['impact_frame_image'],
+                    golfer_hand=golfer_hand,
+                    golfer_club=golfer_club
                 )
                 analysis['claude_vision_analysis'] = claude_analysis
                 if claude_analysis is not None:
@@ -1105,6 +1109,8 @@ def analyze_swing():
             }), 400
         
         file = request.files['file']
+        golfer_hand = request.form.get('hand', 'right')
+        golfer_club = request.form.get('club', 'iron')
         
         # Check if file was actually selected
         if file.filename == '':
@@ -1138,7 +1144,7 @@ def analyze_swing():
         file.save(file_path)
         
         # Analyze video with MediaPipe
-        analysis_data, analysis_error = analyze_video_with_mediapipe(file_path)
+        analysis_data, analysis_error = analyze_video_with_mediapipe(file_path, golfer_hand=golfer_hand, golfer_club=golfer_club)
         
         # Prepare response
         response_data = {
