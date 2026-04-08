@@ -4306,6 +4306,11 @@
             animation: tickerScroll 40s linear infinite;
             gap: 0;
         }
+        @media (max-width: 768px) {
+            .pga-ticker-track {
+                animation-duration: 18s;
+            }
+        }
         .pga-ticker-track:hover {
             animation-play-state: paused;
         }
