@@ -7058,9 +7058,6 @@
 
                 // TAB 1 - SETUP
                 const spineAngleVal = setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : (addr.spine_angle != null ? addr.spine_angle + '°' : 'N/A');
-                const shoulderLevelSub = setupShoulderLevel != null
-                    ? (setupShoulderLevel < 0.02 ? 'nearly level' : setupShoulderLevel < 0.04 ? 'slightly uneven' : 'noticeably uneven')
-                    : '';
                 html += `<div class="tab-panel active" id="tab-setup" role="tabpanel"><div class="results-tab-two-col">`;
                 html += `<div class="results-frame-col">${frameImg(addressFrameB64, 'Address position')}</div>`;
                 html += `<div class="results-metrics-col">`;
@@ -7069,7 +7066,7 @@
                 html += `<div class="results-tab-metrics-grid">`;
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, 'MediaPipe measured', 'setupSpineAngle');
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', '', 'setupKneeFlex');
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', shoulderLevelSub || '', 'setupShoulderLevel');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', '', 'setupShoulderLevel');
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', null);
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution || 'N/A', '', null);
                 html += `</div>`;
