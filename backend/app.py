@@ -203,6 +203,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
                         "text": "You are an expert PGA golf instructor analyzing a golf swing. I am sending you 3 key frames from a golf swing video: Frame 1 is ADDRESS (setup position), Frame 2 is BACKSWING TOP, Frame 3 is IMPACT. Analyze each frame carefully and return ONLY a JSON object with no extra text, no markdown, no code blocks. Use exactly this format:"
                     },
                     {"type": "text", "text": prompt_json},
+                    {"type": "text", "text": "Frame 1 - ADDRESS:"},
                     {
                         "type": "image",
                         "source": {
@@ -778,6 +779,42 @@ def analyze_video_with_mediapipe(video_path):
             'shoulder_width_ratio': cam_info['shoulder_width_ratio'],
         }
 
+        # SWING TEMPO CALCULATION
+        # Tempo ratio = backswing duration / downswing duration (tour average ~3.0)
+        tempo_ratio = None
+        backswing_duration_sec = None
+        downswing_duration_sec = None
+        tempo_label = None
+
+        if (address_frame_idx is not None and
+            backswing_frame_idx is not None and
+            impact_frame_idx is not None and
+            fps and fps > 0 and
+            backswing_frame_idx > address_frame_idx and
+            impact_frame_idx > backswing_frame_idx):
+
+            backswing_frames = backswing_frame_idx - address_frame_idx
+            downswing_frames = impact_frame_idx - backswing_frame_idx
+
+            if downswing_frames > 0:
+                backswing_duration_sec = round(backswing_frames / fps, 2)
+                downswing_duration_sec = round(downswing_frames / fps, 2)
+                tempo_ratio = round(backswing_duration_sec / downswing_duration_sec, 1)
+
+                if tempo_ratio >= 2.5:
+                    tempo_label = "Tour Tempo"
+                elif tempo_ratio >= 1.8:
+                    tempo_label = "Good Tempo"
+                elif tempo_ratio >= 1.2:
+                    tempo_label = "Slightly Rushed"
+                else:
+                    tempo_label = "Too Fast — Rushing Downswing"
+
+        analysis['tempo_ratio'] = tempo_ratio
+        analysis['backswing_duration_sec'] = backswing_duration_sec
+        analysis['downswing_duration_sec'] = downswing_duration_sec
+        analysis['tempo_label'] = tempo_label
+
         # Extract key frames as images with skeleton overlay and add to response
         spine_angle_backswing = calculate_spine_angle(key_frames['backswing']) if key_frames['backswing'] else None
         print(f"[Frame extraction] address_frame={address_frame_idx}, backswing_frame={backswing_frame_idx}, impact_frame={impact_frame_idx}")
@@ -970,16 +1007,41 @@ def diagnose_swing(analysis_data):
                 'description': f'Your spine angle change of {spine_change}° suggests early extension. This is commonly associated with inconsistent contact and loss of power. Maintaining spine angle through impact can improve ball striking.',
                 'severity': 'needs_attention'
             })
-    
+
+    # SWING TEMPO
+    tempo_ratio = analysis_data.get('tempo_ratio')
+    tempo_label = analysis_data.get('tempo_label')
+    backswing_sec = analysis_data.get('backswing_duration_sec')
+    downswing_sec = analysis_data.get('downswing_duration_sec')
+
+    if tempo_ratio is not None and tempo_label is not None:
+        if tempo_ratio >= 2.5:
+            strengths.append(f"Excellent swing tempo ({tempo_ratio}:1 ratio — tour average is 3:1)")
+        elif tempo_ratio >= 1.8:
+            strengths.append(f"Good swing tempo ({tempo_ratio}:1 ratio — keep working toward 3:1)")
+        elif tempo_ratio < 1.8:
+            issues_detected.append({
+                'category': 'Tempo',
+                'issue': 'Rushing the downswing',
+                'description': (
+                    f"Your swing tempo ratio is {tempo_ratio}:1 "
+                    f"(backswing {backswing_sec}s / downswing {downswing_sec}s). "
+                    f"Tour pros average 3:1 — meaning the backswing takes 3x longer than the downswing. "
+                    f"Try counting 'one-and-two' on your backswing and 'three' at impact to slow down and load properly."
+                ),
+                'severity': 'needs_attention'
+            })
+
     # Limit to maximum 2 issues, prioritize most impactful
     # Priority order: 1) Early extension, 2) Setup, 3) Hip rotation, 4) Shoulder rotation, etc.
     priority_order = {
-        'Spine Angle': 1,
-        'Setup': 2,
-        'Hip Rotation': 3,
-        'Shoulder Rotation': 4,
-        'X-Factor': 5,
-        'Impact Position': 6
+        'Tempo': 1,
+        'Spine Angle': 2,
+        'Setup': 3,
+        'Hip Rotation': 4,
+        'Shoulder Rotation': 5,
+        'X-Factor': 6,
+        'Impact Position': 7
     }
     
     # Sort by priority and limit to maximum 2 issues

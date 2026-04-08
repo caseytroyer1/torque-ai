@@ -7005,7 +7005,22 @@
             };
             const xFactor = (backswingShoulderRotation != null && backswingHipRotation != null)
                 ? (backswingShoulderRotation - backswingHipRotation) : null;
-            
+            const tempoRatio = analysis.tempo_ratio != null ? Number(analysis.tempo_ratio) : null;
+            const tempoLabel = analysis.tempo_label || null;
+            const backswingSec = analysis.backswing_duration_sec != null ? Number(analysis.backswing_duration_sec) : null;
+            const downswingSec = analysis.downswing_duration_sec != null ? Number(analysis.downswing_duration_sec) : null;
+
+            const tempoColor = (() => {
+                if (tempoRatio == null) return '#8892b0';
+                if (tempoRatio >= 2.5) return '#22c55e';
+                if (tempoRatio >= 1.8) return '#f59e0b';
+                return '#ef4444';
+            })();
+
+            const tempoSubtext = (backswingSec != null && downswingSec != null)
+                ? `${backswingSec.toFixed(2)}s back / ${downswingSec.toFixed(2)}s down`
+                : 'Tour avg: 3:1';
+
             // Setup metrics from analysis
             const setupSpineAngle = analysis.setup_spine_angle != null ? analysis.setup_spine_angle : analysis.spine_angle_address;
             const setupKneeFlex = analysis.setup_knee_flex;
@@ -7078,6 +7093,7 @@
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', null);
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.weight_transfer)), 'Weight Transfer', back.weight_transfer || 'N/A', '', null);
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.spine_angle_maintained)), 'Spine Maintained', back.spine_angle_maintained || 'N/A', '', null);
+                html += metricCardHtml(tempoColor, 'Swing Tempo', tempoRatio != null ? tempoRatio.toFixed(1) + ':1' : 'N/A', tempoLabel || tempoSubtext, 'swingTempo');
                 html += `</div>`;
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
                 html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach →</button>`;
@@ -7213,6 +7229,10 @@
             xFactor: {
                 name: 'X-Factor',
                 text: 'The difference between your shoulder rotation and hip rotation at the top of your backswing. This separation creates a powerful coil effect. Greater X-Factor is associated with more clubhead speed. Tour pros average 45-55°.'
+            },
+            swingTempo: {
+                name: 'Swing Tempo',
+                text: 'The ratio of your backswing time to your downswing time. Tour pros average 3:1 — meaning their backswing takes 3 times longer than their downswing. Most amateurs rush at 1.5:1. A slower, more controlled backswing gives your body time to load and sequence properly.'
             },
             setupSpineAngle: {
                 name: 'Spine Angle at Address',
