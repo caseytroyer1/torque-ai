@@ -7427,7 +7427,7 @@
                 const btn = infoKey ? `<button type="button" class="metric-info-btn" data-metric-key="${infoKey}" aria-label="More info">ⓘ</button>` : '';
                 const sub = subtext != null && subtext !== '' ? `<div class="results-metric-sub">${escapeHtml(subtext)}</div>` : '<div class="results-metric-sub">&nbsp;</div>';
                 const rawVal = value == null || value === '' ? 'N/A' : String(value);
-                const borderCol = getMetricCardBorderLeftColor(rawVal);
+                const borderCol = (borderColor && borderColor.startsWith('#')) ? borderColor : getMetricCardBorderLeftColor(rawVal);
                 const displayText = formatMetricCardValueText(rawVal);
                 return `<div class="results-metric-card" style="border-left: 4px solid ${borderCol};">${btn}<div class="results-metric-label">${escapeHtml(name)}</div><div class="results-metric-value">${escapeHtml(displayText)}</div>${sub}</div>`;
             };
