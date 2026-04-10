@@ -4549,6 +4549,110 @@
                 font-size: 13px;
             }
         }
+        /* Practice Plan */
+        .practice-plan-section {
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(136,146,176,0.15);
+        }
+        .practice-plan-heading {
+            font-size: 11px;
+            font-weight: 700;
+            color: #8892b0;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .practice-plan-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .practice-plan-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(136,146,176,0.15);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .practice-plan-card-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+        .practice-plan-card-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            width: fit-content;
+        }
+        .practice-plan-card-tag.setup { background: rgba(30,94,255,0.2); color: #7eb8ff; }
+        .practice-plan-card-tag.backswing { background: rgba(34,197,94,0.2); color: #86efac; }
+        .practice-plan-card-tag.impact { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .practice-plan-card-tag.tempo { background: rgba(236,72,153,0.2); color: #f9a8d4; }
+        .practice-plan-card-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .practice-plan-card-desc {
+            font-size: 12px;
+            color: #8892b0;
+            line-height: 1.4;
+        }
+        .practice-plan-view-btn {
+            background: transparent;
+            border: 1px solid rgba(30,94,255,0.4);
+            border-radius: 20px;
+            color: #1e5eff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        .practice-plan-view-btn:hover {
+            background: rgba(30,94,255,0.1);
+            border-color: #1e5eff;
+        }
+        .practice-plan-all-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid rgba(136,146,176,0.2);
+            border-radius: 10px;
+            color: #8892b0;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .practice-plan-all-btn:hover {
+            border-color: #1e5eff;
+            color: #1e5eff;
+        }
+        @media (max-width: 600px) {
+            .practice-plan-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .practice-plan-view-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -7885,6 +7989,85 @@
                 html += metricCardHtml(tempoColor, 'Swing Tempo', tempoRatio != null ? tempoRatio.toFixed(1) + ':1' : 'N/A', tempoLabel || tempoSubtext, 'swingTempo');
                 html += `</div>`;
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
+
+                // PRACTICE PLAN — map issues and Claude Vision findings to drills
+                const DRILL_MAP = {
+                    'spine': { name: 'Spine Angle Hold Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Eliminates early extension — one of the most common causes of thin and fat shots.' },
+                    'early extension': { name: 'Spine Angle Hold Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Eliminates early extension — one of the most common causes of thin and fat shots.' },
+                    'tempo': { name: 'Pause at the Top', category: 'tempo', categoryLabel: 'Tempo', desc: 'The single best drill for golfers who rush the downswing.' },
+                    'rushing': { name: 'Pause at the Top', category: 'tempo', categoryLabel: 'Tempo', desc: 'The single best drill for golfers who rush the downswing.' },
+                    'left arm': { name: 'Left Arm Straight Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Trains a wide swing arc by keeping the lead arm extended through the backswing.' },
+                    'weight transfer': { name: 'Hip Bump Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Trains proper hip clearance and sequencing through the impact zone.' },
+                    'hip': { name: 'Hip Coil Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Builds hip-shoulder separation and X-Factor for more power without swinging harder.' },
+                    'separation': { name: 'Hip Coil Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Builds hip-shoulder separation and X-Factor for more power without swinging harder.' },
+                    'posture': { name: 'Wall Posture Drill', category: 'setup', categoryLabel: 'Setup', desc: 'Builds spine angle awareness and corrects slouching at address.' },
+                    'head': { name: 'Head Behind Ball Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Stops the head from sliding forward which causes thin shots and loss of power.' },
+                };
+
+                function getRecommendedDrills(diagnosisData, claudeData) {
+                    const recommended = [];
+                    const seen = new Set();
+
+                    function addDrill(drill) {
+                        if (!seen.has(drill.name) && recommended.length < 2) {
+                            seen.add(drill.name);
+                            recommended.push(drill);
+                        }
+                    }
+
+                    // Check issues from diagnosis
+                    const issues = diagnosisData.issues_detected || [];
+                    issues.forEach(function(issue) {
+                        const text = ((issue.issue || '') + ' ' + (issue.description || '')).toLowerCase();
+                        Object.keys(DRILL_MAP).forEach(function(key) {
+                            if (text.includes(key)) addDrill(DRILL_MAP[key]);
+                        });
+                    });
+
+                    // Check Claude Vision findings
+                    if (recommended.length < 2 && claudeData) {
+                        const spineM = (claudeData.backswing || {}).spine_angle_maintained || '';
+                        if (spineM.includes('lost')) addDrill(DRILL_MAP['spine']);
+                        const leftArm = (claudeData.backswing || {}).left_arm || '';
+                        if (leftArm.includes('bent')) addDrill(DRILL_MAP['left arm']);
+                        const wt = (claudeData.backswing || {}).weight_transfer || '';
+                        if (wt.includes('minimal') || wt.includes('reverse')) addDrill(DRILL_MAP['weight transfer']);
+                        const tempoL = analysis.tempo_label || '';
+                        if (tempoL.includes('Rushed') || tempoL.includes('Fast')) addDrill(DRILL_MAP['tempo']);
+                        const sep = (claudeData.backswing || {}).hip_shoulder_separation || '';
+                        if (sep.includes('needs')) addDrill(DRILL_MAP['separation']);
+                    }
+
+                    // Default fallback
+                    if (recommended.length === 0) {
+                        addDrill(DRILL_MAP['spine']);
+                        addDrill(DRILL_MAP['tempo']);
+                    }
+
+                    return recommended;
+                }
+
+                const recommendedDrills = getRecommendedDrills(diagnosis, claude);
+
+                if (recommendedDrills.length > 0) {
+                    html += `<div class="practice-plan-section">`;
+                    html += `<div class="practice-plan-heading">⛳ Your Practice Plan</div>`;
+                    html += `<div class="practice-plan-cards">`;
+                    recommendedDrills.forEach(function(drill) {
+                        html += `<div class="practice-plan-card">
+                            <div class="practice-plan-card-left">
+                                <span class="practice-plan-card-tag ${drill.category}">${drill.categoryLabel}</span>
+                                <div class="practice-plan-card-name">${escapeHtml(drill.name)}</div>
+                                <div class="practice-plan-card-desc">${escapeHtml(drill.desc)}</div>
+                            </div>
+                            <button type="button" class="practice-plan-view-btn" data-drill-name="${escapeHtml(drill.name)}">View Drill →</button>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                    html += `<button type="button" class="practice-plan-all-btn">View All Drills in Library →</button>`;
+                    html += `</div>`;
+                }
+
                 html += `<button type="button" class="ask-personal-coach-btn">Ask Your Personal Coach →</button>`;
                 html += `</div></div></div>`;
 
@@ -7926,6 +8109,38 @@
             resultsAnalysisPanel.querySelectorAll('.ask-personal-coach-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     openMyGameCoachTab();
+                });
+            });
+
+            resultsAnalysisPanel.querySelectorAll('.practice-plan-view-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const drillName = this.getAttribute('data-drill-name');
+                    switchPage('my-game');
+                    setTimeout(function() {
+                        const drillsBtn = document.querySelector('#my-game-page .my-game-tabs-root .tab-btn[onclick*="drills-tab"]');
+                        if (drillsBtn) drillsBtn.click();
+                        setTimeout(function() {
+                            const drillCards = document.querySelectorAll('#drillGrid .drill-card');
+                            drillCards.forEach(function(card) {
+                                const name = card.querySelector('.drill-card-name');
+                                if (name && name.textContent.trim() === drillName) {
+                                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    card.style.boxShadow = '0 0 0 2px #1e5eff';
+                                    setTimeout(function() { card.style.boxShadow = ''; }, 3000);
+                                }
+                            });
+                        }, 300);
+                    }, 100);
+                });
+            });
+
+            resultsAnalysisPanel.querySelectorAll('.practice-plan-all-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    switchPage('my-game');
+                    setTimeout(function() {
+                        const drillsBtn = document.querySelector('#my-game-page .my-game-tabs-root .tab-btn[onclick*="drills-tab"]');
+                        if (drillsBtn) drillsBtn.click();
+                    }, 100);
                 });
             });
 
