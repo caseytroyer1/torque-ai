@@ -1045,73 +1045,104 @@
             gap: 24px;
         }
         .drill-card {
-            background: rgba(26, 58, 82, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(13, 33, 55, 0.7);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px;
             overflow: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .drill-card.hidden { display: none; }
-        .drill-card-video {
-            background: #0d2137;
-            aspect-ratio: 16/9;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             flex-direction: column;
+        }
+        .drill-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(30,94,255,0.12);
+        }
+        .drill-card.hidden { display: none; }
+        .drill-card-header {
+            padding: 18px 20px 0 20px;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border: 2px dashed rgba(30, 94, 255, 0.3);
-            border-radius: 16px 16px 0 0;
+            justify-content: space-between;
         }
-        .drill-card-video .drill-video-icon {
-            font-size: 40px;
-            line-height: 1;
-            color: #1E5EFF;
-        }
-        .drill-card-video .drill-video-title {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-        .drill-card-video .drill-video-subtext {
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            color: #B8C5D6;
-        }
-        .drill-card-body { padding: 20px; }
         .drill-card-tag {
             display: inline-block;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .drill-card-tag.setup { background: rgba(30,94,255,0.2); color: #7eb8ff; }
+        .drill-card-tag.backswing { background: rgba(34,197,94,0.2); color: #86efac; }
+        .drill-card-tag.impact { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .drill-card-tag.short-game { background: rgba(168,85,247,0.2); color: #e9d5ff; }
+        .drill-card-tag.tempo { background: rgba(236,72,153,0.2); color: #f9a8d4; }
+        .drill-card-difficulty {
+            font-size: 11px;
             font-weight: 600;
+            color: #8892b0;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 10px;
         }
-        .drill-card-tag.setup { background: rgba(30, 94, 255, 0.25); color: #7eb8ff; }
-        .drill-card-tag.backswing { background: rgba(34, 197, 94, 0.25); color: #86efac; }
-        .drill-card-tag.impact { background: rgba(245, 158, 11, 0.25); color: #fcd34d; }
-        .drill-card-tag.short-game { background: rgba(168, 85, 247, 0.25); color: #e9d5ff; }
+        .drill-card-body { padding: 14px 20px 20px 20px; flex: 1; display: flex; flex-direction: column; }
         .drill-card-name {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 17px;
             color: #ffffff;
-            margin-bottom: 10px;
+            margin: 0 0 8px 0;
         }
         .drill-card-desc {
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            color: #B8C5D6;
+            font-size: 13px;
+            color: #8892b0;
             line-height: 1.55;
-            margin-bottom: 12px;
+            margin: 0 0 14px 0;
         }
-        .drill-card-difficulty {
-            font-family: 'Inter', sans-serif;
+        .drill-card-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 14px 0;
+        }
+        .drill-card-steps li {
+            display: flex;
+            gap: 10px;
+            font-size: 13px;
+            color: #c8d6e8;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .drill-step-num {
+            background: rgba(30,94,255,0.2);
+            color: #7eb8ff;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .drill-card-feel {
+            background: rgba(30,94,255,0.07);
+            border-left: 3px solid #1e5eff;
+            border-radius: 0 8px 8px 0;
+            padding: 10px 12px;
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
+            color: #7eb8ff;
+            line-height: 1.5;
+            margin-top: auto;
+        }
+        .drill-card-feel-label {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 10px;
+            margin-bottom: 3px;
+            color: #1e5eff;
         }
         @media (max-width: 968px) {
             .golf-hub-hero { height: 220px; }
@@ -5035,7 +5066,7 @@
 
                     <div id="coach-tab" class="tab-pane">
                         <div class="golf-coach-header">
-                            <div class="golf-coach-label">POWERED BY AI</div>
+                            <div class="golf-coach-label">POWERED BY TORQUE</div>
                             <h1 class="golf-coach-heading">Your Personal Coach</h1>
                             <p class="golf-coach-subtext">Ask anything about your swing, technique, or game</p>
                         </div>
@@ -5070,89 +5101,304 @@
                             <button type="button" class="drill-filter-btn" data-filter="Backswing">Backswing</button>
                             <button type="button" class="drill-filter-btn" data-filter="Impact">Impact</button>
                             <button type="button" class="drill-filter-btn" data-filter="Short Game">Short Game</button>
+                            <button type="button" class="drill-filter-btn" data-filter="Tempo">Tempo</button>
                         </div>
                         <div class="drill-grid" id="drillGrid">
+
+                            <!-- SETUP DRILLS -->
                             <div class="drill-card" data-category="Setup">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
-                                <div class="drill-card-body">
+                                <div class="drill-card-header">
                                     <span class="drill-card-tag setup">Setup</span>
-                                    <h3 class="drill-card-name">Wall Hip Drill</h3>
-                                    <p class="drill-card-desc">Stand with your back against a wall and practice your address position. Your hips, back, and head should lightly touch the wall. This builds awareness of proper spine angle and posture.</p>
                                     <span class="drill-card-difficulty">Beginner</span>
                                 </div>
-                            </div>
-                            <div class="drill-card" data-category="Backswing">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
                                 <div class="drill-card-body">
-                                    <span class="drill-card-tag backswing">Backswing</span>
-                                    <h3 class="drill-card-name">Feet Together Drill</h3>
-                                    <p class="drill-card-desc">Hit shots with your feet together. This forces proper weight transfer and balance throughout the swing. Start with short irons and work up to longer clubs.</p>
-                                    <span class="drill-card-difficulty">Beginner</span>
+                                    <h3 class="drill-card-name">Wall Posture Drill</h3>
+                                    <p class="drill-card-desc">Builds spine angle awareness and corrects slouching at address.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Stand with your heels, hips, and upper back lightly touching a wall.</li>
+                                        <li><span class="drill-step-num">2</span>Hinge forward from your hips until your hands hang below your shoulders — your backside should leave the wall slightly.</li>
+                                        <li><span class="drill-step-num">3</span>Hold for 5 seconds, memorize the feeling, then step away and replicate it without the wall.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Tall spine, weight in the balls of your feet, arms hanging freely.</div>
                                 </div>
                             </div>
-                            <div class="drill-card" data-category="Backswing">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
-                                <div class="drill-card-body">
-                                    <span class="drill-card-tag backswing">Backswing</span>
-                                    <h3 class="drill-card-name">Pause at the Top</h3>
-                                    <p class="drill-card-desc">Make your backswing and pause for 2 seconds at the top before starting your downswing. This builds awareness of your backswing position and eliminates rushing.</p>
-                                    <span class="drill-card-difficulty">Beginner</span>
-                                </div>
-                            </div>
-                            <div class="drill-card" data-category="Impact">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
-                                <div class="drill-card-body">
-                                    <span class="drill-card-tag impact">Impact</span>
-                                    <h3 class="drill-card-name">Hip Bump Drill</h3>
-                                    <p class="drill-card-desc">From the top of your backswing, initiate the downswing by bumping your lead hip toward the target before rotating. This promotes proper sequencing and hip clearance through impact.</p>
-                                    <span class="drill-card-difficulty">Intermediate</span>
-                                </div>
-                            </div>
+
                             <div class="drill-card" data-category="Setup">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
-                                <div class="drill-card-body">
+                                <div class="drill-card-header">
                                     <span class="drill-card-tag setup">Setup</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
                                     <h3 class="drill-card-name">Alignment Stick Drill</h3>
-                                    <p class="drill-card-desc">Place two alignment sticks on the ground - one pointing at your target, one across your toes. Practice taking your stance until your feet, hips, and shoulders are consistently square.</p>
-                                    <span class="drill-card-difficulty">Beginner</span>
+                                    <p class="drill-card-desc">Grooves consistent alignment of feet, hips, and shoulders at address.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Place one alignment stick on the ground pointing at your target along your toe line.</li>
+                                        <li><span class="drill-step-num">2</span>Place a second stick parallel, just inside the ball position.</li>
+                                        <li><span class="drill-step-num">3</span>Take your address and check that feet, knees, hips, and shoulders are all parallel to the sticks.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Square and balanced — like you're standing on a train track aimed at the target.</div>
                                 </div>
                             </div>
+
+                            <div class="drill-card" data-category="Setup">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag setup">Setup</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Knee Flex Check</h3>
+                                    <p class="drill-card-desc">Fixes locked or over-bent knees that cause balance issues throughout the swing.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Stand straight, then slightly unlock your knees — just enough that they aren't rigid.</li>
+                                        <li><span class="drill-step-num">2</span>Hinge from the hips into your address position maintaining that soft knee flex.</li>
+                                        <li><span class="drill-step-num">3</span>Bounce lightly on your feet — if you feel balanced and springy, your flex is correct.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Athletic and ready — like a shortstop waiting for a ground ball.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Setup">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag setup">Setup</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Shoulder Level Drill</h3>
+                                    <p class="drill-card-desc">Corrects uneven shoulders that cause mis-hits and inconsistent ball flight.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Hold a club across your chest with both hands and take your address.</li>
+                                        <li><span class="drill-step-num">2</span>Look in a mirror or have someone check that the club shaft is level or your trail shoulder is only very slightly lower.</li>
+                                        <li><span class="drill-step-num">3</span>For irons, shoulders should be nearly level. For driver, trail shoulder drops slightly due to ball position.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Level and relaxed across the shoulders — no tension or tilt.</div>
+                                </div>
+                            </div>
+
+                            <!-- BACKSWING DRILLS -->
                             <div class="drill-card" data-category="Backswing">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
-                                <div class="drill-card-body">
+                                <div class="drill-card-header">
                                     <span class="drill-card-tag backswing">Backswing</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Feet Together Drill</h3>
+                                    <p class="drill-card-desc">Improves balance and weight transfer by forcing you to stay centered.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Place your feet together touching, grip down on a short iron.</li>
+                                        <li><span class="drill-step-num">2</span>Make slow half swings focusing on staying balanced throughout.</li>
+                                        <li><span class="drill-step-num">3</span>Gradually build to full swings — if you fall over, your weight transfer is off.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Quiet lower body, rotation happening around a stable center.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Backswing">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag backswing">Backswing</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Left Arm Straight Drill</h3>
+                                    <p class="drill-card-desc">Trains a wide swing arc by keeping the lead arm extended through the backswing.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Take your grip and place your lead arm straight out in front of you at address.</li>
+                                        <li><span class="drill-step-num">2</span>Make a slow backswing focusing on keeping that arm from bending past 10-15 degrees.</li>
+                                        <li><span class="drill-step-num">3</span>At the top, your lead arm should feel taut and connected to your chest rotation.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>A wide, sweeping arc — like you're wrapping your arms around a large barrel.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Backswing">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag backswing">Backswing</span>
+                                    <span class="drill-card-difficulty">Intermediate</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Hip Coil Drill</h3>
+                                    <p class="drill-card-desc">Builds hip-shoulder separation and X-Factor for more power without swinging harder.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Cross your arms over your chest and take your address position.</li>
+                                        <li><span class="drill-step-num">2</span>Rotate your shoulders fully as if making a backswing while resisting with your hips — feel the tension build in your core.</li>
+                                        <li><span class="drill-step-num">3</span>Repeat 10 times to groove the feeling of separation before hitting balls.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>A coiled spring in your torso — shoulders turned, hips resisting.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Backswing">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag backswing">Backswing</span>
+                                    <span class="drill-card-difficulty">Intermediate</span>
+                                </div>
+                                <div class="drill-card-body">
                                     <h3 class="drill-card-name">Step Drill</h3>
-                                    <p class="drill-card-desc">Start with feet together, step toward the target as you start your downswing. This exaggerates the weight shift and hip rotation sequence that creates power.</p>
-                                    <span class="drill-card-difficulty">Intermediate</span>
+                                    <p class="drill-card-desc">Exaggerates weight shift and hip drive to build proper downswing sequencing.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Start with your feet together at address.</li>
+                                        <li><span class="drill-step-num">2</span>As you start your backswing, step your lead foot out to normal width.</li>
+                                        <li><span class="drill-step-num">3</span>Let the step trigger your downswing — hips lead, then arms, then club.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Lower body initiating the downswing — like throwing a ball with your whole body.</div>
                                 </div>
                             </div>
+
+                            <!-- IMPACT DRILLS -->
                             <div class="drill-card" data-category="Impact">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
-                                <div class="drill-card-body">
+                                <div class="drill-card-header">
                                     <span class="drill-card-tag impact">Impact</span>
-                                    <h3 class="drill-card-name">Gate Drill</h3>
-                                    <p class="drill-card-desc">Place two tees just wider than your clubhead on either side of the ball. Swing through the gate without hitting the tees. This promotes an inside-out swing path and eliminates the slice.</p>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Spine Angle Hold Drill</h3>
+                                    <p class="drill-card-desc">Eliminates early extension — one of the most common causes of thin and fat shots.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Take your address and place a club across your shoulders behind your back.</li>
+                                        <li><span class="drill-step-num">2</span>Make slow practice swings focusing on keeping your spine angle constant from address through impact.</li>
+                                        <li><span class="drill-step-num">3</span>If the club points down at the ball at impact, your spine angle is maintained correctly.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Your chest staying down and through — like you're covering the ball at impact.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Impact">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag impact">Impact</span>
                                     <span class="drill-card-difficulty">Intermediate</span>
                                 </div>
-                            </div>
-                            <div class="drill-card" data-category="Short Game">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
                                 <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Hip Bump Drill</h3>
+                                    <p class="drill-card-desc">Trains proper hip clearance and sequencing through the impact zone.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>From the top of your backswing, pause for one second.</li>
+                                        <li><span class="drill-step-num">2</span>Start the downswing by bumping your lead hip toward the target — before your arms move.</li>
+                                        <li><span class="drill-step-num">3</span>Let the hips clear and rotate fully as your arms drop naturally into the slot.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Hips leading, arms following — like cracking a whip from the ground up.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Impact">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag impact">Impact</span>
+                                    <span class="drill-card-difficulty">Intermediate</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Gate Drill</h3>
+                                    <p class="drill-card-desc">Fixes an over-the-top path and eliminates the pull and slice.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Place two tees just wider than your clubhead on either side of the ball.</li>
+                                        <li><span class="drill-step-num">2</span>Make slow swings focused on swinging through the gate without hitting either tee.</li>
+                                        <li><span class="drill-step-num">3</span>A correct path exits the gate to the right of the target (for right-handers).</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Club approaching from inside — swinging out to right field through the ball.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Impact">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag impact">Impact</span>
+                                    <span class="drill-card-difficulty">Intermediate</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Head Behind Ball Drill</h3>
+                                    <p class="drill-card-desc">Stops the head from sliding forward which causes thin shots and loss of power.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>At address, place a headcover or towel just outside your lead foot.</li>
+                                        <li><span class="drill-step-num">2</span>Make swings ensuring your head stays behind the ball position through impact.</li>
+                                        <li><span class="drill-step-num">3</span>Your head should only move forward after the ball is gone — during follow through.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Head staying back while hips drive forward — creating a reverse C at impact.</div>
+                                </div>
+                            </div>
+
+                            <!-- TEMPO DRILLS -->
+                            <div class="drill-card" data-category="Tempo">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag tempo">Tempo</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Pause at the Top</h3>
+                                    <p class="drill-card-desc">The single best drill for golfers who rush the downswing.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Make your full backswing and deliberately pause for 2 full seconds at the top.</li>
+                                        <li><span class="drill-step-num">2</span>From the pause, start the downswing slowly — let gravity begin the movement.</li>
+                                        <li><span class="drill-step-num">3</span>Do 20 reps without a ball before hitting. Your tempo will feel dramatically smoother.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>The club feeling heavy at the top — patience before the release.</div>
+                                </div>
+                            </div>
+
+                            <div class="drill-card" data-category="Tempo">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag tempo">Tempo</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Count Rhythm Drill</h3>
+                                    <p class="drill-card-feel-label" style="font-size:13px;color:#8892b0;font-weight:400;text-transform:none;letter-spacing:0;margin-bottom:14px;">Builds a repeatable 3:1 backswing-to-downswing ratio used by tour pros.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Count out loud: "one-one-thousand, two-one-thousand, three" on your backswing.</li>
+                                        <li><span class="drill-step-num">2</span>Say "hit" as you strike the ball — the downswing should take about 1 count.</li>
+                                        <li><span class="drill-step-num">3</span>Practice this counting rhythm for 10 minutes — it resets rushing faster than any other drill.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Backswing feels almost too slow — downswing happens automatically and effortlessly.</div>
+                                </div>
+                            </div>
+
+                            <!-- SHORT GAME DRILLS -->
+                            <div class="drill-card" data-category="Short Game">
+                                <div class="drill-card-header">
                                     <span class="drill-card-tag short-game">Short Game</span>
+                                    <span class="drill-card-difficulty">Beginner</span>
+                                </div>
+                                <div class="drill-card-body">
                                     <h3 class="drill-card-name">Clock Chipping</h3>
-                                    <p class="drill-card-desc">Imagine a clock around the ball. Practice chips swinging to 7 o'clock (short), 8 o'clock (medium), and 9 o'clock (full). Builds consistent distance control around the greens.</p>
-                                    <span class="drill-card-difficulty">Beginner</span>
+                                    <p class="drill-card-desc">Builds precise distance control around the greens.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Imagine a clock face around the ball. Swing your lead arm to 7 o'clock (short), 8 o'clock (medium), 9 o'clock (full).</li>
+                                        <li><span class="drill-step-num">2</span>Hit 5 chips to each position and note where each distance lands.</li>
+                                        <li><span class="drill-step-num">3</span>On the course, pick your clock position based on the distance needed.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Pendulum motion — same tempo every time, only the length changes.</div>
                                 </div>
                             </div>
+
                             <div class="drill-card" data-category="Short Game">
-                                <div class="drill-card-video"><span>Video Coming Soon</span></div>
-                                <div class="drill-card-body">
+                                <div class="drill-card-header">
                                     <span class="drill-card-tag short-game">Short Game</span>
-                                    <h3 class="drill-card-name">One Hand Putting</h3>
-                                    <p class="drill-card-desc">Practice putting with only your lead hand, then only your trail hand. This builds feel and exposes weaknesses in your putting stroke. Do 10 putts each hand before every practice session.</p>
                                     <span class="drill-card-difficulty">Beginner</span>
                                 </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">One Hand Putting</h3>
+                                    <p class="drill-card-desc">Exposes weaknesses in your putting stroke and builds feel in both hands.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Putt 10 balls using only your lead hand — focus on keeping the face square.</li>
+                                        <li><span class="drill-step-num">2</span>Putt 10 balls using only your trail hand — feel the difference in control.</li>
+                                        <li><span class="drill-step-num">3</span>Now putt with both hands — it should feel noticeably smoother and more connected.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Both hands working as one unit — no dominant hand taking over.</div>
+                                </div>
                             </div>
+
+                            <div class="drill-card" data-category="Short Game">
+                                <div class="drill-card-header">
+                                    <span class="drill-card-tag short-game">Short Game</span>
+                                    <span class="drill-card-difficulty">Intermediate</span>
+                                </div>
+                                <div class="drill-card-body">
+                                    <h3 class="drill-card-name">Towel Under Arms Drill</h3>
+                                    <p class="drill-card-desc">Connects your arms to your body for more consistent chip and pitch shots.</p>
+                                    <ul class="drill-card-steps">
+                                        <li><span class="drill-step-num">1</span>Tuck a small towel under both armpits and grip the club normally.</li>
+                                        <li><span class="drill-step-num">2</span>Make chip and pitch swings — if the towel falls, your arms are disconnecting from your body.</li>
+                                        <li><span class="drill-step-num">3</span>Keep the towel in place for 20 consecutive shots before removing it.</li>
+                                    </ul>
+                                    <div class="drill-card-feel"><div class="drill-card-feel-label">Feel</div>Arms and chest moving together as one connected unit through the shot.</div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
