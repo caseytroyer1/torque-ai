@@ -5801,23 +5801,37 @@
             var el = document.getElementById('golfCoachLoadingMsg');
             if (el) el.remove();
         }
+        var coachConversationHistory = [];
         function buildSwingDataPayload() {
             var d = window.lastSwingData;
             if (!d || !d.analysis) return null;
             var a = d.analysis;
             var diag = d.diagnosis || {};
             var pri = diag.priority_issue;
-            var xFactor = (a.shoulder_rotation_backswing != null && a.hip_rotation_backswing != null) ? (Number(a.shoulder_rotation_backswing) - Number(a.hip_rotation_backswing)) : (a.backswing_shoulder_rotation != null && a.backswing_hip_rotation != null ? (Number(a.backswing_shoulder_rotation) - Number(a.backswing_hip_rotation)) : null);
-            var setupScore = (a.setup_spine_angle != null && Number(a.setup_spine_angle) >= 20 && Number(a.setup_spine_angle) <= 35 ? 25 : 0) + (a.setup_knee_flex != null && Number(a.setup_knee_flex) >= 150 && Number(a.setup_knee_flex) <= 170 ? 25 : 0) + (a.setup_shoulder_level != null && a.setup_shoulder_level < 0.03 ? 25 : 0) + (a.setup_hip_hinge != null && a.setup_hip_hinge >= -0.08 && a.setup_hip_hinge <= 0.08 ? 25 : 0);
-            var setupLabel = setupScore >= 85 ? 'Elite' : (setupScore >= 60 ? 'Solid Foundation' : 'Needs Attention');
+            var claude = a.claude_vision_analysis || {};
+            var overall = claude.overall || {};
+            var addr = claude.address || {};
+            var back = claude.backswing || {};
+            var imp = claude.impact || {};
             return {
-                setup_label: setupLabel,
-                setup_spine_angle: a.setup_spine_angle != null ? Number(a.setup_spine_angle) : null,
-                setup_knee_flex: a.setup_knee_flex != null ? Number(a.setup_knee_flex) : null,
-                hip_rotation_backswing: a.hip_rotation_backswing != null ? Number(a.hip_rotation_backswing) : a.backswing_hip_rotation,
-                shoulder_rotation_backswing: a.shoulder_rotation_backswing != null ? Number(a.shoulder_rotation_backswing) : a.backswing_shoulder_rotation,
-                x_factor: xFactor != null ? Number(xFactor) : null,
-                primary_issue: pri ? (typeof pri === 'object' ? pri.issue : pri) : 'None detected'
+                club: a.golfer_club || 'iron',
+                hand: a.golfer_hand || 'right',
+                primary_issue: pri ? (typeof pri === 'object' ? pri.issue : pri) : 'None detected',
+                issues: (diag.issues_detected || []).map(function(i) { return i.issue; }).join(', ') || 'None',
+                strengths: (diag.strengths || []).join(', ') || 'None',
+                spine_angle: a.setup_spine_angle != null ? Number(a.setup_spine_angle) : null,
+                spine_maintained: back.spine_angle_maintained || null,
+                tempo_ratio: a.tempo_ratio != null ? Number(a.tempo_ratio) : null,
+                tempo_label: a.tempo_label || null,
+                overall_summary: overall.summary || null,
+                biggest_strength: overall.biggest_strength || null,
+                primary_focus: overall.primary_focus || null,
+                posture: addr.posture || null,
+                weight_distribution: addr.weight_distribution || null,
+                hip_shoulder_separation: back.hip_shoulder_separation || null,
+                left_arm: back.left_arm || null,
+                weight_transfer: back.weight_transfer || null,
+                setup_label: addr.overall_setup || null
             };
         }
         function formatCoachMarkdown(text) {
@@ -5880,14 +5894,21 @@
             if (promptsRow) promptsRow.style.display = 'none';
             appendChatMessage('user', msg);
             showCoachLoading();
-            var payload = { message: msg, swing_data: buildSwingDataPayload() };
+            coachConversationHistory.push({ role: 'user', content: msg });
+            var payload = {
+                message: msg,
+                history: coachConversationHistory.slice(-10),
+                swing_data: buildSwingDataPayload()
+            };
             fetch(coachApiBase + '/golf-coach', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             }).then(function(r) { return r.json(); }).then(function(data) {
                 hideCoachLoading();
-                appendChatMessage('ai', data.response || 'Sorry, I couldn\'t generate a response.');
+                var reply = data.response || 'Sorry, I couldn\'t generate a response.';
+                coachConversationHistory.push({ role: 'assistant', content: reply });
+                appendChatMessage('ai', reply);
             }).catch(function(err) {
                 hideCoachLoading();
                 appendChatMessage('ai', 'Something went wrong. Please try again.');
