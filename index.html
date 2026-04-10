@@ -7520,8 +7520,8 @@
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, 'MediaPipe measured', 'setupSpineAngle');
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', '', 'setupKneeFlex');
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', '', 'setupShoulderLevel');
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', 'posture');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution || 'N/A', '', 'weightDistribution');
                 html += `</div>`;
                 if (addr.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(addr.coaching_note)}</span></div>`;
                 html += `<button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>`;
@@ -7534,10 +7534,10 @@
                 const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
                 html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.hip_shoulder_separation)), 'Hip/Shoulder Separation', back.hip_shoulder_separation || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.weight_transfer)), 'Weight Transfer', back.weight_transfer || 'N/A', '', null);
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.spine_angle_maintained)), 'Spine Maintained', back.spine_angle_maintained || 'N/A', '', null);
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.hip_shoulder_separation)), 'Hip/Shoulder Separation', back.hip_shoulder_separation || 'N/A', '', 'hipShoulderSep');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', 'leftArm');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.weight_transfer)), 'Weight Transfer', back.weight_transfer || 'N/A', '', 'weightTransfer');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.spine_angle_maintained)), 'Spine Maintained', back.spine_angle_maintained || 'N/A', '', 'spineMaintained');
                 html += metricCardHtml(tempoColor, 'Swing Tempo', tempoRatio != null ? tempoRatio.toFixed(1) + ':1' : 'N/A', tempoLabel || tempoSubtext, 'swingTempo');
                 html += `</div>`;
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
@@ -7694,6 +7694,30 @@
             setupHipHinge: {
                 name: 'Hip Hinge',
                 text: 'How much your hips are pushed back (or forward) relative to your ankles at address. A slight forward lean of the hips over the toes is typical in a good setup.'
+            },
+            posture: {
+                name: 'Posture',
+                text: 'Your overall body position at address. Good posture means a straight spine, slight forward tilt from the hips, relaxed arms hanging naturally, and balanced weight distribution. Poor posture at setup makes it very difficult to make consistent contact.'
+            },
+            weightDistribution: {
+                name: 'Weight Distribution',
+                text: 'How your weight is balanced between your toes and heels at address. Ideally your weight sits in the middle of your feet — too much on the heels causes you to fall back through impact, too much on the toes causes you to lunge forward.'
+            },
+            hipShoulderSep: {
+                name: 'Hip/Shoulder Separation',
+                text: 'The difference in rotation between your hips and shoulders at the top of the backswing. Good separation means your shoulders have turned significantly more than your hips, creating a powerful coil. This is one of the most important power sources in the golf swing.'
+            },
+            leftArm: {
+                name: 'Left Arm',
+                text: 'The position of your lead arm (left arm for right-handed golfers) at the top of the backswing. A straighter lead arm creates a wider arc and more potential power. A bent lead arm reduces the swing arc and can lead to inconsistent contact.'
+            },
+            weightTransfer: {
+                name: 'Weight Transfer',
+                text: 'How effectively your weight moves from your back foot to your front foot through the swing. Good weight transfer is essential for power and consistency — your weight should load onto the back foot in the backswing and fully shift to the front foot at impact.'
+            },
+            spineMaintained: {
+                name: 'Spine Angle Maintained',
+                text: 'Whether your spine angle stays consistent from backswing through impact. Losing your spine angle (early extension) is one of the most common swing faults — it causes you to stand up through impact, leading to thin shots, pulls, and loss of power.'
             }
         };
         function showMetricModal(name, text) {
