@@ -1358,6 +1358,7 @@ def golf_coach():
         data = request.get_json()
         user_message = data.get('message', '')
         swing_data = data.get('swing_data', None)
+        history = data.get('history', [])
 
         api_key = os.environ.get('ANTHROPIC_API_KEY')
         if not api_key:
@@ -1365,16 +1366,40 @@ def golf_coach():
 
         client = anthropic.Anthropic(api_key=api_key)
 
-        system_prompt = """You are an expert PGA golf coach assistant. Keep responses under 100 words. Be conversational, direct and encouraging. No headers or bullet points - just natural coaching conversation like a real coach talking to a student."""
+        system_prompt = """You are an expert PGA golf coach assistant for Torque AI. Speak directly to the golfer using 'you' and 'your' — never say 'this golfer' or 'the golfer'. Be conversational, encouraging, and direct like a real coach talking to a student on the range. Keep responses under 120 words. No headers — just natural coaching conversation."""
 
         if swing_data:
-            system_prompt += f"\n\nThis golfer's latest swing: Hip Rotation: {swing_data.get('hip_rotation_backswing', 'N/A')}°, Shoulder Rotation: {swing_data.get('shoulder_rotation_backswing', 'N/A')}°, Setup: {swing_data.get('setup_label', 'N/A')}"
+            parts = []
+            if swing_data.get('club'): parts.append(f"Club: {swing_data['club']}")
+            if swing_data.get('hand'): parts.append(f"Handed: {swing_data['hand']}")
+            if swing_data.get('overall_summary'): parts.append(f"Swing summary: {swing_data['overall_summary']}")
+            if swing_data.get('biggest_strength'): parts.append(f"Biggest strength: {swing_data['biggest_strength']}")
+            if swing_data.get('primary_focus'): parts.append(f"Primary focus: {swing_data['primary_focus']}")
+            if swing_data.get('primary_issue') and swing_data['primary_issue'] != 'None detected': parts.append(f"Main issue: {swing_data['primary_issue']}")
+            if swing_data.get('issues') and swing_data['issues'] != 'None': parts.append(f"Issues detected: {swing_data['issues']}")
+            if swing_data.get('strengths') and swing_data['strengths'] != 'None': parts.append(f"Strengths: {swing_data['strengths']}")
+            if swing_data.get('spine_angle'): parts.append(f"Spine angle: {swing_data['spine_angle']}°")
+            if swing_data.get('spine_maintained'): parts.append(f"Spine maintained: {swing_data['spine_maintained']}")
+            if swing_data.get('tempo_ratio'): parts.append(f"Tempo: {swing_data['tempo_ratio']}:1 ({swing_data.get('tempo_label', '')})")
+            if swing_data.get('hip_shoulder_separation'): parts.append(f"Hip/shoulder separation: {swing_data['hip_shoulder_separation']}")
+            if swing_data.get('left_arm'): parts.append(f"Left arm: {swing_data['left_arm']}")
+            if swing_data.get('weight_transfer'): parts.append(f"Weight transfer: {swing_data['weight_transfer']}")
+            if swing_data.get('posture'): parts.append(f"Posture: {swing_data['posture']}")
+            if parts:
+                system_prompt += "\n\nGolfer's latest swing data:\n" + "\n".join(parts)
+
+        messages = []
+        for h in history[:-1]:
+            role = h.get('role', 'user')
+            if role in ('user', 'assistant'):
+                messages.append({"role": role, "content": h.get('content', '')})
+        messages.append({"role": "user", "content": user_message})
 
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=300,
             system=system_prompt,
-            messages=[{"role": "user", "content": user_message}]
+            messages=messages
         )
 
         return jsonify({
