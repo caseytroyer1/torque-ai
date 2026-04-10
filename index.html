@@ -4465,6 +4465,59 @@
             .pga-lb-country { display: none; }
             .pga-lb-thru { display: none; }
         }
+        .coach-welcome-msg {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(59,130,246,0.08);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin: 0 auto 18px auto;
+            max-width: 680px;
+            font-size: 14px;
+            color: #c8d6e8;
+            line-height: 1.6;
+        }
+        .coach-welcome-msg .ai-icon {
+            color: #1e5eff;
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .coach-prompts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            max-width: 680px;
+            margin: 0 auto 24px auto;
+        }
+        .coach-prompt-chip {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(136,146,176,0.25);
+            border-radius: 20px;
+            color: #8892b0;
+            font-size: 13px;
+            padding: 7px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .coach-prompt-chip:hover {
+            border-color: #1e5eff;
+            color: #1e5eff;
+            background: rgba(30,94,255,0.08);
+        }
+        @media (max-width: 600px) {
+            .coach-prompt-chip {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+            .coach-welcome-msg {
+                font-size: 13px;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -4985,6 +5038,17 @@
                             <div class="golf-coach-label">POWERED BY AI</div>
                             <h1 class="golf-coach-heading">Your Personal Coach</h1>
                             <p class="golf-coach-subtext">Ask anything about your swing, technique, or game</p>
+                        </div>
+                        <div class="coach-welcome-msg" id="coachWelcomeMsg">
+                            <span class="ai-icon" aria-hidden="true">✦</span>
+                            <span>Hey! I'm your Torque AI coach. I can see your latest swing analysis and I'm ready to help. Ask me anything about your swing, or tap one of the questions below to get started.</span>
+                        </div>
+                        <div class="coach-prompts-row" id="coachPromptsRow">
+                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">What's my biggest issue?</button>
+                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">How do I fix early extension?</button>
+                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">Give me a drill to practice today</button>
+                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">How can I get more distance?</button>
+                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">Explain my swing tempo</button>
                         </div>
                         <div class="golf-chat-wrap">
                             <div class="golf-chat-messages" id="golfChatMessages"></div>
@@ -5796,11 +5860,24 @@
             golfChatMessages.appendChild(wrap);
             golfChatMessages.scrollTop = golfChatMessages.scrollHeight;
         }
+        function useCoachPrompt(btn) {
+            if (!golfChatInput) return;
+            golfChatInput.value = btn.textContent.trim();
+            const welcomeMsg = document.getElementById('coachWelcomeMsg');
+            const promptsRow = document.getElementById('coachPromptsRow');
+            if (welcomeMsg) welcomeMsg.style.display = 'none';
+            if (promptsRow) promptsRow.style.display = 'none';
+            sendGolfCoachMessage();
+        }
         function sendGolfCoachMessage() {
             if (!golfChatInput || !golfChatSend || !golfChatMessages) return;
             var msg = (golfChatInput.value || '').trim();
             if (!msg) return;
             golfChatInput.value = '';
+            const welcomeMsg = document.getElementById('coachWelcomeMsg');
+            const promptsRow = document.getElementById('coachPromptsRow');
+            if (welcomeMsg) welcomeMsg.style.display = 'none';
+            if (promptsRow) promptsRow.style.display = 'none';
             appendChatMessage('user', msg);
             showCoachLoading();
             var payload = { message: msg, swing_data: buildSwingDataPayload() };
