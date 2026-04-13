@@ -3515,121 +3515,185 @@
 
         /* How It Works Section */
         .how-it-works-section {
-            background: 
-                linear-gradient(rgba(17, 45, 66, 0.92), rgba(17, 45, 66, 0.92)),
+            background:
+                linear-gradient(rgba(10, 28, 48, 0.88), rgba(10, 28, 48, 0.88)),
                 url('vintage-golf-howitworks.jpg') center/cover no-repeat;
             width: 100%;
-            padding: 120px 20px;
+            padding: 100px 40px;
+            position: relative;
+            overflow: hidden;
         }
 
         .how-it-works-container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .how-it-works-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: #ff8c1a;
+            text-transform: uppercase;
+            margin-bottom: 12px;
         }
 
         .how-it-works-heading {
             font-family: 'Space Grotesk', sans-serif;
-            font-weight: 600;
-            font-size: 48px;
+            font-weight: 700;
+            font-size: 44px;
             color: #ffffff;
             text-align: center;
-            margin-bottom: 80px;
-            letter-spacing: -1.5px;
+            margin: 0 0 14px 0;
+            letter-spacing: -1px;
+        }
+
+        .how-it-works-subhead {
+            text-align: center;
+            font-size: 16px;
+            color: #8892b0;
+            margin: 0 0 64px 0;
         }
 
         .how-it-works-columns {
-            display: flex;
-            justify-content: space-between;
-            gap: 80px;
+            display: grid;
+            grid-template-columns: 1fr 44px 1fr 44px 1fr;
+            align-items: start;
+            gap: 0;
         }
 
         .how-it-works-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 32px 26px;
+            backdrop-filter: blur(8px);
+            text-align: left;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .how-it-works-column:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(30,94,255,0.4);
         }
 
         .how-it-works-number {
             font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 64px;
-            color: #1E5EFF;
-            opacity: 0.8;
-            margin-bottom: 16px;
-            letter-spacing: -1.5px;
+            font-weight: 800;
+            font-size: 54px;
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(30,94,255,0.5);
+            line-height: 1;
+            margin-bottom: 18px;
+            letter-spacing: -1px;
         }
 
         .how-it-works-icon {
-            width: 150px;
-            height: 150px;
+            width: 52px;
+            height: 52px;
             display: block;
-            margin: 0 auto;
+            margin-bottom: 18px;
+            opacity: 0.9;
         }
 
         .how-it-works-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-weight: 600;
-            font-size: 24px;
+            font-weight: 700;
+            font-size: 19px;
             color: #ffffff;
-            margin-top: 20px;
-            margin-bottom: 12px;
-            letter-spacing: -1.5px;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.3px;
         }
 
         .how-it-works-description {
             font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 16px;
-            color: #B8C5D6;
-            line-height: 1.6;
-            margin-top: 12px;
+            font-size: 13.5px;
+            color: #8892b0;
+            line-height: 1.7;
+            margin: 0 0 18px 0;
         }
 
-        /* Mobile Responsive for How It Works */
+        .how-it-works-bullets {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 16px;
+        }
+
+        .how-it-works-bullets li {
+            font-size: 13px;
+            color: #a8b4c8;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .how-it-works-bullets li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff8c1a;
+            flex-shrink: 0;
+        }
+
+        .how-it-works-connector {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 90px;
+        }
+
+        .how-it-works-arrow {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(30,94,255,0.12);
+            border: 1px solid rgba(30,94,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7eb8ff;
+            font-size: 16px;
+        }
+
+        .how-it-works-cta-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 52px;
+        }
+
+        .how-it-works-cta-btn {
+            background: #1e5eff;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 38px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s ease;
+        }
+
+        .how-it-works-cta-btn:hover { background: #3d7aff; }
+
         @media (max-width: 968px) {
-            .how-it-works-section {
-                padding: 80px 20px;
-            }
-
-            .how-it-works-heading {
-                font-size: 36px;
-                margin-bottom: 60px;
-                letter-spacing: -1.5px;
-            }
-
-            .how-it-works-columns {
-                flex-direction: column;
-                gap: 60px;
-            }
-
-            .how-it-works-number {
-                font-size: 56px;
-            }
+            .how-it-works-section { padding: 70px 20px; }
+            .how-it-works-columns { grid-template-columns: 1fr; }
+            .how-it-works-connector { display: none; }
+            .how-it-works-column { margin-bottom: 16px; }
+            .how-it-works-heading { font-size: 34px; }
         }
 
         @media (max-width: 480px) {
-            .how-it-works-section {
-                padding: 60px 20px;
-            }
-
-            .how-it-works-heading {
-                font-size: 32px;
-                margin-bottom: 40px;
-            }
-
-            .how-it-works-number {
-                font-size: 48px;
-            }
-
-            .how-it-works-title {
-                font-size: 20px;
-            }
-
-            .how-it-works-description {
-                font-size: 14px;
-            }
+            .how-it-works-heading { font-size: 28px; }
+            .how-it-works-section { padding: 60px 16px; }
         }
 
         /* Features Section */
@@ -4816,28 +4880,54 @@
 
     <section class="how-it-works-section">
         <div class="how-it-works-container">
+            <div class="how-it-works-label">Simple Process</div>
             <h2 class="how-it-works-heading">How It Works</h2>
+            <p class="how-it-works-subhead">From video to personalized coaching in under a minute</p>
             <div class="how-it-works-columns">
                 <div class="how-it-works-column">
                     <div class="how-it-works-number">01</div>
                     <img src="icon-upload.png" alt="Upload icon" class="how-it-works-icon">
-                    <h3 class="how-it-works-title">Upload</h3>
-                    <p class="how-it-works-description">Upload your swing in seconds</p>
-                        </div>
+                    <h3 class="how-it-works-title">Film Your Swing</h3>
+                    <p class="how-it-works-description">Record your swing on any smartphone. No special equipment needed — just your phone and a golf club.</p>
+                    <ul class="how-it-works-bullets">
+                        <li>Film down-the-line behind you</li>
+                        <li>5–10 seconds, normal speed</li>
+                        <li>MP4 or MOV, any smartphone</li>
+                    </ul>
+                </div>
+                <div class="how-it-works-connector">
+                    <div class="how-it-works-arrow">›</div>
+                </div>
                 <div class="how-it-works-column">
                     <div class="how-it-works-number">02</div>
                     <img src="icon-analyze.png" alt="Analyze icon" class="how-it-works-icon">
-                    <h3 class="how-it-works-title">Analyze</h3>
-                    <p class="how-it-works-description">Our AI coaching identifies faults and improvements instantly</p>
-                        </div>
+                    <h3 class="how-it-works-title">AI Analyzes Your Swing</h3>
+                    <p class="how-it-works-description">Our AI uses computer vision and pose tracking to identify exactly what's happening at every phase of your swing.</p>
+                    <ul class="how-it-works-bullets">
+                        <li>Address, backswing and impact analyzed</li>
+                        <li>Spine angle, tempo and posture measured</li>
+                        <li>Results ready in under 60 seconds</li>
+                    </ul>
+                </div>
+                <div class="how-it-works-connector">
+                    <div class="how-it-works-arrow">›</div>
+                </div>
                 <div class="how-it-works-column">
                     <div class="how-it-works-number">03</div>
                     <img src="icon-improve.png" alt="Improve icon" class="how-it-works-icon">
-                    <h3 class="how-it-works-title">Improve</h3>
-                    <p class="how-it-works-description">Receive personalized coaching tailored to your swing</p>
-                        </div>
-                    </div>
-                        </div>
+                    <h3 class="how-it-works-title">Get Your Practice Plan</h3>
+                    <p class="how-it-works-description">Receive a full coaching report with your biggest strength, primary focus, and drills matched to your exact swing faults.</p>
+                    <ul class="how-it-works-bullets">
+                        <li>Personalized coaching feedback</li>
+                        <li>Drills matched to your issues</li>
+                        <li>Ask your AI caddy anything</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="how-it-works-cta-row">
+                <button class="how-it-works-cta-btn" onclick="switchPage('swing-coach')">Analyze My Swing Free →</button>
+            </div>
+        </div>
     </section>
 
     <!-- Stats + Animation Section -->
