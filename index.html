@@ -3752,9 +3752,11 @@
 
         /* Features Section */
         .features-section {
-            background: #0d2137;
+            background: #f8fafc;
             width: 100%;
             padding: 100px 40px;
+            position: relative;
+            overflow: hidden;
         }
 
         .features-container {
@@ -3776,7 +3778,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 44px;
             font-weight: 700;
-            color: #ffffff;
+            color: #060f1e;
             text-align: center;
             margin: 0 0 14px 0;
             letter-spacing: -1px;
@@ -3785,7 +3787,7 @@
         .features-subhead {
             text-align: center;
             font-size: 16px;
-            color: #8892b0;
+            color: #64748b;
             margin: 0 0 72px 0;
         }
 
@@ -3796,7 +3798,7 @@
             margin-bottom: 32px;
             border-radius: 24px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(0,0,0,0.08);
         }
 
         .feature-card:last-child { margin-bottom: 0; }
@@ -3827,11 +3829,13 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(12px);
         }
 
         .feature-card.reverse .feature-content {
-            background: rgba(255,255,255,0.05);
+            background: rgba(248,250,252,0.8);
+            backdrop-filter: blur(12px);
         }
 
         .feature-tag {
@@ -3852,7 +3856,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 30px;
             font-weight: 700;
-            color: #ffffff;
+            color: #060f1e;
             margin: 0 0 14px 0;
             letter-spacing: -0.5px;
             line-height: 1.2;
@@ -3860,7 +3864,7 @@
 
         .feature-description {
             font-size: 15px;
-            color: #8892b0;
+            color: #475569;
             line-height: 1.75;
             margin: 0 0 24px 0;
         }
@@ -3873,12 +3877,12 @@
 
         .feature-bullets li {
             font-size: 14px;
-            color: #a8b4c8;
+            color: #334155;
             padding: 7px 0;
             display: flex;
             align-items: flex-start;
             gap: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
         }
 
         .feature-bullets li:last-child { border-bottom: none; }
@@ -5002,6 +5006,17 @@
         .round-score { font-size: 20px; font-weight: 800; color: #ffffff; text-align: right; }
         .round-diff { font-size: 9px; font-weight: 600; color: #86efac; text-align: right; }
 
+        .features-aurora-canvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .features-container {
+            position: relative;
+            z-index: 1;
+        }
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -5174,6 +5189,7 @@
     </section>
 
     <section class="features-section powerful-analysis">
+        <canvas class="features-aurora-canvas" id="featuresAuroraCanvas"></canvas>
         <div class="features-container">
             <div class="features-label">More Than Just Analysis</div>
             <h2 class="features-heading">Everything In Your Bag</h2>
@@ -6571,6 +6587,49 @@
                 requestAnimationFrame(draw);
             }
 
+            draw();
+        })();
+
+        // Feature section aurora animation
+        (function() {
+            const canvas = document.getElementById('featuresAuroraCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const section = canvas.parentElement;
+
+            function resize() {
+                canvas.width = section.offsetWidth;
+                canvas.height = section.offsetHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const blobs = [
+                { x: 0.75, y: 0.2, r: 0.45, color: [99,102,241], speed: 0.0008, angle: 0, opacity: 0.18 },
+                { x: 0.85, y: 0.55, r: 0.4, color: [255,140,26], speed: 0.0012, angle: 1, opacity: 0.14 },
+                { x: 0.65, y: 0.75, r: 0.38, color: [236,72,153], speed: 0.001, angle: 2, opacity: 0.12 },
+                { x: 0.9, y: 0.35, r: 0.32, color: [30,94,255], speed: 0.0015, angle: 3, opacity: 0.13 },
+            ];
+
+            let t = 0;
+            function draw() {
+                const w = canvas.width, h = canvas.height;
+                ctx.clearRect(0, 0, w, h);
+                blobs.forEach(function(b) {
+                    const cx = (b.x + Math.sin(t * b.speed + b.angle) * 0.12) * w;
+                    const cy = (b.y + Math.cos(t * b.speed * 0.7 + b.angle) * 0.1) * h;
+                    const r = b.r * Math.max(w, h);
+                    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+                    grad.addColorStop(0, 'rgba(' + b.color.join(',') + ',' + b.opacity + ')');
+                    grad.addColorStop(1, 'rgba(' + b.color.join(',') + ',0)');
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+                });
+                t++;
+                requestAnimationFrame(draw);
+            }
             draw();
         })();
 
