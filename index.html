@@ -3639,8 +3639,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 800;
             font-size: 54px;
-            color: transparent;
-            -webkit-text-stroke: 2.5px rgba(30,94,255,0.75);
+            color: #1e5eff;
             line-height: 1;
             margin-bottom: 18px;
             letter-spacing: -1px;
@@ -4876,6 +4875,133 @@
             .torque-stat-item { padding: 24px 18px; }
             .torque-stat-value { font-size: 28px; }
         }
+        .feature-card {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .feature-card:hover {
+            border-color: rgba(30,94,255,0.45) !important;
+            box-shadow: 0 0 30px rgba(30,94,255,0.1);
+        }
+        .caddy-demo {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            gap: 8px;
+            z-index: 2;
+        }
+        .caddy-demo-card {
+            background: rgba(6,15,30,0.85);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px 12px;
+            backdrop-filter: blur(8px);
+        }
+        .caddy-demo-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+        .caddy-demo-val {
+            font-size: 11px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .caddy-chat {
+            background: rgba(6,15,30,0.9);
+            border: 1px solid rgba(30,94,255,0.25);
+            border-radius: 10px;
+            padding: 10px 12px;
+            backdrop-filter: blur(8px);
+        }
+        .caddy-q {
+            font-size: 10px;
+            color: #7eb8ff;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .caddy-a {
+            font-size: 11px;
+            color: #c8d6e8;
+            line-height: 1.5;
+            min-height: 44px;
+        }
+        .caddy-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 11px;
+            background: #1e5eff;
+            margin-left: 1px;
+            animation: caddyCursorBlink 1s step-end infinite;
+            vertical-align: middle;
+        }
+        @keyframes caddyCursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .hub-demo {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 20px;
+            z-index: 2;
+            align-content: center;
+        }
+        .hub-tile {
+            background: rgba(6,15,30,0.85);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px;
+            backdrop-filter: blur(8px);
+        }
+        .hub-tile-icon { font-size: 18px; margin-bottom: 4px; }
+        .hub-tile-title { font-size: 10px; font-weight: 700; color: #ffffff; margin-bottom: 2px; }
+        .hub-tile-sub { font-size: 9px; color: #8892b0; }
+        .rounds-demo {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            gap: 8px;
+            z-index: 2;
+        }
+        .rounds-demo-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .round-row {
+            background: rgba(6,15,30,0.85);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        .round-course { font-size: 11px; font-weight: 700; color: #ffffff; }
+        .round-date { font-size: 9px; color: #8892b0; }
+        .round-score { font-size: 20px; font-weight: 800; color: #ffffff; text-align: right; }
+        .round-diff { font-size: 9px; font-weight: 600; color: #86efac; text-align: right; }
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -5051,11 +5177,21 @@
         <div class="features-container">
             <div class="features-label">More Than Just Analysis</div>
             <h2 class="features-heading">Everything In Your Bag</h2>
-            <p class="features-subhead">Torque isn't just a swing analyzer — it's a complete golf improvement platform</p>
+            <p class="features-subhead">Torque isn't just a swing tool — it's a complete golf improvement platform</p>
 
-            <div class="feature-card">
-                <div class="feature-image" style="background-image:url('vintage-golf-feature1.jpg');background-size:cover;background-position:center;">
+            <div class="feature-card" id="featureCard1">
+                <div class="feature-image" style="background-image:url('vintage-golf-feature1.jpg');background-size:cover;background-position:center;position:relative;">
                     <div class="feature-image-overlay"></div>
+                    <div class="caddy-demo">
+                        <div class="caddy-demo-card">
+                            <div class="caddy-demo-label">Your latest swing</div>
+                            <div class="caddy-demo-val">Spine: 45.7° &middot; Tempo: 1.5:1 &middot; Weight: Good</div>
+                        </div>
+                        <div class="caddy-chat">
+                            <div class="caddy-q">You: "Why am I hitting it thin?"</div>
+                            <div class="caddy-a" id="featureCaddyTyping"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="feature-content">
                     <div class="feature-tag">AI Caddy</div>
@@ -5070,8 +5206,8 @@
                 </div>
             </div>
 
-            <div class="feature-card reverse">
-                <div class="feature-image" style="background-image:url('vintage-golf-feature2.jpg');background-size:cover;background-position:center;">
+            <div class="feature-card reverse" id="featureCard2">
+                <div class="feature-image" style="background-image:url('vintage-golf-feature2.jpg');background-size:cover;background-position:center;position:relative;">
                     <div class="feature-image-overlay"></div>
                 </div>
                 <div class="feature-content">
@@ -5087,8 +5223,8 @@
                 </div>
             </div>
 
-            <div class="feature-card">
-                <div class="feature-image" style="background-image:url('vintage-golf-feature3.jpg');background-size:cover;background-position:center;">
+            <div class="feature-card" id="featureCard3">
+                <div class="feature-image" style="background-image:url('vintage-golf-feature3.jpg');background-size:cover;background-position:center;position:relative;">
                     <div class="feature-image-overlay"></div>
                 </div>
                 <div class="feature-content">
@@ -6436,6 +6572,39 @@
             }
 
             draw();
+        })();
+
+        // Feature section: typing animation + scroll fade-in
+        (function() {
+            const typingEl = document.getElementById('featureCaddyTyping');
+            if (typingEl) {
+                const msg = "Your spine angle is dropping through impact — you're standing up instead of staying in your posture. Try the Spine Angle Hold drill before your next round.";
+                let i = 0;
+                const cursor = '<span class="caddy-cursor"></span>';
+                function type() {
+                    if (i < msg.length) {
+                        typingEl.innerHTML = msg.slice(0, i + 1) + cursor;
+                        i++;
+                        setTimeout(type, 28);
+                    } else {
+                        typingEl.innerHTML = msg + cursor;
+                        setTimeout(function() { i = 0; setTimeout(type, 800); }, 3500);
+                    }
+                }
+                setTimeout(type, 1200);
+            }
+            const featureCards = document.querySelectorAll('.feature-card');
+            if (featureCards.length) {
+                const obs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry, idx) {
+                        if (entry.isIntersecting) {
+                            setTimeout(function() { entry.target.classList.add('visible'); }, idx * 150);
+                            obs.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                featureCards.forEach(function(c) { obs.observe(c); });
+            }
         })();
 
         // Golf Hub: Golf News (rss2json, two feeds)
