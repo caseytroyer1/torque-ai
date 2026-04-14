@@ -3435,7 +3435,7 @@
         }
 
         .hero-headline span {
-            color: #1e5eff;
+            color: #1a4fd6;
         }
 
         .hero-subheadline {
@@ -3481,18 +3481,20 @@
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             font-size: 16px;
-            color: #c8d6e8;
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
+            color: #ffffff;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
             padding: 16px 32px;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.2s ease;
             width: fit-content;
+            backdrop-filter: blur(4px);
         }
 
         .hero-cta-secondary:hover {
-            border-color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.6);
             color: #ffffff;
         }
 
@@ -5060,14 +5062,10 @@
             </video>
             <div class="hero-container">
                 <div class="hero-left">
-                    <h1 class="hero-headline">Your Golf Swing.<br><span>Coached by AI.</span><br>Improve Instantly.</h1>
+                    <h1 class="hero-headline" id="heroHeadline" style="min-height: 220px;"></h1>
                     <div class="hero-btns">
-                        <button class="hero-cta-button" id="tryItFreeBtn" onclick="switchPage('swing-coach')">Analyze My Swing Free →</button>
+                        <button class="hero-cta-button" id="tryItFreeBtn" onclick="switchPage('swing-coach')">Try For Free →</button>
                         <button class="hero-cta-secondary" onclick="document.querySelector('.how-it-works-section').scrollIntoView({behavior:'smooth'})">See How It Works</button>
-                    </div>
-                    <div class="hero-social-proof">
-                        <div class="hero-stars">★★★★★</div>
-                        <div class="hero-social-text">Trusted by <strong>golfers of all levels</strong> — no lesson fees</div>
                     </div>
                 </div>
                 <div class="hero-right">
@@ -6567,6 +6565,74 @@
             }
 
             draw();
+        })();
+
+        // Hero headline typing animation
+        (function() {
+            const el = document.getElementById('heroHeadline');
+            if (!el) return;
+
+            const lines = [
+                { text: 'Your Golf Swing.', blue: false },
+                { text: 'Coached by AI.', blue: true },
+                { text: 'Improve Instantly.', blue: false },
+            ];
+
+            let lineIndex = 0;
+            let charIndex = 0;
+            let currentHtml = '';
+            let isDeleting = false;
+            let pauseCount = 0;
+
+            function buildHtml(completedLines, currentLine, currentText, isBlue) {
+                let html = '';
+                completedLines.forEach(function(l) {
+                    if (l.blue) {
+                        html += '<span>' + l.text + '</span><br>';
+                    } else {
+                        html += l.text + '<br>';
+                    }
+                });
+                if (currentText) {
+                    if (isBlue) {
+                        html += '<span>' + currentText + '</span>';
+                    } else {
+                        html += currentText;
+                    }
+                }
+                return html;
+            }
+
+            const completedLines = [];
+
+            function type() {
+                const line = lines[lineIndex];
+                const fullText = line.text;
+
+                if (charIndex <= fullText.length) {
+                    const current = fullText.slice(0, charIndex);
+                    el.innerHTML = buildHtml(completedLines, line, current, line.blue);
+                    charIndex++;
+                    setTimeout(type, charIndex === 1 ? 300 : 45);
+                } else {
+                    completedLines.push(line);
+                    lineIndex++;
+                    charIndex = 0;
+                    if (lineIndex < lines.length) {
+                        setTimeout(type, 200);
+                    } else {
+                        setTimeout(function() {
+                            lineIndex = 0;
+                            charIndex = 0;
+                            completedLines.length = 0;
+                            el.innerHTML = '';
+                            setTimeout(type, 400);
+                        }, 4000);
+                    }
+                }
+            }
+
+            setTimeout(type, 600);
         })();
 
         // Feature section aurora animation
