@@ -5146,7 +5146,7 @@
         </div>
         <div class="torque-stats-grid">
             <div class="torque-stat-item">
-                <div class="torque-stat-value">$150+</div>
+                <div class="torque-stat-value">$100+</div>
                 <div class="torque-stat-label">What others charge per lesson</div>
             </div>
             <div class="torque-stat-item">
@@ -6469,24 +6469,24 @@
             function rand(a, b) { return a + Math.random() * (b - a); }
 
             const warmLines = [];
-            for (let i = 0; i < 120; i++) {
+            for (let i = 0; i < 180; i++) {
                 warmLines.push({
                     baseAngle: rand(-Math.PI * 0.05, Math.PI * 1.05),
-                    baseLen: rand(30, 160),
+                    baseLen: rand(40, 220),
                     speed: rand(0.003, 0.01),
                     offset: rand(0, Math.PI * 2),
-                    thick: rand(0.4, 2.2),
+                    thick: rand(0.5, 2.8),
                 });
             }
 
             const coolLines = [];
-            for (let i = 0; i < 220; i++) {
+            for (let i = 0; i < 320; i++) {
                 coolLines.push({
-                    baseAngle: rand(-Math.PI * 0.08, Math.PI * 1.08),
-                    baseLen: rand(100, 500),
+                    baseAngle: rand(-Math.PI * 0.1, Math.PI * 1.1),
+                    baseLen: rand(120, 650),
                     speed: rand(0.002, 0.007),
                     offset: rand(0, Math.PI * 2),
-                    thick: rand(0.2, 1.4),
+                    thick: rand(0.3, 1.8),
                     hue: Math.random() > 0.3 ? 220 : 210,
                 });
             }
@@ -6506,7 +6506,7 @@
                     const len = line.baseLen * (0.5 + wave * 0.5);
                     const tipX = ax + Math.cos(line.baseAngle) * len;
                     const tipY = ay - Math.sin(line.baseAngle) * len;
-                    const alpha = 0.15 + wave * 0.5;
+                    const alpha = 0.3 + wave * 0.8;
                     const grad = ctx.createLinearGradient(ax, ay, tipX, tipY);
                     grad.addColorStop(0, 'rgba(255,160,40,' + (alpha * 0.9) + ')');
                     grad.addColorStop(0.5, 'rgba(255,120,20,' + (alpha * 0.5) + ')');
@@ -6528,7 +6528,7 @@
                         tipX += (mouseX - tipX) * 0.15;
                         tipY += (mouseY - tipY) * 0.15;
                     }
-                    const alpha = 0.08 + wave * 0.52;
+                    const alpha = 0.2 + wave * 0.8;
                     const grad = ctx.createLinearGradient(ax, ay, tipX, tipY);
                     grad.addColorStop(0, 'hsla(' + line.hue + ',90%,60%,0)');
                     grad.addColorStop(0.45, 'hsla(' + line.hue + ',90%,65%,' + (alpha * 0.35) + ')');
@@ -6540,25 +6540,25 @@
                     ctx.lineWidth = line.thick;
                     ctx.stroke();
                     ctx.beginPath();
-                    ctx.arc(tipX, tipY, line.thick * 2, 0, Math.PI * 2);
+                    ctx.arc(tipX, tipY, line.thick * 2.5, 0, Math.PI * 2);
                     ctx.fillStyle = 'hsla(' + line.hue + ',90%,80%,' + alpha + ')';
                     ctx.fill();
                 });
 
-                const warmGlow = ctx.createRadialGradient(ax, ay, 0, ax, ay, 90);
-                warmGlow.addColorStop(0, 'rgba(255,140,30,0.5)');
-                warmGlow.addColorStop(0.4, 'rgba(255,100,20,0.15)');
+                const warmGlow = ctx.createRadialGradient(ax, ay, 0, ax, ay, 140);
+                warmGlow.addColorStop(0, 'rgba(255,140,30,0.9)');
+                warmGlow.addColorStop(0.4, 'rgba(255,100,20,0.4)');
                 warmGlow.addColorStop(1, 'rgba(255,80,0,0)');
                 ctx.beginPath();
-                ctx.arc(ax, ay, 90, 0, Math.PI * 2);
+                ctx.arc(ax, ay, 140, 0, Math.PI * 2);
                 ctx.fillStyle = warmGlow;
                 ctx.fill();
 
-                const blueGlow = ctx.createRadialGradient(ax, ay, 60, ax, ay, 200);
-                blueGlow.addColorStop(0, 'rgba(30,94,255,0.15)');
+                const blueGlow = ctx.createRadialGradient(ax, ay, 80, ax, ay, 280);
+                blueGlow.addColorStop(0, 'rgba(30,94,255,0.35)');
                 blueGlow.addColorStop(1, 'rgba(30,94,255,0)');
                 ctx.beginPath();
-                ctx.arc(ax, ay, 200, 0, Math.PI * 2);
+                ctx.arc(ax, ay, 280, 0, Math.PI * 2);
                 ctx.fillStyle = blueGlow;
                 ctx.fill();
 
