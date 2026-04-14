@@ -3367,8 +3367,19 @@
             z-index: 0;
         }
 
-        /* Noise texture overlay */
         .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(6,15,30,0.95) 35%, rgba(6,15,30,0.5) 70%, rgba(6,15,30,0.3) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-section::after {
             content: '';
             position: absolute;
             top: 0;
@@ -3378,13 +3389,14 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
             opacity: 0.3;
             pointer-events: none;
+            z-index: 1;
         }
 
         .hero-container {
             max-width: 1200px;
             width: 100%;
             position: relative;
-            z-index: 1;
+            z-index: 2;
             display: flex;
             align-items: center;
             gap: 80px;
@@ -3396,40 +3408,76 @@
             flex-direction: column;
         }
 
-        .hero-logo {
-            width: 200px;
-            height: auto;
-            margin-bottom: 48px;
-            filter: brightness(0) invert(1);
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,140,26,0.12);
+            border: 1px solid rgba(255,140,26,0.3);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ff8c1a;
+            letter-spacing: 0.04em;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff8c1a;
+            animation: hero-pulse 2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes hero-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
         }
 
         .hero-headline {
             font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 72px;
-            line-height: 1.1;
+            font-weight: 800;
+            font-size: 68px;
+            line-height: 1.05;
             color: #ffffff;
-            letter-spacing: -1.5px;
-            margin-bottom: 24px;
+            letter-spacing: -2px;
+            margin: 0 0 20px 0;
+        }
+
+        .hero-headline span {
+            color: #1e5eff;
         }
 
         .hero-subheadline {
             font-family: 'Inter', sans-serif;
             font-weight: 400;
-            font-size: 24px;
-            line-height: 1.5;
-            color: #B8C5D6;
+            font-size: 18px;
+            line-height: 1.65;
+            color: #c8d6e8;
             margin-bottom: 32px;
+            max-width: 480px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
         }
 
         .hero-cta-button {
             font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 18px;
+            font-weight: 700;
+            font-size: 16px;
             color: #ffffff;
             background: #1E5EFF;
             border: none;
-            padding: 20px 48px;
+            padding: 16px 36px;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -3438,13 +3486,50 @@
         }
 
         .hero-cta-button:hover {
-            background: #2d6eff;
+            background: #3d7aff;
             box-shadow: 0 6px 30px rgba(30, 94, 255, 0.4);
             transform: translateY(-2px);
         }
 
-        .hero-cta-button:active {
-            transform: translateY(0);
+        .hero-cta-secondary {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: #c8d6e8;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 16px 32px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: fit-content;
+        }
+
+        .hero-cta-secondary:hover {
+            border-color: rgba(255,255,255,0.4);
+            color: #ffffff;
+        }
+
+        .hero-social-proof {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-stars {
+            color: #ff8c1a;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .hero-social-text {
+            font-size: 13px;
+            color: #8892b0;
+        }
+
+        .hero-social-text strong {
+            color: #c8d6e8;
+            font-weight: 600;
         }
 
         .hero-right {
@@ -3455,62 +3540,32 @@
         }
 
         .hero-phone {
-            width: 600px;
+            width: 560px;
             height: auto;
             filter: drop-shadow(0 30px 80px rgba(0, 0, 0, 0.6));
-            transform: rotate(0deg);
         }
 
-        /* Mobile Responsive */
         @media (max-width: 968px) {
             .hero-container {
                 flex-direction: column;
-                gap: 60px;
-            text-align: center;
+                gap: 48px;
+                text-align: center;
             }
-
-            .hero-left {
-                align-items: center;
-                margin-top: -40px;
-            }
-
-            .hero-logo {
-                margin-bottom: 32px;
-            }
-
-            .hero-headline {
-                font-size: 48px;
-                letter-spacing: -1.5px;
-            }
-
-            .hero-subheadline {
-                font-size: 20px;
-            }
-
-            .hero-phone {
-                width: 100%;
-                max-width: 400px;
-            }
+            .hero-left { align-items: center; }
+            .hero-badge { margin: 0 auto 24px auto; }
+            .hero-headline { font-size: 44px; letter-spacing: -1.5px; }
+            .hero-subheadline { font-size: 17px; }
+            .hero-btns { justify-content: center; }
+            .hero-social-proof { justify-content: center; }
+            .hero-phone { width: 100%; max-width: 380px; }
         }
 
         @media (max-width: 480px) {
-            .hero-headline {
-                font-size: 36px;
-            }
-
-            .hero-subheadline {
-                font-size: 18px;
-            }
-
-            .hero-cta-button {
-                padding: 18px 40px;
-                font-size: 16px;
-                margin-top: -20px;
-            }
-
-            .hero-phone {
-                max-width: 350px;
-            }
+            .hero-headline { font-size: 34px; }
+            .hero-subheadline { font-size: 15px; }
+            .hero-cta-button { padding: 14px 28px; font-size: 15px; }
+            .hero-cta-secondary { padding: 14px 24px; font-size: 15px; }
+            .hero-phone { max-width: 300px; }
         }
 
         /* How It Works Section */
@@ -3585,18 +3640,18 @@
             font-weight: 800;
             font-size: 54px;
             color: transparent;
-            -webkit-text-stroke: 1.5px rgba(30,94,255,0.5);
+            -webkit-text-stroke: 2.5px rgba(30,94,255,0.75);
             line-height: 1;
             margin-bottom: 18px;
             letter-spacing: -1px;
         }
 
         .how-it-works-icon {
-            width: 52px;
-            height: 52px;
+            width: 80px;
+            height: 80px;
             display: block;
             margin-bottom: 18px;
-            opacity: 0.9;
+            opacity: 0.95;
         }
 
         .how-it-works-title {
@@ -3698,154 +3753,182 @@
 
         /* Features Section */
         .features-section {
-            background: #ffffff;
+            background: #0d2137;
             width: 100%;
-            padding: 120px 20px;
+            padding: 100px 40px;
         }
 
         .features-container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
+        }
+
+        .features-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: #ff8c1a;
+            text-transform: uppercase;
+            margin-bottom: 12px;
         }
 
         .features-heading {
             font-family: 'Space Grotesk', sans-serif;
+            font-size: 44px;
             font-weight: 700;
-            font-size: 48px;
-            color: #0d1f2d;
+            color: #ffffff;
             text-align: center;
-            margin-bottom: 80px;
-            letter-spacing: -1.5px;
+            margin: 0 0 14px 0;
+            letter-spacing: -1px;
+        }
+
+        .features-subhead {
+            text-align: center;
+            font-size: 16px;
+            color: #8892b0;
+            margin: 0 0 72px 0;
         }
 
         .feature-card {
             display: flex;
-            align-items: center;
-            gap: 60px;
-            margin-bottom: 80px;
+            align-items: stretch;
+            gap: 0;
+            margin-bottom: 32px;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .feature-card:last-child {
-            margin-bottom: 0;
-        }
+        .feature-card:last-child { margin-bottom: 0; }
 
-        .feature-card.reverse {
-            flex-direction: row-reverse;
-        }
+        .feature-card.reverse { flex-direction: row-reverse; }
 
         .feature-image {
-            width: 600px;
-            height: 400px;
-            background: #060f1e;
-            border-radius: 16px;
+            width: 480px;
             flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
         }
 
-        /* First card - Instant Fault Detection */
-        .powerful-analysis .feature-card:nth-of-type(1) .feature-image {
-            background-image: url('vintage-golf-feature1.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+        .feature-image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(6,15,30,0.3) 0%, rgba(6,15,30,0.6) 100%);
         }
 
-        /* Second card - Track Your Progress */
-        .powerful-analysis .feature-card:nth-of-type(2) .feature-image {
-            background-image: url('vintage-golf-feature2.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        /* Third card - Personalized Coaching */
-        .powerful-analysis .feature-card:nth-of-type(3) .feature-image {
-            background-image: url('vintage-golf-feature3.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+        .feature-card.reverse .feature-image-overlay {
+            background: linear-gradient(to left, rgba(6,15,30,0.3) 0%, rgba(6,15,30,0.6) 100%);
         }
 
         .feature-content {
             flex: 1;
+            padding: 48px 44px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .feature-card.reverse .feature-content {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .feature-tag {
+            display: inline-block;
+            background: rgba(30,94,255,0.08);
+            color: #1e5eff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            width: fit-content;
         }
 
         .feature-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-weight: 600;
-            font-size: 32px;
-            color: #0d1f2d;
-            letter-spacing: -1.5px;
+            font-size: 30px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 14px 0;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
         }
 
         .feature-description {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 18px;
-            color: #4a5568;
-            line-height: 1.6;
-            margin-top: 16px;
+            font-size: 15px;
+            color: #8892b0;
+            line-height: 1.75;
+            margin: 0 0 24px 0;
         }
 
-        /* Mobile Responsive for Features */
+        .feature-bullets {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 28px 0;
+        }
+
+        .feature-bullets li {
+            font-size: 14px;
+            color: #a8b4c8;
+            padding: 7px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .feature-bullets li:last-child { border-bottom: none; }
+
+        .feature-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(30,94,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 10px;
+            color: #1e5eff;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #1e5eff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .feature-link:hover { color: #3d7aff; }
+
         @media (max-width: 968px) {
-            .features-section {
-                padding: 80px 20px;
-            }
-
-            .features-heading {
-                font-size: 36px;
-                margin-bottom: 60px;
-            }
-
-            .feature-card {
-                flex-direction: column !important;
-                gap: 40px;
-                margin-bottom: 60px;
-            }
-
-            .feature-image {
-            width: 100%;
-                max-width: 600px;
-                height: 300px;
-            }
-
-            .feature-title {
-                font-size: 28px;
-            }
-
-            .feature-description {
-                font-size: 16px;
-            }
+            .features-section { padding: 70px 20px; }
+            .feature-card, .feature-card.reverse { flex-direction: column !important; }
+            .feature-image { width: 100%; min-height: 260px; }
+            .feature-content { padding: 32px 24px; }
+            .features-heading { font-size: 32px; }
+            .feature-title { font-size: 24px; }
         }
 
         @media (max-width: 480px) {
-            .features-section {
-                padding: 60px 20px;
-            }
-
-            .features-heading {
-                font-size: 32px;
-                margin-bottom: 40px;
-            }
-
-            .feature-card {
-                margin-bottom: 50px;
-            }
-
-            .feature-image {
-                height: 250px;
-            }
-
-            .feature-title {
-                font-size: 24px;
-            }
-
-            .feature-description {
-                font-size: 16px;
-            }
+            .features-section { padding: 60px 16px; }
+            .features-heading { font-size: 28px; }
+            .feature-title { font-size: 22px; }
+            .feature-image { min-height: 220px; }
         }
 
         /* Final CTA Section */
@@ -4855,18 +4938,28 @@
             <video class="hero-video" autoplay loop muted playsinline>
                 <source src="hero-background.mp4" type="video/mp4">
             </video>
-        <div class="hero-container">
-            <div class="hero-left">
-                <img src="torque-logo.png" alt="Torque AI" class="hero-logo">
-                <h1 class="hero-headline">Tour-Level Swing Coach. Powered by AI</h1>
-                <p class="hero-subheadline">Computer vision, pose tracking, and biomechanics - delivering instant swing corrections.</p>
-                <button class="hero-cta-button" id="tryItFreeBtn">Try It Free</button>
-                            </div>
-            <div class="hero-right">
-                <img src="hero-page-phone.png" alt="Torque AI Analysis" class="hero-phone">
-                            </div>
-                        </div>
-    </section>
+            <div class="hero-container">
+                <div class="hero-left">
+                    <div class="hero-badge">
+                        <div class="hero-badge-dot"></div>
+                        AI-Powered Golf Coaching
+                    </div>
+                    <h1 class="hero-headline">Your Swing.<br><span>Coached by AI.</span><br>Improved Today.</h1>
+                    <p class="hero-subheadline">Upload a 10-second swing video and get instant PGA-level analysis, a personalized practice plan, and your own AI caddy — all free.</p>
+                    <div class="hero-btns">
+                        <button class="hero-cta-button" id="tryItFreeBtn" onclick="switchPage('swing-coach')">Analyze My Swing Free →</button>
+                        <button class="hero-cta-secondary" onclick="document.querySelector('.how-it-works-section').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+                    </div>
+                    <div class="hero-social-proof">
+                        <div class="hero-stars">★★★★★</div>
+                        <div class="hero-social-text">Trusted by <strong>golfers of all levels</strong> — no lesson fees</div>
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <img src="hero-page-phone.png" alt="Torque AI Analysis" class="hero-phone">
+                </div>
+            </div>
+        </section>
 
     <!-- PGA Live Scoreboard Ticker -->
     <div class="pga-ticker-bar" id="pgaTickerBar">
@@ -4961,31 +5054,64 @@
 
     <section class="features-section powerful-analysis">
         <div class="features-container">
-            <h2 class="features-heading">Powerful Analysis</h2>
-            
+            <div class="features-label">More Than Just Analysis</div>
+            <h2 class="features-heading">Everything In Your Bag</h2>
+            <p class="features-subhead">Torque isn't just a swing analyzer — it's a complete golf improvement platform</p>
+
             <div class="feature-card">
-                <div class="feature-image"></div>
+                <div class="feature-image" style="background-image:url('vintage-golf-feature1.jpg');background-size:cover;background-position:center;">
+                    <div class="feature-image-overlay"></div>
+                </div>
                 <div class="feature-content">
-                    <h3 class="feature-title">Instant Fault Detection</h3>
-                    <p class="feature-description">AI identifies over-the-top swings, tempo issues, and grip problems in seconds</p>
+                    <div class="feature-tag">AI Caddy</div>
+                    <h3 class="feature-title">A Caddy Who Has Actually Seen Your Swing</h3>
+                    <p class="feature-description">Powered by Torque's proprietary swing engine, your AI caddy takes everything it measured — your spine angle, tempo ratio, weight transfer, and posture — and uses it as context for every conversation. This isn't a generic chatbot. It has literally seen your swing before you ask your first question.</p>
+                    <ul class="feature-bullets">
+                        <li><span class="feature-check">✓</span>Reads your full swing analysis before every conversation</li>
+                        <li><span class="feature-check">✓</span>Remembers your conversation history — no repeating yourself</li>
+                        <li><span class="feature-check">✓</span>Answers like a real coach, not a manual</li>
+                        <li><span class="feature-check">✓</span>Available 24/7 — even at 11pm when you're watching swing videos</li>
+                    </ul>
+                    <button class="feature-link" onclick="switchPage('my-game')">Meet your caddy →</button>
                 </div>
             </div>
 
             <div class="feature-card reverse">
-                <div class="feature-image"></div>
+                <div class="feature-image" style="background-image:url('vintage-golf-feature2.jpg');background-size:cover;background-position:center;">
+                    <div class="feature-image-overlay"></div>
+                </div>
                 <div class="feature-content">
-                    <h3 class="feature-title">Track Your Progress</h3>
-                    <p class="feature-description">Watch your swing metrics improve with detailed analytics over time</p>
-                    </div>
+                    <div class="feature-tag">Golf Hub</div>
+                    <h3 class="feature-title">Your Golf World, All In One Place</h3>
+                    <p class="feature-description">The Golf Hub keeps you connected to everything happening in the game. Live PGA Tour leaderboards, daily trivia, the latest golf news, and a full drill library — all built into the same app where you analyze your swing.</p>
+                    <ul class="feature-bullets">
+                        <li><span class="feature-check">✓</span>Live PGA Tour leaderboard updated every 5 minutes</li>
+                        <li><span class="feature-check">✓</span>Daily golf trivia — 5 new questions every day</li>
+                        <li><span class="feature-check">✓</span>Golf news from BBC Sport and Golf Monthly</li>
+                        <li><span class="feature-check">✓</span>17+ drills with step-by-step instructions and feel cues</li>
+                    </ul>
+                    <button class="feature-link" onclick="switchPage('golf-hub')">Explore the Golf Hub →</button>
+                </div>
             </div>
 
             <div class="feature-card">
-                <div class="feature-image"></div>
+                <div class="feature-image" style="background-image:url('vintage-golf-feature3.jpg');background-size:cover;background-position:center;">
+                    <div class="feature-image-overlay"></div>
+                </div>
                 <div class="feature-content">
-                    <h3 class="feature-title">Personalized Coaching</h3>
-                    <p class="feature-description">Get specific drills and fixes tailored to your unique swing faults</p>
-                            </div>
+                    <div class="feature-tag">Round Tracker</div>
+                    <h3 class="feature-title">Track Every Round. Watch Yourself Improve.</h3>
+                    <p class="feature-description">Log your rounds after every game and watch your scores trend over time. Torque automatically calculates your handicap differential so you can see your improvement in real numbers — not just feel it.</p>
+                    <ul class="feature-bullets">
+                        <li><span class="feature-check">✓</span>Log scores, putts, fairways and greens in regulation</li>
+                        <li><span class="feature-check">✓</span>Auto-populates course data — par, slope and rating</li>
+                        <li><span class="feature-check">✓</span>Handicap differential calculated automatically</li>
+                        <li><span class="feature-check">✓</span>See your improvement over time in real numbers</li>
+                    </ul>
+                    <button class="feature-link" onclick="switchPage('my-game')">Start tracking →</button>
+                </div>
             </div>
+
         </div>
     </section>
 
