@@ -167,7 +167,31 @@
         .golf-hub-section {
             background: #0d2137;
             min-height: calc(100vh - 72px);
-            padding: 80px 20px 100px;
+            padding: 32px 20px 100px;
+        }
+
+        .golf-hub-two-col {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .golf-hub-col-left {
+            min-width: 0;
+        }
+
+        .golf-hub-col-right {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            min-width: 0;
+        }
+
+        @media (max-width: 968px) {
+            .golf-hub-two-col {
+                grid-template-columns: 1fr;
+            }
         }
 
         .golf-hub-container {
