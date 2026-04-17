@@ -474,10 +474,25 @@
 
     <!-- Golf Hub Page -->
     <div id="golf-hub-page" class="page-section">
-        <div class="golf-hub-hero">
+        <div class="golf-hub-hero" id="golfHubHero">
+            <div class="golf-hub-hero-bg-grid"></div>
+            <canvas id="golfHubBallCanvas"></canvas>
             <div class="golf-hub-hero-content">
-                <h1 class="golf-hub-hero-title">Golf Hub</h1>
-                <p class="golf-hub-hero-subtext">Master your game with expert instruction</p>
+                <div class="golf-hub-hero-label">Live Golf Intelligence</div>
+                <h1 class="golf-hub-hero-title">Golf <span class="golf-hub-hero-blue">Hub</span></h1>
+                <p class="golf-hub-hero-subtext">Live scores, daily trivia, and the latest from the tour</p>
+                <div class="golf-hub-stats-bar" id="golfHubStatsBar">
+                    <div class="golf-hub-stat-pill">
+                        <div class="golf-hub-stat-dot green"></div>
+                        <span class="golf-hub-stat-label">Tournament</span>
+                        <span class="golf-hub-stat-val" id="golfHubStatTournament">Loading...</span>
+                    </div>
+                    <div class="golf-hub-stat-pill">
+                        <div class="golf-hub-stat-dot"></div>
+                        <span class="golf-hub-stat-label">Leader</span>
+                        <span class="golf-hub-stat-val" id="golfHubStatLeader">—</span>
+                    </div>
+                </div>
             </div>
         </div>
         <section class="golf-hub-section">
@@ -1100,6 +1115,7 @@
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
             if (pageId === 'golf-hub') {
+                initGolfHubAnimation();
                 ensureGolfCoachWelcome();
                 if (typeof loadTrivia === 'function') loadTrivia();
                 if (typeof loadGolfNews === 'function') loadGolfNews();
@@ -1451,6 +1467,17 @@
                 const updatedEl = document.getElementById('pgaLeaderboardUpdated');
                 if (updatedEl) updatedEl.textContent = 'Updated ' + new Date().toLocaleTimeString();
 
+                const heroTournEl = document.getElementById('golfHubStatTournament');
+                if (heroTournEl) heroTournEl.textContent = tournamentName;
+
+                if (top15.length > 0) {
+                    const leader = top15[0];
+                    const leaderName = leader.athlete?.displayName || '—';
+                    const leaderScore = fmtScore(leader.statistics?.find(s => s.name === 'scoreToPar')?.displayValue ?? leader.score ?? '');
+                    const heroLeaderEl = document.getElementById('golfHubStatLeader');
+                    if (heroLeaderEl) heroLeaderEl.textContent = leaderName + ' ' + leaderScore;
+                }
+
                 // Build ticker
                 buildTicker(top15, fmtScore, scoreClass);
 
@@ -1492,6 +1519,178 @@
 
             // Duplicate for seamless loop
             track.innerHTML = items + items;
+        }
+
+        // Golf Hub ball flight animation
+        function initGolfHubAnimation() {
+            const canvas = document.getElementById('golfHubBallCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const TRAIL_LENGTH = 80;
+            let t = 0;
+            let trail = [];
+            let landed = false;
+            let landedTimer = 0;
+            let ripples = [];
+            let animating = false;
+
+            function getPos(progress) {
+                const W = canvas.width;
+                const H = canvas.height;
+                const startX = W * 0.08;
+                const endX = W * 0.92;
+                const groundY = H * 0.78;
+                const peakY = H * 0.12;
+                const x = startX + (endX - startX) * progress;
+                const y = groundY - Math.sin(Math.PI * progress) * (groundY - peakY);
+                return { x, y, groundY };
+            }
+
+            function drawGround(groundY) {
+                const W = canvas.width;
+                const H = canvas.height;
+                const grad = ctx.createLinearGradient(0, groundY, 0, H);
+                grad.addColorStop(0, 'rgba(30,94,255,0.06)');
+                grad.addColorStop(1, 'rgba(30,94,255,0.01)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, groundY, W, H - groundY);
+                ctx.strokeStyle = 'rgba(30,94,255,0.2)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, groundY);
+                ctx.lineTo(W, groundY);
+                ctx.stroke();
+            }
+
+            function drawGhost() {
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(30,94,255,0.08)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([4, 6]);
+                for (let i = 0; i <= 100; i++) {
+                    const p = getPos(i / 100);
+                    if (i === 0) ctx.moveTo(p.x, p.y);
+                    else ctx.lineTo(p.x, p.y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            function drawTrail() {
+                for (let i = 0; i < trail.length - 1; i++) {
+                    const alpha = (i / trail.length) * 0.6;
+                    const size = (i / trail.length) * 4;
+                    ctx.beginPath();
+                    ctx.arc(trail[i].x, trail[i].y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(30,94,255,' + alpha + ')';
+                    ctx.fill();
+                }
+            }
+
+            function drawBall(x, y) {
+                const glow = ctx.createRadialGradient(x, y, 0, x, y, 22);
+                glow.addColorStop(0, 'rgba(30,94,255,0.35)');
+                glow.addColorStop(1, 'rgba(30,94,255,0)');
+                ctx.beginPath();
+                ctx.arc(x, y, 22, 0, Math.PI * 2);
+                ctx.fillStyle = glow;
+                ctx.fill();
+                const ballGrad = ctx.createRadialGradient(x - 2, y - 2, 0, x, y, 8);
+                ballGrad.addColorStop(0, '#ffffff');
+                ballGrad.addColorStop(0.6, '#d0dcf0');
+                ballGrad.addColorStop(1, '#8aa4cc');
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = ballGrad;
+                ctx.fill();
+            }
+
+            function drawMarkers(groundY) {
+                const W = canvas.width;
+                const startX = W * 0.08;
+                const endX = W * 0.92;
+                ctx.beginPath();
+                ctx.arc(startX, groundY, 4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(30,94,255,0.4)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(30,94,255,0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(endX, groundY);
+                ctx.lineTo(endX, groundY - 28);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(endX, groundY - 28);
+                ctx.lineTo(endX + 12, groundY - 22);
+                ctx.lineTo(endX, groundY - 16);
+                ctx.closePath();
+                ctx.fillStyle = '#1e5eff';
+                ctx.fill();
+            }
+
+            function drawRipples() {
+                ripples = ripples.filter(function(r) { return r.alpha > 0; });
+                ripples.forEach(function(r) {
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(30,94,255,' + r.alpha + ')';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    r.radius += 1.5;
+                    r.alpha -= 0.018;
+                });
+            }
+
+            function animate() {
+                if (!animating) return;
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const sample = getPos(0);
+                const groundY = sample.groundY;
+                drawGround(groundY);
+                drawGhost();
+                drawMarkers(groundY);
+                if (!landed) {
+                    t += 0.004;
+                    if (t >= 1) {
+                        t = 1;
+                        landed = true;
+                        const p = getPos(1);
+                        ripples.push({ x: p.x, y: groundY, radius: 4, alpha: 0.7 });
+                        ripples.push({ x: p.x, y: groundY, radius: 4, alpha: 0.5 });
+                    }
+                    const pos = getPos(t);
+                    trail.push({ x: pos.x, y: pos.y });
+                    if (trail.length > TRAIL_LENGTH) trail.shift();
+                    drawTrail();
+                    drawBall(pos.x, pos.y);
+                } else {
+                    drawTrail();
+                    drawRipples();
+                    if (trail.length > 0) {
+                        const last = trail[trail.length - 1];
+                        drawBall(last.x, last.y);
+                    }
+                    landedTimer++;
+                    if (landedTimer > 90) {
+                        t = 0;
+                        trail = [];
+                        landed = false;
+                        landedTimer = 0;
+                    }
+                }
+            }
+
+            animating = true;
+            animate();
         }
 
         // Initialize leaderboard

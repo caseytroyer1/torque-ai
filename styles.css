@@ -60,14 +60,90 @@
         .golf-hub-hero {
             position: relative;
             width: 100%;
-            height: 400px;
-            background-image: linear-gradient(rgba(10, 37, 64, 0.5), rgba(10, 37, 64, 0.9)), url('vintage-golf-3.jpg');
-            background-size: 100% auto;
-            background-position: center bottom;
+            height: 420px;
+            background: #060f1e;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+        }
+
+        .golf-hub-hero-bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(30,94,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(30,94,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        #golfHubBallCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .golf-hub-hero-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #1e5eff;
+            margin-bottom: 10px;
+        }
+
+        .golf-hub-hero-blue {
+            color: #1e5eff;
+        }
+
+        .golf-hub-stats-bar {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+            justify-content: center;
+        }
+
+        .golf-hub-stat-pill {
+            background: rgba(30,94,255,0.08);
+            border: 1px solid rgba(30,94,255,0.2);
+            border-radius: 40px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .golf-hub-stat-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #1e5eff;
+            animation: statDotPulse 2s infinite;
+        }
+
+        .golf-hub-stat-dot.green {
+            background: #22c55e;
+        }
+
+        @keyframes statDotPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .golf-hub-stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #7a8fad;
+        }
+
+        .golf-hub-stat-val {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
         }
         .golf-hub-hero-content {
             position: relative;
