@@ -3995,8 +3995,17 @@
                 html += `<div class="tab-panel active" id="tab-setup" role="tabpanel"><div class="results-tab-two-col">`;
                 html += `<div class="results-frame-col">${frameImg(addressFrameB64, 'Address position')}</div>`;
                 html += `<div class="results-metrics-col">`;
-                const setupLabel = (addr.overall_setup != null) ? escapeHtml(addr.overall_setup) : 'Setup';
-                html += `<div class="results-overall-label ${getTierClass(addr.overall_setup)}"><span aria-hidden="true">✦</span> ${setupLabel}</div>`;
+                const setupStatuses = [
+                    getStatusFromClaude(addr.spine_assessment),
+                    getStatusFromClaude(addr.knee_flex),
+                    getStatusFromClaude(addr.shoulder_level),
+                    getStatusFromClaude(addr.posture),
+                    getStatusFromClaude(addr.weight_distribution)
+                ];
+                const setupRedCount = setupStatuses.filter(s => s === 'status-needs-attention').length;
+                const setupGreenCount = setupStatuses.filter(s => s === 'status-good').length;
+                const setupDerivedLabel = setupRedCount >= 2 ? 'Needs Attention' : (setupGreenCount >= 3 ? 'Elite' : 'Solid Foundation');
+                html += `<div class="results-overall-label ${getTierClass(setupDerivedLabel)}"><span aria-hidden="true">✦</span> ${setupDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, 'MediaPipe measured', 'setupSpineAngle');
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', '', 'setupKneeFlex');
