@@ -118,28 +118,33 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
     def to_px(lm):
         return (int(lm.x * new_w), int(lm.y * new_h))
 
-    BLUE_BGR = (255, 94, 30)  # #1E5EFF
+    BLUE_BGR = (255, 94, 30)   # #1E5EFF in BGR
     WHITE = (255, 255, 255)
-    GREEN = (0, 255, 0)
-    RADIUS = 4
+    SPINE_COLOR = (255, 200, 0)  # bright blue-white for spine
+    RADIUS = 5
     THICKNESS_LINE = 2
 
     if landmarks and len(landmarks) > 28:
-        for lm in landmarks:
-            cv2.circle(frame, to_px(lm), RADIUS, BLUE_BGR, -1)
-        # Shoulders, hips, arms, legs
+        # Draw skeleton lines first (under joints)
         line_pairs = [(11, 12), (23, 24), (11, 13), (13, 15), (12, 14), (14, 16), (23, 25), (25, 27), (24, 26), (26, 28)]
         for i, j in line_pairs:
             if i < len(landmarks) and j < len(landmarks):
                 cv2.line(frame, to_px(landmarks[i]), to_px(landmarks[j]), WHITE, THICKNESS_LINE)
-        # Spine: midpoint shoulders to midpoint hips (white)
+
+        # Spine line
         shoulder_mid = (int((landmarks[11].x + landmarks[12].x) / 2 * new_w), int((landmarks[11].y + landmarks[12].y) / 2 * new_h))
         hip_mid = (int((landmarks[23].x + landmarks[24].x) / 2 * new_w), int((landmarks[23].y + landmarks[24].y) / 2 * new_h))
-        cv2.line(frame, shoulder_mid, hip_mid, WHITE, THICKNESS_LINE)
-        # Spine angle line in green (hip midpoint extending toward shoulder at spine angle)
-        cv2.line(frame, hip_mid, shoulder_mid, GREEN, 3)
+        cv2.line(frame, hip_mid, shoulder_mid, SPINE_COLOR, 3)
+
+        # Draw joints on top
+        for lm in landmarks:
+            cv2.circle(frame, to_px(lm), RADIUS, BLUE_BGR, -1)
+            cv2.circle(frame, to_px(lm), RADIUS, WHITE, 1)
+
+        # Spine angle label
         if spine_angle is not None:
-            cv2.putText(frame, f"{spine_angle:.0f} deg", (hip_mid[0] + 10, hip_mid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, GREEN, 2)
+            label = f"{spine_angle:.0f}{chr(176)}"
+            cv2.putText(frame, label, (hip_mid[0] + 8, hip_mid[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.55, SPINE_COLOR, 2)
 
     _, buf = cv2.imencode('.jpg', frame)
     return base64.b64encode(buf.tobytes()).decode('utf-8')
