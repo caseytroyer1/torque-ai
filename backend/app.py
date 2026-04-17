@@ -139,7 +139,7 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
         # Spine angle line in green (hip midpoint extending toward shoulder at spine angle)
         cv2.line(frame, hip_mid, shoulder_mid, GREEN, 3)
         if spine_angle is not None:
-            cv2.putText(frame, f"{spine_angle:.0f}\u00b0", (hip_mid[0] + 10, hip_mid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, GREEN, 2)
+            cv2.putText(frame, f"{spine_angle:.0f} deg", (hip_mid[0] + 10, hip_mid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, GREEN, 2)
 
     _, buf = cv2.imencode('.jpg', frame)
     return base64.b64encode(buf.tobytes()).decode('utf-8')
