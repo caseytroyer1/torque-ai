@@ -141,11 +141,6 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
             cv2.circle(frame, to_px(lm), RADIUS, BLUE_BGR, -1)
             cv2.circle(frame, to_px(lm), RADIUS, WHITE, 1)
 
-        # Spine angle label
-        if spine_angle is not None:
-            label = f"{spine_angle:.0f}{chr(176)}"
-            cv2.putText(frame, label, (hip_mid[0] + 8, hip_mid[1] - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.55, SPINE_COLOR, 2)
-
     _, buf = cv2.imencode('.jpg', frame)
     return base64.b64encode(buf.tobytes()).decode('utf-8')
 
