@@ -145,8 +145,10 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
     return base64.b64encode(buf.tobytes()).decode('utf-8')
 
 
-def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64, golfer_hand='right', golfer_club='iron'):
-    """Send the three key frames to Claude Vision for golf swing analysis. Returns parsed JSON or None."""
+def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64, mediapipe_data=None, golfer_hand='right', golfer_club='iron'):
+    """Send the three key frames to Claude Vision for golf swing analysis.
+    MediaPipe measurements are computed deterministically; Claude fills in visual
+    assessments and coaching notes around them. Returns parsed JSON or None."""
     if not address_frame_b64 or not backswing_frame_b64 or not impact_frame_b64:
         return None
     api_key = os.environ.get('ANTHROPIC_API_KEY')
@@ -154,35 +156,134 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         return None
     import anthropic
     client = anthropic.Anthropic(api_key=api_key)
+
+    md = mediapipe_data or {}
+
+    # ------ MediaPipe-driven grades (deterministic) ------
+    def _setup_grade_to_tier(g):
+        if g == 'A':
+            return 'Elite'
+        if g == 'B':
+            return 'Solid Foundation'
+        return 'Needs Attention'
+
+    setup_tier = _setup_grade_to_tier(md.get('setup_grade'))
+
+    spine_change = md.get('spine_angle_change')
+    spine_change_abs = abs(spine_change) if spine_change is not None else None
+    tempo_ratio = md.get('tempo_ratio')
+
+    # Backswing tier: spine maintained + tempo
+    if spine_change_abs is not None and tempo_ratio is not None:
+        if spine_change_abs < 10 and tempo_ratio >= 2.5:
+            backswing_tier = 'Elite'
+        elif spine_change_abs <= 15 and tempo_ratio >= 1.8:
+            backswing_tier = 'Solid Foundation'
+        else:
+            backswing_tier = 'Needs Attention'
+    else:
+        backswing_tier = 'Solid Foundation'
+
+    # Impact tier: spine change is primary driver
+    if spine_change_abs is not None:
+        if spine_change_abs < 10:
+            impact_tier = 'Elite'
+        elif spine_change_abs <= 15:
+            impact_tier = 'Solid Foundation'
+        else:
+            impact_tier = 'Needs Attention'
+    else:
+        impact_tier = 'Solid Foundation'
+
+    # Spine assessment string (address, qualitative from number)
+    spine_addr = md.get('setup_spine_angle') or md.get('spine_angle_address')
+    if spine_addr is not None:
+        if 20 <= spine_addr <= 35:
+            spine_assessment_str = 'good'
+        elif 15 <= spine_addr < 20 or 35 < spine_addr <= 40:
+            spine_assessment_str = 'slightly off'
+        else:
+            spine_assessment_str = 'needs work'
+    else:
+        spine_assessment_str = None
+
+    # Knee flex qualitative
+    knee_flex = md.get('setup_knee_flex')
+    if knee_flex is not None:
+        if 150 <= knee_flex <= 170:
+            knee_flex_str = 'appropriate'
+        elif knee_flex < 150:
+            knee_flex_str = 'too bent'
+        else:
+            knee_flex_str = 'too straight'
+    else:
+        knee_flex_str = None
+
+    # Shoulder level qualitative
+    shoulder_level = md.get('setup_shoulder_level')
+    if shoulder_level is not None:
+        if shoulder_level <= 0.03:
+            shoulder_level_str = 'level'
+        elif shoulder_level <= 0.05:
+            shoulder_level_str = 'slightly uneven'
+        else:
+            shoulder_level_str = 'uneven'
+    else:
+        shoulder_level_str = None
+
+    # Spine maintained qualitative
+    if spine_change_abs is not None:
+        if spine_change_abs < 10:
+            spine_maintained_str = 'yes'
+        elif spine_change_abs <= 15:
+            spine_maintained_str = 'slightly lost'
+        else:
+            spine_maintained_str = 'significantly lost'
+    else:
+        spine_maintained_str = None
+
+    # Build a compact MediaPipe context string for Claude
+    mp_facts = []
+    if spine_addr is not None:
+        mp_facts.append(f"- Spine angle at address: {spine_addr}° (assessment: {spine_assessment_str})")
+    if knee_flex is not None:
+        mp_facts.append(f"- Knee flex: {knee_flex}° ({knee_flex_str})")
+    if shoulder_level is not None:
+        mp_facts.append(f"- Shoulder level delta: {shoulder_level} ({shoulder_level_str})")
+    if spine_change is not None:
+        mp_facts.append(f"- Spine angle change address->impact: {spine_change}° ({spine_maintained_str})")
+    if tempo_ratio is not None:
+        mp_facts.append(f"- Tempo ratio (backswing:downswing): {tempo_ratio}:1")
+    if md.get('setup_grade'):
+        mp_facts.append(f"- Setup grade (MediaPipe): {md.get('setup_grade')} -> tier: {setup_tier}")
+    mp_facts.append(f"- Backswing tier (computed): {backswing_tier}")
+    mp_facts.append(f"- Impact tier (computed): {impact_tier}")
+    mp_context = "\n".join(mp_facts) if mp_facts else "No MediaPipe measurements available."
+
+    club_desc = (
+        'DRIVER — expect a wider stance, more spine tilt away from target, and a shallower swing arc' if golfer_club == 'driver'
+        else 'FAIRWAY WOOD — expect a slightly narrower stance than driver with a shallow to medium swing arc' if golfer_club == 'fairway'
+        else 'WEDGE — expect a narrow stance, upright posture, and a shorter controlled backswing' if golfer_club == 'wedge'
+        else 'IRON — expect a standard athletic stance with a medium swing arc'
+    )
+
     prompt_json = '''{
   "address": {
-    "spine_angle": "estimated degrees from vertical (number only)",
-    "spine_assessment": "good/slightly off/needs work",
-    "knee_flex": "appropriate/too bent/too straight",
-    "knee_flex_degrees": "estimated degrees (number only)",
-    "shoulder_level": "level/slightly uneven/uneven",
     "posture": "good/needs work",
     "weight_distribution": "balanced/too much on heels/too much on toes",
-    "overall_setup": "Elite/Solid Foundation/Needs Attention",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
   },
   "backswing": {
-    "shoulder_rotation": "estimated degrees (number only)",
-    "hip_rotation": "estimated degrees (number only)",
     "hip_shoulder_separation": "good/needs more/excessive",
-    "spine_angle_maintained": "yes/slightly lost/significantly lost",
     "left_arm": "straight/slightly bent/too bent",
     "weight_transfer": "good/minimal/reverse pivot",
-    "overall_backswing": "Elite/Solid Foundation/Needs Attention",
     "coaching_note": "one specific actionable tip about backswing in 15 words or less"
   },
   "impact": {
     "hip_clearance": "good/needs more/excessive",
     "shoulder_position": "square/open/closed",
-    "spine_angle_maintained": "yes/slightly lost/significantly lost",
     "head_position": "steady/moved forward/moved back",
     "weight_transfer": "good/minimal/reversed",
-    "overall_impact": "Elite/Solid Foundation/Needs Attention",
     "coaching_note": "one specific actionable tip about impact in 15 words or less"
   },
   "overall": {
@@ -191,45 +292,39 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     "summary": "2-3 sentence overall assessment like a real golf coach would give"
   }
 }'''
+
+    instruction_text = (
+        f"You are an expert PGA golf instructor analyzing a golf swing. The golfer is "
+        f"{'LEFT' if golfer_hand == 'left' else 'RIGHT'}-handed and is hitting a {club_desc}. "
+        f"I am sending you 3 key frames from a golf swing video: Frame 1 is ADDRESS, Frame 2 is "
+        f"BACKSWING TOP, Frame 3 is IMPACT.\n\n"
+        f"MEDIAPIPE MEASUREMENTS (these are authoritative — do not contradict them):\n"
+        f"{mp_context}\n\n"
+        f"Your job is to provide ONLY the visual assessments that MediaPipe cannot measure "
+        f"(posture, weight distribution, arm position, hip/shoulder separation, head position, "
+        f"shoulder position at impact, hip clearance, weight transfer) and write coaching notes "
+        f"that are consistent with the MediaPipe measurements above. Write coaching notes in "
+        f"second person — speak directly to the golfer using 'you' and 'your'. Reference the "
+        f"measurements when relevant. Return ONLY a JSON object with no extra text, no markdown, "
+        f"no code blocks. Use exactly this format:"
+    )
+
     message = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-sonnet-4-5",
         max_tokens=1024,
+        temperature=0.3,
         messages=[
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "text",
-                        "text": f"You are an expert PGA golf instructor analyzing a golf swing. The golfer is {'LEFT' if golfer_hand == 'left' else 'RIGHT'}-handed and is hitting a {'DRIVER — expect a wider stance, more spine tilt away from target, and a shallower swing arc' if golfer_club == 'driver' else 'FAIRWAY WOOD — expect a slightly narrower stance than driver with a shallow to medium swing arc' if golfer_club == 'fairway' else 'WEDGE — expect a narrow stance, upright posture, and a shorter controlled backswing' if golfer_club == 'wedge' else 'IRON — expect a standard athletic stance with a medium swing arc'}. I am sending you 3 key frames from a golf swing video: Frame 1 is ADDRESS (setup position), Frame 2 is BACKSWING TOP, Frame 3 is IMPACT. Analyze each frame carefully with the club and handedness in mind. IMPORTANT: Write all coaching notes and summaries in second person — speak directly to the golfer using 'you' and 'your', never say 'this golfer' or 'the golfer'. For example: 'You show great hip separation' not 'This golfer shows great hip separation'. Return ONLY a JSON object with no extra text, no markdown, no code blocks. Use exactly this format:"
-                    },
+                    {"type": "text", "text": instruction_text},
                     {"type": "text", "text": prompt_json},
                     {"type": "text", "text": "Frame 1 - ADDRESS:"},
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/jpeg",
-                            "data": address_frame_b64
-                        }
-                    },
+                    {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": address_frame_b64}},
                     {"type": "text", "text": "Frame 2 - BACKSWING TOP:"},
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/jpeg",
-                            "data": backswing_frame_b64
-                        }
-                    },
+                    {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": backswing_frame_b64}},
                     {"type": "text", "text": "Frame 3 - IMPACT:"},
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/jpeg",
-                            "data": impact_frame_b64
-                        }
-                    }
+                    {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": impact_frame_b64}}
                 ]
             }
         ]
@@ -241,6 +336,36 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
             response_text = response_text[4:]
     response_text = response_text.strip()
     claude_analysis = json.loads(response_text)
+
+    # ------ Inject MediaPipe-driven fields into Claude's response ------
+    # These fields were previously guessed by Claude; now they come from MediaPipe.
+    if 'address' not in claude_analysis or not isinstance(claude_analysis['address'], dict):
+        claude_analysis['address'] = {}
+    if 'backswing' not in claude_analysis or not isinstance(claude_analysis['backswing'], dict):
+        claude_analysis['backswing'] = {}
+    if 'impact' not in claude_analysis or not isinstance(claude_analysis['impact'], dict):
+        claude_analysis['impact'] = {}
+
+    if spine_addr is not None:
+        claude_analysis['address']['spine_angle'] = spine_addr
+    if spine_assessment_str is not None:
+        claude_analysis['address']['spine_assessment'] = spine_assessment_str
+    if knee_flex is not None:
+        claude_analysis['address']['knee_flex_degrees'] = knee_flex
+    if knee_flex_str is not None:
+        claude_analysis['address']['knee_flex'] = knee_flex_str
+    if shoulder_level_str is not None:
+        claude_analysis['address']['shoulder_level'] = shoulder_level_str
+    claude_analysis['address']['overall_setup'] = setup_tier
+
+    if spine_maintained_str is not None:
+        claude_analysis['backswing']['spine_angle_maintained'] = spine_maintained_str
+    claude_analysis['backswing']['overall_backswing'] = backswing_tier
+
+    if spine_maintained_str is not None:
+        claude_analysis['impact']['spine_angle_maintained'] = spine_maintained_str
+    claude_analysis['impact']['overall_impact'] = impact_tier
+
     return claude_analysis
 
 
@@ -845,6 +970,7 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
                     analysis['address_frame_image'],
                     analysis['backswing_frame_image'],
                     analysis['impact_frame_image'],
+                    mediapipe_data=analysis,
                     golfer_hand=golfer_hand,
                     golfer_club=golfer_club
                 )
