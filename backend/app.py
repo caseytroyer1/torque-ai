@@ -510,7 +510,7 @@ def calculate_rotation_degrees(world_landmarks_a, world_landmarks_b, joint='hip'
     return round(float(diff), 1)
 
 
-def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='iron'):
+def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='iron', user_camera_angle='behind'):
     """Analyze golf swing video using MediaPipe Pose detection"""
     try:
         import mediapipe as mp
@@ -713,7 +713,18 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
         print(f"[Key frames] address={address_frame_idx}, backswing={backswing_frame_idx}, impact={impact_frame_idx}")
 
         cam_info = detect_camera_angle(key_frames['address'])
-        print(f"[Camera angle] {cam_info['message']}")
+        print(f"[Camera angle auto-detected] {cam_info['message']}")
+
+        # If user declared a specific angle, trust their selection over auto-detection
+        # 'behind' and 'down_the_line' both use the same DTL measurement geometry
+        if user_camera_angle in ('behind', 'down_the_line'):
+            cam_info['angle'] = user_camera_angle
+            cam_info['confidence'] = 'high'
+            print(f"[Camera angle] User declared: {user_camera_angle} — overriding auto-detection")
+        elif user_camera_angle == 'face_on':
+            cam_info['angle'] = 'face_on'
+            cam_info['confidence'] = 'high'
+            print(f"[Camera angle] User declared: face_on — overriding auto-detection")
 
         # Calculate angles for key frames
         # MediaPipe pose landmark indices
@@ -904,6 +915,7 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
             'camera_angle_confidence': cam_info['confidence'],
             'camera_angle_message': cam_info['message'],
             'shoulder_width_ratio': cam_info['shoulder_width_ratio'],
+            'user_declared_camera_angle': user_camera_angle,
         }
 
         # SWING TEMPO CALCULATION
@@ -1144,6 +1156,7 @@ def analyze_swing():
         file = request.files['file']
         golfer_hand = request.form.get('hand', 'right')
         golfer_club = request.form.get('club', 'iron')
+        user_camera_angle = request.form.get('camera_angle', 'behind')
         
         # Check if file was actually selected
         if file.filename == '':
@@ -1177,7 +1190,7 @@ def analyze_swing():
         file.save(file_path)
         
         # Analyze video with MediaPipe
-        analysis_data, analysis_error = analyze_video_with_mediapipe(file_path, golfer_hand=golfer_hand, golfer_club=golfer_club)
+        analysis_data, analysis_error = analyze_video_with_mediapipe(file_path, golfer_hand=golfer_hand, golfer_club=golfer_club, user_camera_angle=user_camera_angle)
         
         # Prepare response
         response_data = {

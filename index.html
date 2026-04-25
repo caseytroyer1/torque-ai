@@ -422,6 +422,17 @@
                                     <button type="button" class="swing-selector-btn" id="clubWedge" data-club="wedge" onclick="selectClub('wedge')">Wedge</button>
                                 </div>
                             </div>
+                            <div>
+                                <div class="swing-selectors-label">Camera Angle</div>
+                                <div class="swing-selector-group">
+                                    <button type="button" class="swing-selector-btn selected" id="cameraBehind" data-camera="behind" onclick="selectCameraAngle('behind')">Behind</button>
+                                    <button type="button" class="swing-selector-btn" id="cameraDownTheLine" data-camera="down_the_line" onclick="selectCameraAngle('down_the_line')">Down-the-Line</button>
+                                    <button type="button" class="swing-selector-btn" id="cameraFaceOn" data-camera="face_on" onclick="selectCameraAngle('face_on')">Face-On</button>
+                                </div>
+                                <div id="cameraAngleWarning" style="display:none; margin-top:8px; padding:10px 14px; background:rgba(255,180,0,0.12); border:1px solid rgba(255,180,0,0.4); border-radius:8px; color:#ffd966; font-size:13px;">
+                                    ⚠️ Face-On analysis is coming soon. For best results, film from <strong>Behind</strong> or <strong>Down-the-Line</strong>.
+                                </div>
+                            </div>
                         </div>
                         <div class="upload-actions" id="uploadActions">
                             <button class="analyze-button analyze-button-fullwidth" id="analyzeButton">Analyze Swing</button>
@@ -3029,6 +3040,7 @@
         // Swing Coach Upload Functionality
         let selectedHand = null;
         let selectedClub = null;
+        let selectedCameraAngle = 'behind';
 
         function selectHand(hand) {
             selectedHand = hand;
@@ -3042,6 +3054,30 @@
             document.querySelectorAll('[data-club]').forEach(btn => btn.classList.remove('selected'));
             const btn = document.getElementById('club' + club.charAt(0).toUpperCase() + club.slice(1));
             if (btn) btn.classList.add('selected');
+        }
+
+        function selectCameraAngle(angle) {
+            selectedCameraAngle = angle;
+            document.querySelectorAll('[data-camera]').forEach(btn => btn.classList.remove('selected'));
+            const btn = document.querySelector('[data-camera="' + angle + '"]');
+            if (btn) btn.classList.add('selected');
+            const warning = document.getElementById('cameraAngleWarning');
+            const analyzeButton = document.getElementById('analyzeButton');
+            if (angle === 'face_on') {
+                if (warning) warning.style.display = 'block';
+                if (analyzeButton) {
+                    analyzeButton.disabled = true;
+                    analyzeButton.style.opacity = '0.5';
+                    analyzeButton.style.cursor = 'not-allowed';
+                }
+            } else {
+                if (warning) warning.style.display = 'none';
+                if (analyzeButton) {
+                    analyzeButton.disabled = false;
+                    analyzeButton.style.opacity = '';
+                    analyzeButton.style.cursor = '';
+                }
+            }
         }
 
         const uploadZone = document.getElementById('uploadZone');
@@ -3086,6 +3122,16 @@
             if (videoPreviewSection) {
                 videoPreviewSection.style.display = '';
             }
+            selectedHand = null;
+            selectedClub = null;
+            selectedCameraAngle = 'behind';
+            document.querySelectorAll('.swing-selector-btn').forEach(btn => btn.classList.remove('selected'));
+            const cameraBehindBtn = document.getElementById('cameraBehind');
+            if (cameraBehindBtn) cameraBehindBtn.classList.add('selected');
+            const cameraWarning = document.getElementById('cameraAngleWarning');
+            if (cameraWarning) cameraWarning.style.display = 'none';
+            const analyzeBtn = document.getElementById('analyzeButton');
+            if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.style.opacity = ''; analyzeBtn.style.cursor = ''; }
         }
 
         // Function to handle file selection
@@ -3508,6 +3554,7 @@
                 formData.append('file', file);
                 formData.append('hand', selectedHand);
                 formData.append('club', selectedClub);
+                formData.append('camera_angle', selectedCameraAngle);
                 console.log('FormData created, sending request to https://torque-ai-docker.onrender.com/analyze-swing');
                 
                 // Send POST request to Flask backend
@@ -3654,6 +3701,10 @@
             const fps = analysis.fps !== undefined ? analysis.fps : 'N/A';
             const framesAnalyzed = analysis.frames_analyzed !== undefined ? analysis.frames_analyzed : 'N/A';
             const statusMessage = analysis.status || analysis.message || 'N/A';
+            const detectedAngle = analysis.camera_angle || null;
+            const detectedConfidence = analysis.camera_angle_confidence || null;
+            const angleDisplayMap = { face_on: 'Face-On', down_the_line: 'Down-the-Line', behind: 'Behind', unknown: null };
+            const angleLabel = detectedAngle ? (angleDisplayMap[detectedAngle] || null) : null;
             
             // Extract rotation delta values (change from address, not absolute angles)
             const backswingHipRotation = analysis.hip_rotation_backswing ?? analysis.backswing_hip_rotation;
@@ -3775,6 +3826,11 @@
                             <span class="detail-label">Status:</span>
                             <span class="detail-value">${escapeHtml(statusMessage)}</span>
                         </div>
+                        ${angleLabel ? `
+                        <div class="upload-detail-item">
+                            <span class="detail-label">Camera Angle Detected:</span>
+                            <span class="detail-value highlight">${angleLabel}${detectedConfidence ? ' (' + detectedConfidence + ' confidence)' : ''}</span>
+                        </div>` : ''}
                     </div>
                     ${swingMeasurementsHTML}
                     ${hasDiagnosis ? `
