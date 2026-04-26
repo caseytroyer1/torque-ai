@@ -447,9 +447,6 @@
                                     <button type="button" class="swing-selector-btn" id="cameraDownTheLine" data-camera="down_the_line" onclick="selectCameraAngle('down_the_line')">Down-the-Line</button>
                                     <button type="button" class="swing-selector-btn" id="cameraFaceOn" data-camera="face_on" onclick="selectCameraAngle('face_on')">Face-On</button>
                                 </div>
-                                <div id="cameraAngleWarning" style="display:none; margin-top:8px; padding:10px 14px; background:rgba(255,180,0,0.12); border:1px solid rgba(255,180,0,0.4); border-radius:8px; color:#ffd966; font-size:13px;">
-                                    ⚠️ Face-On analysis is coming soon. For best results, film from <strong>Behind</strong> or <strong>Down-the-Line</strong>.
-                                </div>
                             </div>
                         </div>
                         <div class="upload-actions" id="uploadActions">
@@ -3079,23 +3076,6 @@
             document.querySelectorAll('[data-camera]').forEach(btn => btn.classList.remove('selected'));
             const btn = document.querySelector('[data-camera="' + angle + '"]');
             if (btn) btn.classList.add('selected');
-            const warning = document.getElementById('cameraAngleWarning');
-            const analyzeButton = document.getElementById('analyzeButton');
-            if (angle === 'face_on') {
-                if (warning) warning.style.display = 'block';
-                if (analyzeButton) {
-                    analyzeButton.disabled = true;
-                    analyzeButton.style.opacity = '0.5';
-                    analyzeButton.style.cursor = 'not-allowed';
-                }
-            } else {
-                if (warning) warning.style.display = 'none';
-                if (analyzeButton) {
-                    analyzeButton.disabled = false;
-                    analyzeButton.style.opacity = '';
-                    analyzeButton.style.cursor = '';
-                }
-            }
         }
 
         const uploadZone = document.getElementById('uploadZone');
@@ -3146,10 +3126,6 @@
             document.querySelectorAll('.swing-selector-btn').forEach(btn => btn.classList.remove('selected'));
             const cameraBehindBtn = document.getElementById('cameraBehind');
             if (cameraBehindBtn) cameraBehindBtn.classList.add('selected');
-            const cameraWarning = document.getElementById('cameraAngleWarning');
-            if (cameraWarning) cameraWarning.style.display = 'none';
-            const analyzeBtn = document.getElementById('analyzeButton');
-            if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.style.opacity = ''; analyzeBtn.style.cursor = ''; }
         }
 
         // Function to handle file selection
