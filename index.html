@@ -4130,8 +4130,23 @@
                 html += `<div class="tab-panel" id="tab-mechanics" role="tabpanel"><div class="results-tab-two-col">`;
                 html += `<div class="results-frame-col">${frameImg(backswingFrameB64, 'Backswing top')}</div>`;
                 html += `<div class="results-metrics-col">`;
-                const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
-                html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
+                // Derive mechanics tier by counting visible card statuses — same approach as Setup tab
+                const mechStatuses = [];
+                mechStatuses.push(getStatusFromClaude(back.spine_angle_maintained));
+                if (tempoRatio != null) mechStatuses.push(tempoRatio >= 2.5 ? 'status-good' : tempoRatio >= 1.8 ? 'status-moderate' : 'status-needs-attention');
+                if (selectedCameraAngle === 'down_the_line' || selectedCameraAngle === 'behind') {
+                    mechStatuses.push(getStatusFromClaude(back.left_arm));
+                }
+                if (selectedCameraAngle === 'face_on') {
+                    mechStatuses.push(getStatusFromClaude(back.weight_transfer));
+                    if (back.lateral_head_movement) mechStatuses.push(getStatusFromClaude(back.lateral_head_movement));
+                    const impactClaudeForTier = claude && claude.impact ? claude.impact : {};
+                    if (impactClaudeForTier.shoulder_tilt) mechStatuses.push(getStatusFromClaude(impactClaudeForTier.shoulder_tilt));
+                }
+                const mechRedCount = mechStatuses.filter(s => s === 'status-needs-attention').length;
+                const mechGreenCount = mechStatuses.filter(s => s === 'status-good').length;
+                const mechDerivedLabel = mechRedCount >= 2 ? 'Needs Attention' : (mechGreenCount >= 2 ? 'Elite' : 'Solid Foundation');
+                html += `<div class="results-overall-label ${getTierClass(mechDerivedLabel)}"><span aria-hidden="true">✦</span> ${mechDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 // Spine Maintained — reliable all angles
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.spine_angle_maintained)), 'Spine Maintained', back.spine_angle_maintained || 'N/A', '', 'spineMaintained');
