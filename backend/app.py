@@ -145,7 +145,7 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
     return base64.b64encode(buf.tobytes()).decode('utf-8')
 
 
-def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64, mediapipe_data=None, golfer_hand='right', golfer_club='iron'):
+def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64, mediapipe_data=None, golfer_hand='right', golfer_club='iron', user_camera_angle='behind'):
     """Send the three key frames to Claude Vision for golf swing analysis.
     MediaPipe measurements are computed deterministically; Claude fills in visual
     assessments and coaching notes around them. Returns parsed JSON or None."""
@@ -267,14 +267,40 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         else 'IRON — expect a standard athletic stance with a medium swing arc'
     )
 
-    prompt_json = '''{
+    # Angle-specific prompt JSON — only ask Claude to assess what is actually visible from this angle
+    if user_camera_angle == 'face_on':
+        prompt_json = '''{
+  "address": {
+    "posture": "good/needs work",
+    "shoulder_level": "level/slightly uneven/uneven",
+    "weight_distribution": "balanced/too much on left/too much on right",
+    "coaching_note": "one specific actionable tip about setup in 15 words or less"
+  },
+  "backswing": {
+    "lateral_head_movement": "steady/swayed left/swayed right",
+    "weight_transfer": "good/minimal/reverse pivot",
+    "coaching_note": "one specific actionable tip about backswing in 15 words or less"
+  },
+  "impact": {
+    "shoulder_tilt": "good/too flat/too steep",
+    "head_position": "steady/moved forward/moved back",
+    "weight_transfer": "good/minimal/reversed",
+    "coaching_note": "one specific actionable tip about impact in 15 words or less"
+  },
+  "overall": {
+    "biggest_strength": "one sentence about the best part of this swing",
+    "primary_focus": "the single most important thing to work on",
+    "summary": "2-3 sentence overall assessment like a real golf coach would give"
+  }
+}'''
+    elif user_camera_angle == 'down_the_line':
+        prompt_json = '''{
   "address": {
     "posture": "good/needs work",
     "weight_distribution": "balanced/too much on heels/too much on toes",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
   },
   "backswing": {
-    "hip_shoulder_separation": "good/needs more/excessive",
     "left_arm": "straight/slightly bent/too bent",
     "weight_transfer": "good/minimal/reverse pivot",
     "coaching_note": "one specific actionable tip about backswing in 15 words or less"
@@ -292,20 +318,57 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     "summary": "2-3 sentence overall assessment like a real golf coach would give"
   }
 }'''
+    else:
+        # behind (default)
+        prompt_json = '''{
+  "address": {
+    "posture": "good/needs work",
+    "weight_distribution": "balanced/too much on heels/too much on toes",
+    "coaching_note": "one specific actionable tip about setup in 15 words or less"
+  },
+  "backswing": {
+    "left_arm": "straight/slightly bent/too bent",
+    "weight_transfer": "good/minimal/reverse pivot",
+    "coaching_note": "one specific actionable tip about backswing in 15 words or less"
+  },
+  "impact": {
+    "head_position": "steady/moved forward/moved back",
+    "weight_transfer": "good/minimal/reversed",
+    "coaching_note": "one specific actionable tip about impact in 15 words or less"
+  },
+  "overall": {
+    "biggest_strength": "one sentence about the best part of this swing",
+    "primary_focus": "the single most important thing to work on",
+    "summary": "2-3 sentence overall assessment like a real golf coach would give"
+  }
+}'''
+
+    angle_desc = (
+        'FACE-ON (camera is directly in front of the golfer, facing them). '
+        'From this angle you can assess: shoulder level, lateral head movement, weight shift left/right, shoulder tilt at impact. '
+        'You CANNOT reliably assess left arm straightness, hip/shoulder separation, or heel/toe weight distribution from this angle.'
+        if user_camera_angle == 'face_on'
+        else 'DOWN-THE-LINE (camera is behind and to the side, looking down the target line). '
+        'From this angle you can assess: left arm straightness, heel/toe weight distribution, hip clearance, shoulder position at impact. '
+        'You CANNOT reliably assess lateral head movement or left/right weight shift from this angle.'
+        if user_camera_angle == 'down_the_line'
+        else 'BEHIND (camera is directly behind the golfer). '
+        'From this angle you can assess: posture, head position, and general weight distribution. '
+        'You CANNOT reliably assess left arm straightness, hip clearance, or lateral weight shift from this angle.'
+    )
 
     instruction_text = (
         f"You are an expert PGA golf instructor analyzing a golf swing. The golfer is "
         f"{'LEFT' if golfer_hand == 'left' else 'RIGHT'}-handed and is hitting a {club_desc}. "
+        f"Camera angle: {angle_desc}\n\n"
         f"I am sending you 3 key frames from a golf swing video: Frame 1 is ADDRESS, Frame 2 is "
         f"BACKSWING TOP, Frame 3 is IMPACT.\n\n"
         f"MEDIAPIPE MEASUREMENTS (these are authoritative — do not contradict them):\n"
         f"{mp_context}\n\n"
-        f"Your job is to provide ONLY the visual assessments that MediaPipe cannot measure "
-        f"(posture, weight distribution, arm position, hip/shoulder separation, head position, "
-        f"shoulder position at impact, hip clearance, weight transfer) and write coaching notes "
-        f"that are consistent with the MediaPipe measurements above. Write coaching notes in "
-        f"second person — speak directly to the golfer using 'you' and 'your'. Reference the "
-        f"measurements when relevant. Return ONLY a JSON object with no extra text, no markdown, "
+        f"Your job is to provide ONLY the visual assessments that MediaPipe cannot measure, "
+        f"limited to what is actually visible from the {user_camera_angle.replace('_', ' ')} angle. "
+        f"Write coaching notes in second person — speak directly to the golfer using 'you' and 'your'. "
+        f"Reference the measurements when relevant. Return ONLY a JSON object with no extra text, no markdown, "
         f"no code blocks. Use exactly this format:"
     )
 
@@ -984,7 +1047,8 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
                     analysis['impact_frame_image'],
                     mediapipe_data=analysis,
                     golfer_hand=golfer_hand,
-                    golfer_club=golfer_club
+                    golfer_club=golfer_club,
+                    user_camera_angle=user_camera_angle
                 )
                 analysis['claude_vision_analysis'] = claude_analysis
                 if claude_analysis is not None:
