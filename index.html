@@ -29,20 +29,32 @@
         .metric-locked-pills-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 8px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-locked-pills-row-label {
+            width: 100%;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 2px;
         }
 
         .metric-locked-pill {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.14);
             border-radius: 20px;
-            padding: 3px 10px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.3);
+            padding: 5px 12px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
             letter-spacing: 0.2px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -3975,7 +3987,7 @@
             }
             const lockedMetricPill = (name, availableAngle) => {
                 const angleLabel = availableAngle === 'down_the_line' ? 'Down-the-Line' : availableAngle === 'face_on' ? 'Face-On' : 'Behind';
-                return `<div class="metric-locked-pill">📷 ${name} · ${angleLabel} only</div>`;
+                return `<div class="metric-locked-pill"><span style="opacity:0.5;">🔒</span> ${name} <span style="opacity:0.4;">· ${angleLabel} only</span></div>`;
             };
             const metricCardHtml = (borderColor, name, value, subtext, infoKey) => {
                 const btn = infoKey ? `<button type="button" class="metric-info-btn" data-metric-key="${infoKey}" aria-label="More info">ⓘ</button>` : '';
@@ -4108,7 +4120,7 @@
                 if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Shoulder Level', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Weight Distribution', 'face_on'));
                 if (setupLockedPills.length > 0) {
-                    html += `<div class="metric-locked-pills-row">${setupLockedPills.join('')}</div>`;
+                    html += `<div class="metric-locked-pills-row"><div class="metric-locked-pills-row-label">Not available for this angle</div>${setupLockedPills.join('')}</div>`;
                 }
                 if (addr.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(addr.coaching_note)}</span></div>`;
                 html += `<button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>`;
@@ -4152,7 +4164,7 @@
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Lateral Head Movement', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Shoulder Tilt at Impact', 'face_on'));
                 if (mechLockedPills.length > 0) {
-                    html += `<div class="metric-locked-pills-row">${mechLockedPills.join('')}</div>`;
+                    html += `<div class="metric-locked-pills-row"><div class="metric-locked-pills-row-label">Not available for this angle</div>${mechLockedPills.join('')}</div>`;
                 }
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
 
