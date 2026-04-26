@@ -735,7 +735,19 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
             # Window = backswing_frame to backswing_frame + (backswing - address) * 3
             if backswing_frame_idx is not None and address_frame_idx is not None and address_wrist_y is not None:
                 downswing_length = int((backswing_frame_idx - address_frame_idx) * 3)
-                impact_window_end = min(total_frames, backswing_frame_idx + 1 + downswing_length)
+                impact_window_end_ideal = min(total_frames, backswing_frame_idx + 1 + downswing_length)
+
+                # If fewer than 10 frames remain after backswing, the ideal window is
+                # too short — search ALL remaining frames instead so late-swing videos
+                # (golfer standing still for several seconds before swinging) still get
+                # a valid impact frame.
+                frames_after_backswing = total_frames - (backswing_frame_idx + 1)
+                if frames_after_backswing < 15:
+                    impact_window_end = total_frames
+                    print(f"[Impact] Only {frames_after_backswing} frames after backswing — expanding impact search to end of video")
+                else:
+                    impact_window_end = impact_window_end_ideal
+
                 impact_candidates = [
                     (idx, _entry_wrist_y(frame_data[idx]))
                     for idx in range(backswing_frame_idx + 1, impact_window_end)
@@ -743,7 +755,7 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
                 ]
                 if impact_candidates:
                     impact_frame_idx = min(impact_candidates, key=lambda c: abs(c[1] - address_wrist_y))[0]
-                    print(f"[Impact] Frame {impact_frame_idx} (within downswing window frames {backswing_frame_idx + 1}-{impact_window_end - 1}, wrist Y closest to address {address_wrist_y:.4f}, impact wrist_y={_entry_wrist_y(frame_data[impact_frame_idx]):.4f})")
+                    print(f"[Impact] Frame {impact_frame_idx} (window frames {backswing_frame_idx + 1}-{impact_window_end - 1}, wrist Y closest to address {address_wrist_y:.4f}, impact wrist_y={_entry_wrist_y(frame_data[impact_frame_idx]):.4f})")
         
         # STEP 3: Fallback to percentage-based frames if intelligent detection failed
         if address_frame_idx is None or backswing_frame_idx is None or impact_frame_idx is None:
