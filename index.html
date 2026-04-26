@@ -25,6 +25,25 @@
             color: rgba(255, 255, 255, 0.7);
             letter-spacing: 0.3px;
         }
+
+        .metric-locked-pills-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .metric-locked-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.2px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -3954,6 +3973,10 @@
                 if (s.length === 0) return 'N/A';
                 return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
             }
+            const lockedMetricPill = (name, availableAngle) => {
+                const angleLabel = availableAngle === 'down_the_line' ? 'Down-the-Line' : availableAngle === 'face_on' ? 'Face-On' : 'Behind';
+                return `<div class="metric-locked-pill">📷 ${name} · ${angleLabel} only</div>`;
+            };
             const metricCardHtml = (borderColor, name, value, subtext, infoKey) => {
                 const btn = infoKey ? `<button type="button" class="metric-info-btn" data-metric-key="${infoKey}" aria-label="More info">ⓘ</button>` : '';
                 const sub = subtext != null && subtext !== '' ? `<div class="results-metric-sub">${escapeHtml(subtext)}</div>` : '<div class="results-metric-sub">&nbsp;</div>';
@@ -4062,12 +4085,31 @@
                 const setupDerivedLabel = setupRedCount >= 2 ? 'Needs Attention' : (setupGreenCount >= 3 ? 'Elite' : 'Solid Foundation');
                 html += `<div class="results-overall-label ${getTierClass(setupDerivedLabel)}"><span aria-hidden="true">✦</span> ${setupDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
+                // Spine Angle — reliable all angles
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, 'MediaPipe measured', 'setupSpineAngle');
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', '', 'setupKneeFlex');
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', '', 'setupShoulderLevel');
+                // Posture — reliable all angles (Claude Vision)
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', 'posture');
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution || 'N/A', '', 'weightDistribution');
+                // Knee Flex — DTL only
+                if (selectedCameraAngle === 'down_the_line') {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', '', 'setupKneeFlex');
+                }
+                // Shoulder Level — Face-On only
+                if (selectedCameraAngle === 'face_on') {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', '', 'setupShoulderLevel');
+                }
+                // Weight Distribution — Face-On only
+                if (selectedCameraAngle === 'face_on') {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution || 'N/A', '', 'weightDistribution');
+                }
                 html += `</div>`;
+                // Locked pills for unavailable metrics
+                const setupLockedPills = [];
+                if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Knee Flex', 'down_the_line'));
+                if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Shoulder Level', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Weight Distribution', 'face_on'));
+                if (setupLockedPills.length > 0) {
+                    html += `<div class="metric-locked-pills-row">${setupLockedPills.join('')}</div>`;
+                }
                 if (addr.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(addr.coaching_note)}</span></div>`;
                 html += `<button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>`;
                 html += `</div></div></div>`;
@@ -4079,12 +4121,39 @@
                 const mechLabel = (back.overall_backswing != null) ? escapeHtml(back.overall_backswing) : 'Mechanics';
                 html += `<div class="results-overall-label ${getTierClass(back.overall_backswing)}"><span aria-hidden="true">✦</span> ${mechLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.hip_shoulder_separation)), 'Hip/Shoulder Separation', back.hip_shoulder_separation || 'N/A', '', 'hipShoulderSep');
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', 'leftArm');
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.weight_transfer)), 'Weight Transfer', back.weight_transfer || 'N/A', '', 'weightTransfer');
+                // Spine Maintained — reliable all angles
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.spine_angle_maintained)), 'Spine Maintained', back.spine_angle_maintained || 'N/A', '', 'spineMaintained');
+                // Swing Tempo — reliable all angles
                 html += metricCardHtml(tempoColor, 'Swing Tempo', tempoRatio != null ? tempoRatio.toFixed(1) + ':1' : 'N/A', tempoLabel || tempoSubtext, 'swingTempo');
+                // Left Arm — DTL and Behind only
+                if (selectedCameraAngle === 'down_the_line' || selectedCameraAngle === 'behind') {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', 'leftArm');
+                }
+                // Weight Transfer — Face-On only
+                if (selectedCameraAngle === 'face_on') {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.weight_transfer)), 'Weight Transfer', back.weight_transfer || 'N/A', '', 'weightTransfer');
+                }
+                // Lateral Head Movement — Face-On only
+                if (selectedCameraAngle === 'face_on') {
+                    const lateralHead = back.lateral_head_movement || null;
+                    if (lateralHead) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(lateralHead)), 'Lateral Head Movement', lateralHead, '', 'lateralHead');
+                }
+                // Shoulder Tilt at Impact — Face-On only
+                if (selectedCameraAngle === 'face_on') {
+                    const impactClaude = claude && claude.impact ? claude.impact : {};
+                    const shoulderTilt = impactClaude.shoulder_tilt || null;
+                    if (shoulderTilt) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(shoulderTilt)), 'Shoulder Tilt at Impact', shoulderTilt, '', 'shoulderTilt');
+                }
                 html += `</div>`;
+                // Locked pills for unavailable metrics this angle
+                const mechLockedPills = [];
+                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Left Arm', 'down_the_line'));
+                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Weight Transfer', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Lateral Head Movement', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Shoulder Tilt at Impact', 'face_on'));
+                if (mechLockedPills.length > 0) {
+                    html += `<div class="metric-locked-pills-row">${mechLockedPills.join('')}</div>`;
+                }
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
 
                 // PRACTICE PLAN — map issues and Claude Vision findings to drills
