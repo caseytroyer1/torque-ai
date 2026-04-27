@@ -198,9 +198,9 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     # Spine assessment string (address, qualitative from number)
     spine_addr = md.get('setup_spine_angle') or md.get('spine_angle_address')
     if spine_addr is not None:
-        if 20 <= spine_addr <= 35:
+        if 20 <= spine_addr <= 40:
             spine_assessment_str = 'good'
-        elif 15 <= spine_addr < 20 or 35 < spine_addr <= 40:
+        elif 40 < spine_addr <= 50:
             spine_assessment_str = 'slightly off'
         else:
             spine_assessment_str = 'needs work'
@@ -834,7 +834,12 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
             dy = shoulder_mid['y'] - hip_mid['y']
             # Vertical is 90 degrees, so we calculate deviation from vertical
             angle = math.degrees(math.atan2(dx, -dy))  # Negative dy because y increases downward
-            return round(angle, 1)
+            angle = round(angle, 1)
+            # Sanity clamp — readings outside 5-55° are almost certainly detection errors
+            if angle < 5 or angle > 55:
+                print(f"[Spine angle] Clamped unreliable reading: {angle}°")
+                return None
+            return angle
         
         def angle_at_joint(landmarks, upper_idx, joint_idx, lower_idx):
             """Angle at joint (upper-joint-lower) in degrees. 180 = straight."""
@@ -930,7 +935,7 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
             setup_hip_hinge = round(hip_mid_x - ankle_mid_x, 4)
         # Setup grade: spine 20-35°, knee 150-170°, shoulder < 0.03, hip hinge in range (-0.08 to 0.08)
         in_range = 0
-        if setup_spine_angle is not None and 20 <= setup_spine_angle <= 35:
+        if setup_spine_angle is not None and 20 <= setup_spine_angle <= 40:
             in_range += 1
         if setup_knee_flex is not None and 150 <= setup_knee_flex <= 170:
             in_range += 1

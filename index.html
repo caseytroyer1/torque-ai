@@ -1233,7 +1233,7 @@
             var diagnosis = (d && d.diagnosis) ? d.diagnosis : {};
             var text;
             if (d && analysis && (analysis.setup_spine_angle != null || analysis.hip_rotation_backswing != null)) {
-                var score = (analysis.setup_spine_angle != null && Number(analysis.setup_spine_angle) >= 20 && Number(analysis.setup_spine_angle) <= 35 ? 25 : 0) + (analysis.setup_knee_flex != null && Number(analysis.setup_knee_flex) >= 150 && Number(analysis.setup_knee_flex) <= 170 ? 25 : 0) + (analysis.setup_shoulder_level != null && analysis.setup_shoulder_level < 0.03 ? 25 : 0) + (analysis.setup_hip_hinge != null && analysis.setup_hip_hinge >= -0.08 && analysis.setup_hip_hinge <= 0.08 ? 25 : 0);
+                var score = (analysis.setup_spine_angle != null && Number(analysis.setup_spine_angle) >= 20 && Number(analysis.setup_spine_angle) <= 40 ? 25 : 0) + (analysis.setup_knee_flex != null && Number(analysis.setup_knee_flex) >= 150 && Number(analysis.setup_knee_flex) <= 170 ? 25 : 0) + (analysis.setup_shoulder_level != null && analysis.setup_shoulder_level < 0.03 ? 25 : 0) + (analysis.setup_hip_hinge != null && analysis.setup_hip_hinge >= -0.08 && analysis.setup_hip_hinge <= 0.08 ? 25 : 0);
                 var setupLabel = score >= 85 ? 'Elite' : (score >= 60 ? 'Solid Foundation' : 'Needs Attention');
                 var primaryIssue = diagnosis.priority_issue ? (typeof diagnosis.priority_issue === 'object' ? diagnosis.priority_issue.issue : diagnosis.priority_issue) : null;
                 text = "Hi! I've reviewed your latest swing analysis. Your " + setupLabel + " setup shows " + (primaryIssue || 'some great fundamentals') + ". What would you like to work on today?";
@@ -4044,6 +4044,9 @@
             const setupKneeFlex = analysis.setup_knee_flex;
             const setupShoulderLevel = analysis.setup_shoulder_level;
             const setupHipHinge = analysis.setup_hip_hinge;
+            const spineAngleAddress = analysis.spine_angle_address;
+            const spineAngleImpact = analysis.spine_angle_impact;
+            const spineAngleChange = analysis.spine_angle_change;
 
             let html = '';
             const o = claude && claude.overall ? claude.overall : null;
@@ -4097,7 +4100,10 @@
                 html += `<div class="results-overall-label ${getTierClass(setupDerivedLabel)}"><span aria-hidden="true">✦</span> ${setupDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 // Spine Angle — reliable all angles
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, 'MediaPipe measured', 'setupSpineAngle');
+                const spineChangeDisplay = (spineAngleChange != null && spineAngleAddress != null && spineAngleImpact != null)
+                    ? (spineAngleChange > 0 ? `Lost ${Math.abs(spineAngleChange)}° through impact` : spineAngleChange < -5 ? `Gained ${Math.abs(spineAngleChange)}° through impact` : 'Maintained through impact')
+                    : '';
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, spineChangeDisplay, 'setupSpineAngle');
                 // Posture — reliable all angles (Claude Vision)
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', 'posture');
                 // Knee Flex — DTL only
