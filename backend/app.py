@@ -96,7 +96,7 @@ def calculate_angle_3d(point1, point2, point3):
     return math.degrees(math.acos(cos_angle))
 
 
-def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle, max_width=640, wrist_path=None):
+def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle, max_width=640):
     """Extract one frame from video, draw skeleton overlay, return base64 JPEG string."""
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -123,28 +123,6 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
     SPINE_COLOR = (255, 200, 0)  # bright blue-white for spine
     RADIUS = 5
     THICKNESS_LINE = 2
-
-    # Draw wrist path arc if provided (before skeleton so skeleton renders on top)
-    if wrist_path and len(wrist_path) >= 2:
-        PATH_COLOR = (255, 220, 50)  # bright cyan-yellow visible against blue skeleton
-        path_px = [(int(x * new_w), int(y * new_h)) for x, y in wrist_path]
-        # Draw the path line
-        for k in range(1, len(path_px)):
-            alpha = k / len(path_px)  # fade from dim to bright along path
-            intensity = int(150 + 105 * alpha)
-            color = (intensity, int(200 * alpha), 50)
-            cv2.line(frame, path_px[k-1], path_px[k], color, 3, cv2.LINE_AA)
-        # Draw dots at each point
-        for k, pt in enumerate(path_px):
-            alpha = k / max(len(path_px) - 1, 1)
-            dot_color = (255, int(220 * alpha), 50)
-            cv2.circle(frame, pt, 4, dot_color, -1, cv2.LINE_AA)
-        # Draw start dot (address position) larger and white
-        cv2.circle(frame, path_px[0], 7, (255, 255, 255), -1, cv2.LINE_AA)
-        cv2.circle(frame, path_px[0], 7, (200, 200, 200), 2, cv2.LINE_AA)
-        # Draw end dot (backswing top) larger and bright
-        cv2.circle(frame, path_px[-1], 7, (50, 255, 255), -1, cv2.LINE_AA)
-        cv2.circle(frame, path_px[-1], 7, (255, 255, 255), 2, cv2.LINE_AA)
 
     if landmarks and len(landmarks) > 28:
         # Draw skeleton lines first (under joints)
@@ -1055,26 +1033,13 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
         spine_angle_backswing = calculate_spine_angle(key_frames['backswing']) if key_frames['backswing'] else None
         print(f"[Frame extraction] address_frame={address_frame_idx}, backswing_frame={backswing_frame_idx}, impact_frame={impact_frame_idx}")
         try:
-            # Collect wrist path from address to backswing top for swing arc visualization
-            RIGHT_WRIST_IDX = 16
-            wrist_path_points = []
-            if address_frame_idx is not None and backswing_frame_idx is not None:
-                step = max(1, (backswing_frame_idx - address_frame_idx) // 30)  # max 30 points
-                for fi in range(address_frame_idx, backswing_frame_idx + 1, step):
-                    entry = frame_data[fi] if fi < len(frame_data) else None
-                    lms = _entry_landmarks(entry)
-                    if lms and len(lms) > RIGHT_WRIST_IDX:
-                        wrist_path_points.append((lms[RIGHT_WRIST_IDX].x, lms[RIGHT_WRIST_IDX].y))
-                print(f"[Wrist path] Collected {len(wrist_path_points)} points from frame {address_frame_idx} to {backswing_frame_idx}")
-
             # address_frame_image from frame index address_frame_idx
             analysis['address_frame_image'] = _extract_and_annotate_frame(
                 video_path, address_frame_idx, key_frames['address'], spine_angle_address
             )
-            # backswing_frame_image from frame index backswing_frame_idx — includes wrist path arc
+            # backswing_frame_image from frame index backswing_frame_idx
             analysis['backswing_frame_image'] = _extract_and_annotate_frame(
-                video_path, backswing_frame_idx, key_frames['backswing'], spine_angle_backswing,
-                wrist_path=wrist_path_points if wrist_path_points else None
+                video_path, backswing_frame_idx, key_frames['backswing'], spine_angle_backswing
             )
             # impact_frame_image from frame index impact_frame_idx
             analysis['impact_frame_image'] = _extract_and_annotate_frame(
