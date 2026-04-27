@@ -145,7 +145,7 @@ def _extract_and_annotate_frame(video_path, frame_index, landmarks, spine_angle,
     return base64.b64encode(buf.tobytes()).decode('utf-8')
 
 
-def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64, mediapipe_data=None, golfer_hand='right', golfer_club='iron', user_camera_angle='behind'):
+def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_frame_b64, mediapipe_data=None, golfer_hand='right', golfer_club='iron', user_camera_angle='down_the_line'):
     """Send the three key frames to Claude Vision for golf swing analysis.
     MediaPipe measurements are computed deterministically; Claude fills in visual
     assessments and coaching notes around them. Returns parsed JSON or None."""
@@ -573,7 +573,7 @@ def calculate_rotation_degrees(world_landmarks_a, world_landmarks_b, joint='hip'
     return round(float(diff), 1)
 
 
-def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='iron', user_camera_angle='behind'):
+def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='iron', user_camera_angle='down_the_line'):
     """Analyze golf swing video using MediaPipe Pose detection"""
     try:
         import mediapipe as mp
@@ -1232,7 +1232,7 @@ def analyze_swing():
         file = request.files['file']
         golfer_hand = request.form.get('hand', 'right')
         golfer_club = request.form.get('club', 'iron')
-        user_camera_angle = request.form.get('camera_angle', 'behind')
+        user_camera_angle = request.form.get('camera_angle', 'down_the_line')
         
         # Check if file was actually selected
         if file.filename == '':

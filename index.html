@@ -474,8 +474,7 @@
                             <div>
                                 <div class="swing-selectors-label">Camera Angle</div>
                                 <div class="swing-selector-group">
-                                    <button type="button" class="swing-selector-btn selected" id="cameraBehind" data-camera="behind" onclick="selectCameraAngle('behind')">Behind</button>
-                                    <button type="button" class="swing-selector-btn" id="cameraDownTheLine" data-camera="down_the_line" onclick="selectCameraAngle('down_the_line')">Down-the-Line</button>
+                                    <button type="button" class="swing-selector-btn selected" id="cameraDownTheLine" data-camera="down_the_line" onclick="selectCameraAngle('down_the_line')">Down-the-Line</button>
                                     <button type="button" class="swing-selector-btn" id="cameraFaceOn" data-camera="face_on" onclick="selectCameraAngle('face_on')">Face-On</button>
                                 </div>
                             </div>
@@ -3086,7 +3085,7 @@
         // Swing Coach Upload Functionality
         let selectedHand = null;
         let selectedClub = null;
-        let selectedCameraAngle = 'behind';
+        let selectedCameraAngle = 'down_the_line';
 
         function selectHand(hand) {
             selectedHand = hand;
@@ -3153,10 +3152,10 @@
             }
             selectedHand = null;
             selectedClub = null;
-            selectedCameraAngle = 'behind';
+            selectedCameraAngle = 'down_the_line';
             document.querySelectorAll('.swing-selector-btn').forEach(btn => btn.classList.remove('selected'));
-            const cameraBehindBtn = document.getElementById('cameraBehind');
-            if (cameraBehindBtn) cameraBehindBtn.classList.add('selected');
+            const cameraDTLBtn = document.getElementById('cameraDownTheLine');
+            if (cameraDTLBtn) cameraDTLBtn.classList.add('selected');
         }
 
         // Function to handle file selection
@@ -4058,7 +4057,7 @@
                     <div class="swing-meta-pills">
                         ${selectedHand ? `<span class="swing-meta-pill">${selectedHand === 'right' ? '🖐 Right-Handed' : '🖐 Left-Handed'}</span>` : ''}
                         ${selectedClub ? `<span class="swing-meta-pill">${selectedClub === 'driver' ? '🏌️ Driver' : selectedClub === 'fairway' ? '🏌️ Fairway Wood' : selectedClub === 'iron' ? '🏌️ Iron' : '🏌️ Wedge'}</span>` : ''}
-                        ${selectedCameraAngle ? `<span class="swing-meta-pill">${selectedCameraAngle === 'down_the_line' ? '📷 Down-the-Line' : selectedCameraAngle === 'face_on' ? '📷 Face-On' : '📷 Behind'}</span>` : ''}
+                        ${selectedCameraAngle ? `<span class="swing-meta-pill">${selectedCameraAngle === 'down_the_line' ? '📷 Down-the-Line' : '📷 Face-On'}</span>` : ''}
                     </div>
                     <div class="results-tabs" role="tablist">
                         <button type="button" class="tab-btn active" data-tab="setup" role="tab" aria-selected="true">Setup</button>
@@ -4134,7 +4133,7 @@
                 const mechStatuses = [];
                 mechStatuses.push(getStatusFromClaude(back.spine_angle_maintained));
                 if (tempoRatio != null) mechStatuses.push(tempoRatio >= 2.5 ? 'status-good' : tempoRatio >= 1.8 ? 'status-moderate' : 'status-needs-attention');
-                if (selectedCameraAngle === 'down_the_line' || selectedCameraAngle === 'behind') {
+                if (selectedCameraAngle === 'down_the_line') {
                     mechStatuses.push(getStatusFromClaude(back.left_arm));
                 }
                 if (selectedCameraAngle === 'face_on') {
@@ -4153,7 +4152,7 @@
                 // Swing Tempo — reliable all angles
                 html += metricCardHtml(tempoColor, 'Swing Tempo', tempoRatio != null ? tempoRatio.toFixed(1) + ':1' : 'N/A', tempoLabel || tempoSubtext, 'swingTempo');
                 // Left Arm — DTL and Behind only
-                if (selectedCameraAngle === 'down_the_line' || selectedCameraAngle === 'behind') {
+                if (selectedCameraAngle === 'down_the_line') {
                     html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', 'leftArm');
                 }
                 // Weight Transfer — Face-On only
