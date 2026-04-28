@@ -3959,8 +3959,8 @@
             const getStatusFromClaude = (val) => {
                 if (!val) return '';
                 const v = String(val).toLowerCase();
-                if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady') return 'status-good';
-                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body' || v === 'over extended') return 'status-moderate';
+                if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady' || v === 'parallel' || v === 'good turn') return 'status-good';
+                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body' || v === 'over extended' || v === 'slight sway' || v === 'short of parallel' || v === 'above parallel' || v === 'too much') return 'status-moderate';
                 return 'status-needs-attention';
             };
             const getMetricBorderColor = (sc) => {
@@ -4172,6 +4172,10 @@
                 if (tempoRatio != null) mechStatuses.push(tempoRatio >= 2.5 ? 'status-good' : tempoRatio >= 1.8 ? 'status-moderate' : 'status-needs-attention');
                 if (selectedCameraAngle === 'down_the_line') {
                     mechStatuses.push(getStatusFromClaude(back.left_arm));
+                    if (back.club_position) mechStatuses.push(getStatusFromClaude(back.club_position));
+                    if (back.hip_sway) mechStatuses.push(getStatusFromClaude(back.hip_sway));
+                    const impactDTLTier = claude && claude.impact ? claude.impact : {};
+                    if (impactDTLTier.shaft_lean) mechStatuses.push(getStatusFromClaude(impactDTLTier.shaft_lean));
                 }
                 if (selectedCameraAngle === 'face_on') {
                     mechStatuses.push(getStatusFromClaude(back.weight_transfer));
@@ -4191,9 +4195,17 @@
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(spineMaintainedRaw)), 'Spine Maintained', spineMaintainedVal, spineMaintainedSubtext, 'spineMaintained');
                 // Swing Tempo — reliable all angles
                 html += metricCardHtml(tempoColor, 'Swing Tempo', tempoRatio != null ? tempoRatio.toFixed(1) + ':1' : 'N/A', tempoLabel || tempoSubtext, 'swingTempo');
-                // Left Arm — DTL and Behind only
+                // Left Arm — DTL only
                 if (selectedCameraAngle === 'down_the_line') {
-                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm || 'N/A', '', 'leftArm');
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.left_arm)), 'Left Arm', back.left_arm ? back.left_arm.charAt(0).toUpperCase() + back.left_arm.slice(1) : 'N/A', '', 'leftArm');
+                }
+                // Club Position at Top — DTL only
+                if (selectedCameraAngle === 'down_the_line' && back.club_position) {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.club_position)), 'Club at Top', back.club_position.charAt(0).toUpperCase() + back.club_position.slice(1), '', 'clubPosition');
+                }
+                // Hip Sway — DTL only
+                if (selectedCameraAngle === 'down_the_line' && back.hip_sway) {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.hip_sway)), 'Hip Sway', back.hip_sway.charAt(0).toUpperCase() + back.hip_sway.slice(1), '', 'hipSway');
                 }
                 // Weight Transfer — Face-On only
                 if (selectedCameraAngle === 'face_on') {
@@ -4203,6 +4215,12 @@
                 if (selectedCameraAngle === 'face_on') {
                     const lateralHead = back.lateral_head_movement || null;
                     if (lateralHead) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(lateralHead)), 'Lateral Head Movement', lateralHead, '', 'lateralHead');
+                }
+                // Shaft Lean at Impact — DTL only
+                if (selectedCameraAngle === 'down_the_line') {
+                    const impactClaudeDTL = claude && claude.impact ? claude.impact : {};
+                    const shaftLean = impactClaudeDTL.shaft_lean || null;
+                    if (shaftLean) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(shaftLean)), 'Shaft Lean at Impact', shaftLean.charAt(0).toUpperCase() + shaftLean.slice(1), '', 'shaftLean');
                 }
                 // Shoulder Tilt at Impact — Face-On only
                 if (selectedCameraAngle === 'face_on') {
@@ -4214,6 +4232,9 @@
                 // Locked pills for unavailable metrics this angle
                 const mechLockedPills = [];
                 if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Left Arm', 'down_the_line'));
+                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Club at Top', 'down_the_line'));
+                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Hip Sway', 'down_the_line'));
+                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Shaft Lean at Impact', 'down_the_line'));
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Weight Transfer', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Lateral Head Movement', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Shoulder Tilt at Impact', 'face_on'));
@@ -4521,6 +4542,18 @@
             handPosition: {
                 name: 'Hand Position / Shaft Lean',
                 text: 'Where your hands are positioned relative to the ball at address. For irons, hands slightly ahead of the ball with a small forward shaft lean is correct — it promotes a descending strike and proper ball-first contact. Hands behind the ball encourages scooping, which leads to thin and fat shots.'
+            },
+            clubPosition: {
+                name: 'Club Position at Top',
+                text: 'Where the club shaft is pointing at the top of your backswing. Parallel to the ground is the standard ideal position. Above parallel (over-swinging) can cause loss of control and consistency. Short of parallel may indicate a restricted shoulder turn or overly tight grip.'
+            },
+            hipSway: {
+                name: 'Hip Sway',
+                text: 'Whether your hips are turning or sliding during the backswing. A good hip turn coils the body and stores energy. A lateral sway — where the hips slide toward the trail side instead of turning — reduces coil, causes balance issues, and makes it hard to return to the ball consistently.'
+            },
+            shaftLean: {
+                name: 'Shaft Lean at Impact',
+                text: 'The angle of the club shaft at the moment of impact. Forward shaft lean — hands ahead of the ball — is a hallmark of solid ball striking and promotes a descending blow for clean contact. No shaft lean or backward lean causes scooping, which leads to fat and thin shots and loss of distance.'
             }
         };
         function showMetricModal(name, text) {

@@ -309,6 +309,8 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
   },
   "backswing": {
     "left_arm": "straight/slightly bent/too bent/over extended",
+    "club_position": "parallel/above parallel/short of parallel",
+    "hip_sway": "good turn/slight sway/excessive sway",
     "weight_transfer": "good/minimal/reverse pivot",
     "coaching_note": "one specific actionable tip about backswing in 15 words or less"
   },
@@ -316,6 +318,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     "hip_clearance": "good/needs more/excessive",
     "shoulder_position": "square/open/closed",
     "head_position": "steady/moved forward/moved back",
+    "shaft_lean": "good/too much/none",
     "weight_transfer": "good/minimal/reversed",
     "coaching_note": "one specific actionable tip about impact in 15 words or less"
   },
@@ -396,7 +399,22 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         f"- 'slightly bent': lead arm has a small bend at the elbow, not severe. Still functional but could improve.\n"
         f"- 'too bent': lead arm clearly bent significantly at elbow, reduces swing arc and power.\n"
         f"- 'over extended': lead arm appears hyperextended or locked rigid, creates tension and restricts shoulder turn.\n"
-        f"Important: most recreational golfers have some bend — 'slightly bent' is common and not a major issue. Only use 'too bent' for obvious significant bend.\n\n"
+        f"Important: most recreational golfers have some bend — 'slightly bent' is common and not a major issue. Only use 'too bent' for obvious significant bend.\n"
+        f"CLUB POSITION CRITERIA — use these for the club_position field (DTL angle, backswing top frame):\n"
+        f"- 'parallel': club shaft appears parallel to the ground at the top of the backswing. This is the standard ideal position.\n"
+        f"- 'above parallel': club has gone past parallel, shaft pointing downward past horizontal. Common over-swing fault.\n"
+        f"- 'short of parallel': club has not reached parallel, shaft pointing upward. Can indicate restricted turn or short backswing.\n"
+        f"Important: slight variations are normal. Only flag clear and obvious positions.\n"
+        f"HIP SWAY CRITERIA — use these for the hip_sway field (DTL angle, backswing top frame):\n"
+        f"- 'good turn': trail hip appears to rotate back and around, golfer looks coiled. Hips have turned not slid.\n"
+        f"- 'slight sway': hips have moved slightly laterally toward the trail side rather than turning. Minor fault.\n"
+        f"- 'excessive sway': hips have clearly slid far to the trail side, golfer looks off-balance. Major fault.\n"
+        f"Important: some lateral movement is normal. Only flag 'excessive sway' for obvious cases.\n"
+        f"SHAFT LEAN CRITERIA — use these for the shaft_lean field (DTL angle, impact frame):\n"
+        f"- 'good': hands are ahead of the ball at impact, shaft leaning toward target. This is correct for solid ball striking.\n"
+        f"- 'too much': hands dramatically ahead of ball, excessive forward lean that could cause thin contact.\n"
+        f"- 'none': shaft is vertical or leaning away from target at impact. Indicates scooping, common cause of fat/thin shots.\n"
+        f"Important: forward shaft lean at impact is desirable. Only flag 'too much' for extreme cases. 'none' is a significant fault worth noting.\n\n"
         f"HAND POSITION CRITERIA — use these for the hand_position field (DTL angle only):\n"
         f"- 'good': hands slightly ahead of the ball at address, shaft leaning slightly toward target. Normal and correct for irons.\n"
         f"- 'too far forward': hands significantly ahead of ball, shaft leaning excessively toward target, looks forced.\n"
