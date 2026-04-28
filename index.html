@@ -4118,7 +4118,7 @@
                 if (selectedCameraAngle === 'down_the_line') {
                     const kneeFlexVisual = addr.knee_flex_visual || null;
                     const kneeFlexVal = kneeFlexVisual ? (kneeFlexVisual === 'good' ? 'Good' : kneeFlexVisual === 'slightly bent' ? 'Slightly Bent' : kneeFlexVisual === 'too bent' ? 'Too Bent' : 'Too Straight') : (addr.knee_flex || 'N/A');
-                    const kneeFlexDegrees = analysis.setup_knee_flex != null ? `${Number(analysis.setup_knee_flex).toFixed(0)}° measured` : '';
+                    const kneeFlexDegrees = '';
                     const kneeColorSource = kneeFlexVisual || addr.knee_flex;
                     html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(kneeColorSource)), 'Knee Flex', kneeFlexVal, kneeFlexDegrees, 'setupKneeFlex');
                 }
