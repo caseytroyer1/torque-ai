@@ -3961,6 +3961,7 @@
                 const v = String(val).toLowerCase();
                 if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady' || v === 'parallel' || v === 'good turn' || v === 'good slide') return 'status-good';
                 if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body' || v === 'over extended' || v === 'slight sway' || v === 'short of parallel' || v === 'above parallel' || v === 'too much' || v === 'insufficient' || v === 'too flat' || v === 'too steep') return 'status-moderate';
+                if (v === 'falling back' || v === 'falling forward' || v === 'reversed' || v === 'reverse pivot' || v === 'none' || v === 'excessive sway' || v === 'too bent' || v === 'too straight') return 'status-needs-attention';
                 return 'status-needs-attention';
             };
             const getMetricBorderColor = (sc) => {

@@ -918,7 +918,7 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
         LEFT_HIP = 23
         RIGHT_HIP = 24
         
-        def calculate_spine_angle(landmarks):
+        def calculate_spine_angle(landmarks, clamp=True):
             """Calculate spine angle (angle from hip midpoint to shoulder midpoint relative to vertical)"""
             if not landmarks or len(landmarks) <= max(LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_HIP, RIGHT_HIP):
                 return None
@@ -942,11 +942,9 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
             # Calculate angle from vertical (90 degrees = straight up)
             dx = shoulder_mid['x'] - hip_mid['x']
             dy = shoulder_mid['y'] - hip_mid['y']
-            # Vertical is 90 degrees, so we calculate deviation from vertical
-            angle = math.degrees(math.atan2(dx, -dy))  # Negative dy because y increases downward
+            angle = math.degrees(math.atan2(dx, -dy))
             angle = round(angle, 1)
-            # Sanity clamp — readings outside 5-55° are almost certainly detection errors
-            if angle < 5 or angle > 55:
+            if clamp and (angle < 5 or angle > 55):
                 print(f"[Spine angle] Clamped unreliable reading: {angle}°")
                 return None
             return angle
@@ -1014,8 +1012,15 @@ def analyze_video_with_mediapipe(video_path, golfer_hand='right', golfer_club='i
         # Calculate spine angle (unchanged - this is still a valid measurement)
         spine_angle_address = calculate_spine_angle(key_frames['address']) if key_frames['address'] else None
         spine_angle_impact = calculate_spine_angle(key_frames['impact']) if key_frames['impact'] else None
+        # For face-on, absolute spine angle is unreliable but the change is still valid
+        # Use unclamped readings for change calculation only when face-on
         spine_angle_change = None
-        if spine_angle_address is not None and spine_angle_impact is not None:
+        if user_camera_angle == 'face_on':
+            raw_address = calculate_spine_angle(key_frames['address'], clamp=False) if key_frames['address'] else None
+            raw_impact = calculate_spine_angle(key_frames['impact'], clamp=False) if key_frames['impact'] else None
+            if raw_address is not None and raw_impact is not None:
+                spine_angle_change = round(raw_impact - raw_address, 1)
+        elif spine_angle_address is not None and spine_angle_impact is not None:
             spine_angle_change = round(spine_angle_impact - spine_angle_address, 1)
         
         # Setup/posture metrics from address frame
