@@ -3960,7 +3960,7 @@
                 if (!val) return '';
                 const v = String(val).toLowerCase();
                 if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady') return 'status-good';
-                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent') return 'status-moderate';
+                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back') return 'status-moderate';
                 return 'status-needs-attention';
             };
             const getMetricBorderColor = (sc) => {
@@ -4090,11 +4090,13 @@
                 html += `<div class="results-frame-col">${frameImg(addressFrameB64, 'Address position')}</div>`;
                 html += `<div class="results-metrics-col">`;
                 const setupStatuses = [
-                    getStatusFromClaude(spineVisual || addr.spine_assessment),
+                    getStatusFromClaude(addr.spine_angle_visual || addr.spine_assessment),
                     getStatusFromClaude(addr.knee_flex_visual || addr.knee_flex),
                     getStatusFromClaude(addr.shoulder_level),
                     getStatusFromClaude(addr.posture),
-                    getStatusFromClaude(addr.weight_distribution)
+                    getStatusFromClaude(addr.weight_distribution),
+                    getStatusFromClaude(addr.stance_width),
+                    getStatusFromClaude(addr.hand_position)
                 ];
                 const setupRedCount = setupStatuses.filter(s => s === 'status-needs-attention').length;
                 const setupGreenCount = setupStatuses.filter(s => s === 'status-good').length;
@@ -4114,9 +4116,17 @@
                 if (selectedCameraAngle === 'down_the_line') {
                     const kneeFlexVisual = addr.knee_flex_visual || null;
                     const kneeFlexVal = kneeFlexVisual ? (kneeFlexVisual === 'good' ? 'Good' : kneeFlexVisual === 'slightly bent' ? 'Slightly Bent' : kneeFlexVisual === 'too bent' ? 'Too Bent' : 'Too Straight') : (addr.knee_flex || 'N/A');
-                    const kneeFlexDegrees = setupKneeFlex != null ? `${Number(setupKneeFlex).toFixed(0)}° measured` : '';
+                    const kneeFlexDegrees = analysis.setup_knee_flex != null ? `${Number(analysis.setup_knee_flex).toFixed(0)}° measured` : '';
                     const kneeColorSource = kneeFlexVisual || addr.knee_flex;
                     html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(kneeColorSource)), 'Knee Flex', kneeFlexVal, kneeFlexDegrees, 'setupKneeFlex');
+                }
+                // Stance Width — DTL only
+                if (selectedCameraAngle === 'down_the_line' && addr.stance_width) {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.stance_width)), 'Stance Width', addr.stance_width.charAt(0).toUpperCase() + addr.stance_width.slice(1), '', 'stanceWidth');
+                }
+                // Hand Position — DTL only
+                if (selectedCameraAngle === 'down_the_line' && addr.hand_position) {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.hand_position)), 'Hand Position', addr.hand_position.charAt(0).toUpperCase() + addr.hand_position.slice(1), '', 'handPosition');
                 }
                 // Shoulder Level — Face-On only
                 if (selectedCameraAngle === 'face_on') {
@@ -4130,6 +4140,8 @@
                 // Locked pills for unavailable metrics
                 const setupLockedPills = [];
                 if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Knee Flex', 'down_the_line'));
+                if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Stance Width', 'down_the_line'));
+                if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Hand Position', 'down_the_line'));
                 if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Shoulder Level', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Weight Distribution', 'face_on'));
                 if (setupLockedPills.length > 0) {
