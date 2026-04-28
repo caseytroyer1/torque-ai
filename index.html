@@ -4185,7 +4185,10 @@
                 html += `<div class="results-overall-label ${getTierClass(mechDerivedLabel)}"><span aria-hidden="true">✦</span> ${mechDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 // Spine Maintained — reliable all angles
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(back.spine_angle_maintained)), 'Spine Maintained', back.spine_angle_maintained || 'N/A', '', 'spineMaintained');
+                const spineMaintainedRaw = back.spine_angle_maintained || null;
+                const spineMaintainedVal = spineMaintainedRaw === 'yes' ? 'Maintained' : spineMaintainedRaw === 'slightly lost' ? 'Slightly Lost' : spineMaintainedRaw === 'significantly lost' ? 'Significantly Lost' : spineMaintainedRaw || 'N/A';
+                const spineMaintainedSubtext = spineAngleChange != null ? (Math.abs(spineAngleChange) < 10 ? `${Math.abs(spineAngleChange).toFixed(1)}° change — excellent` : Math.abs(spineAngleChange) <= 15 ? `Lost ${Math.abs(spineAngleChange).toFixed(1)}° through impact` : `Lost ${Math.abs(spineAngleChange).toFixed(1)}° through impact`) : '';
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(spineMaintainedRaw)), 'Spine Maintained', spineMaintainedVal, spineMaintainedSubtext, 'spineMaintained');
                 // Swing Tempo — reliable all angles
                 html += metricCardHtml(tempoColor, 'Swing Tempo', tempoRatio != null ? tempoRatio.toFixed(1) + ':1' : 'N/A', tempoLabel || tempoSubtext, 'swingTempo');
                 // Left Arm — DTL and Behind only
