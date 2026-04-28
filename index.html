@@ -3960,7 +3960,7 @@
                 if (!val) return '';
                 const v = String(val).toLowerCase();
                 if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady') return 'status-good';
-                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body') return 'status-moderate';
+                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body' || v === 'over extended') return 'status-moderate';
                 return 'status-needs-attention';
             };
             const getMetricBorderColor = (sc) => {

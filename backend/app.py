@@ -308,7 +308,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
   },
   "backswing": {
-    "left_arm": "straight/slightly bent/too bent",
+    "left_arm": "straight/slightly bent/too bent/over extended",
     "weight_transfer": "good/minimal/reverse pivot",
     "coaching_note": "one specific actionable tip about backswing in 15 words or less"
   },
@@ -391,6 +391,12 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         f"- 'too narrow': feet clearly too close together, looks unstable, will restrict rotation.\n"
         f"- 'too wide': feet clearly too far apart, looks awkward, will restrict hip turn.\n"
         f"Important: most recreational golfers have reasonable stance width. Only flag if clearly too narrow or too wide.\n"
+        f"LEFT ARM CRITERIA — use these for the left_arm field (DTL angle, backswing top frame):\n"
+        f"- 'straight': lead arm appears straight or very close to straight at the top of the backswing. This is ideal.\n"
+        f"- 'slightly bent': lead arm has a small bend at the elbow, not severe. Still functional but could improve.\n"
+        f"- 'too bent': lead arm clearly bent significantly at elbow, reduces swing arc and power.\n"
+        f"- 'over extended': lead arm appears hyperextended or locked rigid, creates tension and restricts shoulder turn.\n"
+        f"Important: most recreational golfers have some bend — 'slightly bent' is common and not a major issue. Only use 'too bent' for obvious significant bend.\n\n"
         f"HAND POSITION CRITERIA — use these for the hand_position field (DTL angle only):\n"
         f"- 'good': hands slightly ahead of the ball at address, shaft leaning slightly toward target. Normal and correct for irons.\n"
         f"- 'too far forward': hands significantly ahead of ball, shaft leaning excessively toward target, looks forced.\n"
