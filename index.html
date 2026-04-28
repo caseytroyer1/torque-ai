@@ -3959,8 +3959,8 @@
             const getStatusFromClaude = (val) => {
                 if (!val) return '';
                 const v = String(val).toLowerCase();
-                if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady' || v === 'parallel' || v === 'good turn') return 'status-good';
-                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body' || v === 'over extended' || v === 'slight sway' || v === 'short of parallel' || v === 'above parallel' || v === 'too much') return 'status-moderate';
+                if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady' || v === 'parallel' || v === 'good turn' || v === 'good slide') return 'status-good';
+                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body' || v === 'over extended' || v === 'slight sway' || v === 'short of parallel' || v === 'above parallel' || v === 'too much' || v === 'insufficient' || v === 'too flat' || v === 'too steep') return 'status-moderate';
                 return 'status-needs-attention';
             };
             const getMetricBorderColor = (sc) => {
@@ -4182,6 +4182,10 @@
                     if (back.lateral_head_movement) mechStatuses.push(getStatusFromClaude(back.lateral_head_movement));
                     const impactClaudeForTier = claude && claude.impact ? claude.impact : {};
                     if (impactClaudeForTier.shoulder_tilt) mechStatuses.push(getStatusFromClaude(impactClaudeForTier.shoulder_tilt));
+                    if (impactClaudeForTier.head_position) mechStatuses.push(getStatusFromClaude(impactClaudeForTier.head_position));
+                    if (impactClaudeForTier.weight_transfer) mechStatuses.push(getStatusFromClaude(impactClaudeForTier.weight_transfer));
+                    if (impactClaudeForTier.hip_slide) mechStatuses.push(getStatusFromClaude(impactClaudeForTier.hip_slide));
+                    if (impactClaudeForTier.finish_position) mechStatuses.push(getStatusFromClaude(impactClaudeForTier.finish_position));
                 }
                 const mechRedCount = mechStatuses.filter(s => s === 'status-needs-attention').length;
                 const mechGreenCount = mechStatuses.filter(s => s === 'status-good').length;
@@ -4222,11 +4226,19 @@
                     const shaftLean = impactClaudeDTL.shaft_lean || null;
                     if (shaftLean) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(shaftLean)), 'Shaft Lean at Impact', shaftLean.charAt(0).toUpperCase() + shaftLean.slice(1), '', 'shaftLean');
                 }
-                // Shoulder Tilt at Impact — Face-On only
+                // Face-On impact metrics
                 if (selectedCameraAngle === 'face_on') {
                     const impactClaude = claude && claude.impact ? claude.impact : {};
                     const shoulderTilt = impactClaude.shoulder_tilt || null;
-                    if (shoulderTilt) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(shoulderTilt)), 'Shoulder Tilt at Impact', shoulderTilt, '', 'shoulderTilt');
+                    if (shoulderTilt) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(shoulderTilt)), 'Shoulder Tilt at Impact', shoulderTilt.charAt(0).toUpperCase() + shoulderTilt.slice(1), '', 'shoulderTilt');
+                    const headPos = impactClaude.head_position || null;
+                    if (headPos) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(headPos)), 'Head Position at Impact', headPos.charAt(0).toUpperCase() + headPos.slice(1), '', 'headPosition');
+                    const impactWT = impactClaude.weight_transfer || null;
+                    if (impactWT) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(impactWT)), 'Weight Transfer at Impact', impactWT.charAt(0).toUpperCase() + impactWT.slice(1), '', 'impactWeightTransfer');
+                    const hipSlide = impactClaude.hip_slide || null;
+                    if (hipSlide) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(hipSlide)), 'Hip Slide', hipSlide.charAt(0).toUpperCase() + hipSlide.slice(1), '', 'hipSlide');
+                    const finishPos = impactClaude.finish_position || null;
+                    if (finishPos) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(finishPos)), 'Finish Position', finishPos.charAt(0).toUpperCase() + finishPos.slice(1), '', 'finishPosition');
                 }
                 html += `</div>`;
                 // Locked pills for unavailable metrics this angle
@@ -4237,6 +4249,10 @@
                 if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Shaft Lean at Impact', 'down_the_line'));
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Weight Transfer', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Lateral Head Movement', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Head Position at Impact', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Weight Transfer at Impact', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Hip Slide', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Finish Position', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Shoulder Tilt at Impact', 'face_on'));
                 if (mechLockedPills.length > 0) {
                     html += `<div class="metric-locked-pills-row"><div class="metric-locked-pills-row-label">Not available for this angle</div>${mechLockedPills.join('')}</div>`;
@@ -4554,6 +4570,26 @@
             shaftLean: {
                 name: 'Shaft Lean at Impact',
                 text: 'The angle of the club shaft at the moment of impact. Forward shaft lean — hands ahead of the ball — is a hallmark of solid ball striking and promotes a descending blow for clean contact. No shaft lean or backward lean causes scooping, which leads to fat and thin shots and loss of distance.'
+            },
+            headPosition: {
+                name: 'Head Position at Impact',
+                text: 'Where your head is positioned at the moment of impact compared to address. Your head should stay relatively centered — moving dramatically toward the target causes thin shots, while falling back causes fat shots and a loss of power through the ball.'
+            },
+            impactWeightTransfer: {
+                name: 'Weight Transfer at Impact',
+                text: 'How effectively your weight has shifted to your lead side at the moment of impact. A full weight transfer onto the lead foot is essential for power and consistency. Weight staying on the trail side at impact causes fat shots, scooping, and a loss of distance.'
+            },
+            hipSlide: {
+                name: 'Hip Slide',
+                text: 'The lateral movement of your hips toward the target through impact. A good hip slide — combined with rotation — creates a powerful bump and turn that sequences the downswing correctly. Too much slide without rotation causes blocks, while insufficient slide causes pulls and over-the-top moves.'
+            },
+            finishPosition: {
+                name: 'Finish Position',
+                text: 'Your balance and body position at the end of the swing. A balanced finish — weight fully on the lead foot, chest facing the target — indicates good sequencing and weight transfer throughout the swing. Falling back through impact is one of the most common amateur faults.'
+            },
+            lateralHead: {
+                name: 'Lateral Head Movement',
+                text: 'Whether your head moves laterally during the backswing. A steady head provides a consistent pivot point for the swing. Swaying toward the trail side can cause timing issues, while moving toward the target during the backswing creates a reverse pivot — one of the most destructive swing faults.'
             }
         };
         function showMetricModal(name, text) {
