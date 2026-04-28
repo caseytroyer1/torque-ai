@@ -300,6 +300,8 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     "posture": "good/slightly rounded/too upright/too hunched",
     "spine_angle_visual": "good/too upright/too bent over",
     "knee_flex_visual": "good/slightly bent/too bent/too straight",
+    "stance_width": "good/too narrow/too wide",
+    "hand_position": "good/too far forward/too far back",
     "weight_distribution": "balanced/too much on heels/too much on toes",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
   },
@@ -381,7 +383,17 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         f"- 'slightly bent': a bit more knee bend than ideal but not severe, still functional.\n"
         f"- 'too bent': clearly squatting into the shot, excessive knee bend that restricts rotation.\n"
         f"- 'too straight': legs nearly locked, no athletic flex, will restrict weight transfer.\n"
-        f"Important: most amateur golfers with decent form should score 'good' or 'slightly bent'. Only use 'too bent' or 'too straight' for obvious issues.\n\n"
+        f"Important: most amateur golfers with decent form should score 'good' or 'slightly bent'. Only use 'too bent' or 'too straight' for obvious issues.\n"
+        f"STANCE WIDTH CRITERIA — use these for the stance_width field (DTL angle only):\n"
+        f"- 'good': feet shoulder-width apart or slightly wider for driver, narrower for irons/wedges. Looks balanced and stable.\n"
+        f"- 'too narrow': feet clearly too close together, looks unstable, will restrict rotation.\n"
+        f"- 'too wide': feet clearly too far apart, looks awkward, will restrict hip turn.\n"
+        f"Important: most recreational golfers have reasonable stance width. Only flag if clearly too narrow or too wide.\n"
+        f"HAND POSITION CRITERIA — use these for the hand_position field (DTL angle only):\n"
+        f"- 'good': hands slightly ahead of the ball at address, shaft leaning slightly toward target. Normal and correct for irons.\n"
+        f"- 'too far forward': hands significantly ahead of ball, shaft leaning excessively toward target, looks forced.\n"
+        f"- 'too far back': hands even with or behind the ball, shaft leaning away from target or vertical. Common cause of scooping.\n"
+        f"Important: a slight forward press is normal and correct. Only flag if clearly too far forward or too far back.\n\n"
         f"Write coaching notes in second person — speak directly to the golfer using 'you' and 'your'. "
         f"Reference the measurements when relevant. Return ONLY a JSON object with no extra text, no markdown, "
         f"no code blocks. Use exactly this format:"
