@@ -4084,7 +4084,8 @@
 
                 // TAB 1 - SETUP
                 const spineVisual = addr.spine_angle_visual || null;
-                const spineAngleVal = spineVisual === 'too upright' ? 'Under 20°' : spineVisual === 'too bent over' ? 'Over 45°' : spineVisual === 'good' ? '25–40° range' : (setupSpineAngle != null ? Number(setupSpineAngle).toFixed(1) + '°' : 'N/A');
+                const spineAngleVal = spineVisual === 'too upright' ? 'Too Upright' : spineVisual === 'too bent over' ? 'Too Bent Over' : spineVisual === 'good' ? 'Good' : 'N/A';
+                const spineRangeLabel = spineVisual === 'too upright' ? 'Under 20° range' : spineVisual === 'too bent over' ? 'Over 45° range' : spineVisual === 'good' ? '25–40° range' : '';
                 html += `<div class="tab-panel active" id="tab-setup" role="tabpanel"><div class="results-tab-two-col">`;
                 html += `<div class="results-frame-col">${frameImg(addressFrameB64, 'Address position')}</div>`;
                 html += `<div class="results-metrics-col">`;
@@ -4105,7 +4106,8 @@
                     ? (spineAngleChange > 5 ? `Lost ${Math.abs(spineAngleChange)}° through impact` : spineAngleChange < -5 ? `Increased tilt ${Math.abs(spineAngleChange)}° through impact` : 'Maintained through impact')
                     : '';
                 const spineColorSource = spineVisual || addr.spine_assessment;
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(spineColorSource)), 'Spine Angle', spineAngleVal, spineChangeDisplay, 'setupSpineAngle');
+                const spineSubtext = [spineRangeLabel, spineChangeDisplay].filter(Boolean).join(' · ');
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(spineColorSource)), 'Spine Angle', spineAngleVal, spineSubtext, 'setupSpineAngle');
                 // Posture — reliable all angles (Claude Vision)
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', 'posture');
                 // Knee Flex — DTL only
