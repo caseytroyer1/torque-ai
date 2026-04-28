@@ -4088,7 +4088,7 @@
                 html += `<div class="results-frame-col">${frameImg(addressFrameB64, 'Address position')}</div>`;
                 html += `<div class="results-metrics-col">`;
                 const setupStatuses = [
-                    getStatusFromClaude(addr.spine_assessment),
+                    getStatusFromClaude(addr.spine_angle_visual || addr.spine_assessment),
                     getStatusFromClaude(addr.knee_flex),
                     getStatusFromClaude(addr.shoulder_level),
                     getStatusFromClaude(addr.posture),
@@ -4100,10 +4100,11 @@
                 html += `<div class="results-overall-label ${getTierClass(setupDerivedLabel)}"><span aria-hidden="true">✦</span> ${setupDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 // Spine Angle — reliable all angles
-                const spineChangeDisplay = (spineAngleChange != null && spineAngleAddress != null && spineAngleImpact != null)
-                    ? (spineAngleChange > 0 ? `Lost ${Math.abs(spineAngleChange)}° through impact` : spineAngleChange < -5 ? `Gained ${Math.abs(spineAngleChange)}° through impact` : 'Maintained through impact')
+                const spineChangeDisplay = (spineAngleChange != null)
+                    ? (spineAngleChange > 5 ? `Lost ${Math.abs(spineAngleChange)}° through impact` : spineAngleChange < -5 ? `Increased tilt ${Math.abs(spineAngleChange)}° through impact` : 'Maintained through impact')
                     : '';
-                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.spine_assessment)), 'Spine Angle', spineAngleVal, spineChangeDisplay, 'setupSpineAngle');
+                const spineColorSource = addr.spine_angle_visual || addr.spine_assessment;
+                html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(spineColorSource)), 'Spine Angle', spineAngleVal, spineChangeDisplay, 'setupSpineAngle');
                 // Posture — reliable all angles (Claude Vision)
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', 'posture');
                 // Knee Flex — DTL only

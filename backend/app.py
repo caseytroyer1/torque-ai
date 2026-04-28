@@ -245,7 +245,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     # Build a compact MediaPipe context string for Claude
     mp_facts = []
     if spine_addr is not None:
-        mp_facts.append(f"- Spine angle at address: {spine_addr}° (assessment: {spine_assessment_str})")
+        mp_facts.append(f"- Spine angle at address: {spine_addr}° (MediaPipe reference only — use your visual assessment of the address frame as the primary judge of whether spine angle looks appropriate for this club and golfer. Return your verdict in spine_angle_visual.)")
     if knee_flex is not None:
         mp_facts.append(f"- Knee flex: {knee_flex}° ({knee_flex_str})")
     if shoulder_level is not None:
@@ -272,6 +272,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         prompt_json = '''{
   "address": {
     "posture": "good/needs work",
+    "spine_angle_visual": "good/too upright/too bent over",
     "shoulder_level": "level/slightly uneven/uneven",
     "weight_distribution": "balanced/too much on left/too much on right",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
@@ -297,6 +298,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         prompt_json = '''{
   "address": {
     "posture": "good/needs work",
+    "spine_angle_visual": "good/too upright/too bent over",
     "weight_distribution": "balanced/too much on heels/too much on toes",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
   },
