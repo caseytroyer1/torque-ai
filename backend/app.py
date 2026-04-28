@@ -247,7 +247,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     if spine_addr is not None:
         mp_facts.append(f"- Spine angle at address: {spine_addr}° (MediaPipe reference only — do NOT use this number to judge posture as DTL camera angles distort it. Instead look at the address frame image and judge visually whether the golfer's spine tilt looks appropriate for their club: DRIVER needs moderate forward bend ~25-35°, IRON needs athletic forward bend ~30-40°, WEDGE needs upright posture ~20-30°. Return your visual verdict in spine_angle_visual as exactly one of: good / too upright / too bent over)")
     if knee_flex is not None:
-        mp_facts.append(f"- Knee flex: {knee_flex}° ({knee_flex_str})")
+        mp_facts.append(f"- Knee flex angle: {knee_flex}° (MediaPipe reference — use your visual assessment of the address frame as primary judge. Good golf knee flex looks like a slight, athletic bend — not squatting, not locked straight. DRIVER/IRON: slight flex around 155-165° looks athletic. Below 145° usually looks too squatted. Above 172° usually looks locked. Return your verdict in knee_flex_visual as exactly one of: good / slightly bent / too bent / too straight)")
     if shoulder_level is not None:
         mp_facts.append(f"- Shoulder level delta: {shoulder_level} ({shoulder_level_str})")
     if spine_change is not None:
@@ -299,6 +299,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
   "address": {
     "posture": "good/slightly rounded/too upright/too hunched",
     "spine_angle_visual": "good/too upright/too bent over",
+    "knee_flex_visual": "good/slightly bent/too bent/too straight",
     "weight_distribution": "balanced/too much on heels/too much on toes",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
   },
@@ -374,7 +375,13 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         f"- 'slightly rounded': mild rounding of the upper back or shoulders, not severe enough to cause major issues but could improve.\n"
         f"- 'too upright': standing too tall with insufficient forward bend from the hips, arms reaching for the ball, looks stiff.\n"
         f"- 'too hunched': excessive rounding of the back or hunching of the shoulders, chin down toward chest, creates restriction.\n"
-        f"Important: most recreational golfers with reasonable form should score 'good' or 'slightly rounded'. Only use 'too upright' or 'too hunched' for clear and obvious posture issues.\n\n"
+        f"Important: most recreational golfers with reasonable form should score 'good' or 'slightly rounded'. Only use 'too upright' or 'too hunched' for clear and obvious posture issues.\n"
+        f"KNEE FLEX ASSESSMENT CRITERIA — use these for the knee_flex_visual field (DTL angle only):\n"
+        f"- 'good': slight athletic bend, looks balanced and ready to move, not squatting.\n"
+        f"- 'slightly bent': a bit more knee bend than ideal but not severe, still functional.\n"
+        f"- 'too bent': clearly squatting into the shot, excessive knee bend that restricts rotation.\n"
+        f"- 'too straight': legs nearly locked, no athletic flex, will restrict weight transfer.\n"
+        f"Important: most amateur golfers with decent form should score 'good' or 'slightly bent'. Only use 'too bent' or 'too straight' for obvious issues.\n\n"
         f"Write coaching notes in second person — speak directly to the golfer using 'you' and 'your'. "
         f"Reference the measurements when relevant. Return ONLY a JSON object with no extra text, no markdown, "
         f"no code blocks. Use exactly this format:"

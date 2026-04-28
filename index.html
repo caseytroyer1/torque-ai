@@ -3960,7 +3960,7 @@
                 if (!val) return '';
                 const v = String(val).toLowerCase();
                 if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady') return 'status-good';
-                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched') return 'status-moderate';
+                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent') return 'status-moderate';
                 return 'status-needs-attention';
             };
             const getMetricBorderColor = (sc) => {
@@ -4091,7 +4091,7 @@
                 html += `<div class="results-metrics-col">`;
                 const setupStatuses = [
                     getStatusFromClaude(spineVisual || addr.spine_assessment),
-                    getStatusFromClaude(addr.knee_flex),
+                    getStatusFromClaude(addr.knee_flex_visual || addr.knee_flex),
                     getStatusFromClaude(addr.shoulder_level),
                     getStatusFromClaude(addr.posture),
                     getStatusFromClaude(addr.weight_distribution)
@@ -4112,7 +4112,11 @@
                 html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.posture)), 'Posture', addr.posture || 'N/A', '', 'posture');
                 // Knee Flex — DTL only
                 if (selectedCameraAngle === 'down_the_line') {
-                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.knee_flex)), 'Knee Flex', addr.knee_flex || 'N/A', '', 'setupKneeFlex');
+                    const kneeFlexVisual = addr.knee_flex_visual || null;
+                    const kneeFlexVal = kneeFlexVisual ? (kneeFlexVisual === 'good' ? 'Good' : kneeFlexVisual === 'slightly bent' ? 'Slightly Bent' : kneeFlexVisual === 'too bent' ? 'Too Bent' : 'Too Straight') : (addr.knee_flex || 'N/A');
+                    const kneeFlexDegrees = setupKneeFlex != null ? `${Number(setupKneeFlex).toFixed(0)}° measured` : '';
+                    const kneeColorSource = kneeFlexVisual || addr.knee_flex;
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(kneeColorSource)), 'Knee Flex', kneeFlexVal, kneeFlexDegrees, 'setupKneeFlex');
                 }
                 // Shoulder Level — Face-On only
                 if (selectedCameraAngle === 'face_on') {
