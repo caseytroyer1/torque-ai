@@ -245,7 +245,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     # Build a compact MediaPipe context string for Claude
     mp_facts = []
     if spine_addr is not None:
-        mp_facts.append(f"- Spine angle at address: {spine_addr}° (MediaPipe reference only — use your visual assessment of the address frame as the primary judge of whether spine angle looks appropriate for this club and golfer. Return your verdict in spine_angle_visual.)")
+        mp_facts.append(f"- Spine angle at address: {spine_addr}° (MediaPipe reference only — do NOT use this number to judge posture as DTL camera angles distort it. Instead look at the address frame image and judge visually whether the golfer's spine tilt looks appropriate for their club: DRIVER needs moderate forward bend ~25-35°, IRON needs athletic forward bend ~30-40°, WEDGE needs upright posture ~20-30°. Return your visual verdict in spine_angle_visual as exactly one of: good / too upright / too bent over)")
     if knee_flex is not None:
         mp_facts.append(f"- Knee flex: {knee_flex}° ({knee_flex_str})")
     if shoulder_level is not None:
