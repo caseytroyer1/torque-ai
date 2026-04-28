@@ -275,6 +275,8 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     "spine_angle_visual": "good/too upright/too bent over",
     "shoulder_level": "level/slightly uneven/uneven",
     "weight_distribution": "balanced/too much on left/too much on right",
+    "ball_position": "good/too far forward/too far back/too far from body/too close to body",
+    "stance_width": "good/too narrow/too wide",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
   },
   "backswing": {
@@ -393,7 +395,29 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         f"- 'good': hands slightly ahead of the ball at address, shaft leaning slightly toward target. Normal and correct for irons.\n"
         f"- 'too far forward': hands significantly ahead of ball, shaft leaning excessively toward target, looks forced.\n"
         f"- 'too far back': hands even with or behind the ball, shaft leaning away from target or vertical. Common cause of scooping.\n"
-        f"Important: a slight forward press is normal and correct. Only flag if clearly too far forward or too far back.\n\n"
+        f"Important: a slight forward press is normal and correct. Only flag if clearly too far forward or too far back.\n"
+        f"SHOULDER LEVEL CRITERIA — use these for the shoulder_level field (face-on angle only):\n"
+        f"- 'level': shoulders appear at the same height, balanced at address.\n"
+        f"- 'slightly uneven': one shoulder noticeably higher than the other but not severely so.\n"
+        f"- 'uneven': clearly one shoulder significantly higher, will affect swing plane.\n"
+        f"Important: for right-handed golfers, the right shoulder being slightly lower than the left at address is actually normal and correct due to the grip. Only flag as uneven if the difference looks excessive.\n"
+        f"WEIGHT DISTRIBUTION CRITERIA — use these for the weight_distribution field (face-on angle only):\n"
+        f"- 'balanced': weight appears evenly distributed left and right, golfer looks centered and stable.\n"
+        f"- 'too much on left': weight clearly favoring the lead side at address, will restrict backswing loading.\n"
+        f"- 'too much on right': weight clearly favoring the trail side, may cause reverse pivot.\n"
+        f"Important: for driver, slightly more weight on the right (trail) side is normal. Only flag if clearly excessive.\n"
+        f"BALL POSITION CRITERIA — use these for the ball_position field (face-on angle only):\n"
+        f"- 'good': ball positioned appropriately for the club — driver off lead heel, irons center to slightly forward, wedges center.\n"
+        f"- 'too far forward': ball clearly too far toward the lead foot, will cause thin contact and pulls.\n"
+        f"- 'too far back': ball clearly too far toward the trail foot, will cause fat contact and pushes.\n"
+        f"- 'too far from body': ball clearly too far away, arms reaching, will cause toe strikes.\n"
+        f"- 'too close to body': ball clearly too close, arms cramped, will cause heel strikes.\n"
+        f"Important: ball position is one of the most important setup fundamentals. Judge carefully based on the club being used.\n"
+        f"STANCE WIDTH CRITERIA (face-on) — use these for the stance_width field:\n"
+        f"- 'good': feet shoulder-width apart or slightly wider for driver, narrower for irons/wedges.\n"
+        f"- 'too narrow': feet clearly too close, looks unstable.\n"
+        f"- 'too wide': feet clearly too far apart, will restrict hip turn.\n"
+        f"Important: most recreational golfers have reasonable stance width. Only flag if clearly off.\n\n"
         f"Write coaching notes in second person — speak directly to the golfer using 'you' and 'your'. "
         f"Reference the measurements when relevant. Return ONLY a JSON object with no extra text, no markdown, "
         f"no code blocks. Use exactly this format:"

@@ -3960,7 +3960,7 @@
                 if (!val) return '';
                 const v = String(val).toLowerCase();
                 if (v.includes('elite') || v === 'good' || v === 'level' || v === 'balanced' || v === 'appropriate' || v === 'straight' || v === 'yes' || v === 'square' || v === 'steady') return 'status-good';
-                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back') return 'status-moderate';
+                if (v.includes('solid') || v.includes('slightly') || v === 'minimal' || v === 'too upright' || v === 'too hunched' || v === 'slightly bent' || v === 'too narrow' || v === 'too wide' || v === 'too far forward' || v === 'too far back' || v === 'too far from body' || v === 'too close to body') return 'status-moderate';
                 return 'status-needs-attention';
             };
             const getMetricBorderColor = (sc) => {
@@ -4096,7 +4096,8 @@
                     getStatusFromClaude(addr.posture),
                     getStatusFromClaude(addr.weight_distribution),
                     getStatusFromClaude(addr.stance_width),
-                    getStatusFromClaude(addr.hand_position)
+                    getStatusFromClaude(addr.hand_position),
+                    getStatusFromClaude(addr.ball_position)
                 ];
                 const setupRedCount = setupStatuses.filter(s => s === 'status-needs-attention').length;
                 const setupGreenCount = setupStatuses.filter(s => s === 'status-good').length;
@@ -4130,11 +4131,19 @@
                 }
                 // Shoulder Level — Face-On only
                 if (selectedCameraAngle === 'face_on') {
-                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level || 'N/A', '', 'setupShoulderLevel');
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.shoulder_level)), 'Shoulder Level', addr.shoulder_level ? addr.shoulder_level.charAt(0).toUpperCase() + addr.shoulder_level.slice(1) : 'N/A', '', 'setupShoulderLevel');
                 }
                 // Weight Distribution — Face-On only
                 if (selectedCameraAngle === 'face_on') {
-                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution || 'N/A', '', 'weightDistribution');
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.weight_distribution)), 'Weight Distribution', addr.weight_distribution ? addr.weight_distribution.charAt(0).toUpperCase() + addr.weight_distribution.slice(1) : 'N/A', '', 'weightDistribution');
+                }
+                // Ball Position — Face-On only
+                if (selectedCameraAngle === 'face_on' && addr.ball_position) {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.ball_position)), 'Ball Position', addr.ball_position.charAt(0).toUpperCase() + addr.ball_position.slice(1), '', 'ballPosition');
+                }
+                // Stance Width — Face-On only
+                if (selectedCameraAngle === 'face_on' && addr.stance_width) {
+                    html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.stance_width)), 'Stance Width', addr.stance_width.charAt(0).toUpperCase() + addr.stance_width.slice(1), '', 'stanceWidth');
                 }
                 html += `</div>`;
                 // Locked pills for unavailable metrics
@@ -4144,6 +4153,8 @@
                 if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Hand Position', 'down_the_line'));
                 if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Shoulder Level', 'face_on'));
                 if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Weight Distribution', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Ball Position', 'face_on'));
+                if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Stance Width', 'face_on'));
                 if (setupLockedPills.length > 0) {
                     html += `<div class="metric-locked-pills-row"><div class="metric-locked-pills-row-label">Not available for this angle</div>${setupLockedPills.join('')}</div>`;
                 }
@@ -4499,6 +4510,10 @@
             stanceWidth: {
                 name: 'Stance Width',
                 text: 'The distance between your feet at address. A good stance width provides a stable base for rotation — typically shoulder-width or slightly wider for a driver, narrower for irons and wedges. Too narrow and you lose stability; too wide and your hip turn becomes restricted.'
+            },
+            ballPosition: {
+                name: 'Ball Position',
+                text: 'Where the ball sits relative to your stance at address. Driver should be positioned off your lead heel to promote an upward strike. Irons should be slightly forward of center for a descending strike. Wedges play best from center. Poor ball position is one of the most common causes of inconsistent contact.'
             },
             handPosition: {
                 name: 'Hand Position / Shaft Lean',
