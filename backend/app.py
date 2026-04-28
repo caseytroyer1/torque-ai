@@ -271,7 +271,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     if user_camera_angle == 'face_on':
         prompt_json = '''{
   "address": {
-    "posture": "good/needs work",
+    "posture": "good/slightly rounded/too upright/too hunched",
     "spine_angle_visual": "good/too upright/too bent over",
     "shoulder_level": "level/slightly uneven/uneven",
     "weight_distribution": "balanced/too much on left/too much on right",
@@ -297,7 +297,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     elif user_camera_angle == 'down_the_line':
         prompt_json = '''{
   "address": {
-    "posture": "good/needs work",
+    "posture": "good/slightly rounded/too upright/too hunched",
     "spine_angle_visual": "good/too upright/too bent over",
     "weight_distribution": "balanced/too much on heels/too much on toes",
     "coaching_note": "one specific actionable tip about setup in 15 words or less"
@@ -369,6 +369,12 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         f"{mp_context}\n\n"
         f"Your job is to provide ONLY the visual assessments that MediaPipe cannot measure, "
         f"limited to what is actually visible from the {user_camera_angle.replace('_', ' ')} angle. "
+        f"POSTURE ASSESSMENT CRITERIA — use these to grade the posture field:\n"
+        f"- 'good': neutral spine with slight forward tilt from hips, chin up, back relatively flat, knees slightly flexed, arms hanging naturally. Looks athletic and balanced.\n"
+        f"- 'slightly rounded': mild rounding of the upper back or shoulders, not severe enough to cause major issues but could improve.\n"
+        f"- 'too upright': standing too tall with insufficient forward bend from the hips, arms reaching for the ball, looks stiff.\n"
+        f"- 'too hunched': excessive rounding of the back or hunching of the shoulders, chin down toward chest, creates restriction.\n"
+        f"Important: most recreational golfers with reasonable form should score 'good' or 'slightly rounded'. Only use 'too upright' or 'too hunched' for clear and obvious posture issues.\n\n"
         f"Write coaching notes in second person — speak directly to the golfer using 'you' and 'your'. "
         f"Reference the measurements when relevant. Return ONLY a JSON object with no extra text, no markdown, "
         f"no code blocks. Use exactly this format:"
