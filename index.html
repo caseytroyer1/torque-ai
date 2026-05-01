@@ -9,6 +9,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
     <style>
+        #torque-toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: #1a2a3a;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 14px;
+            color: #fff;
+            z-index: 99999;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        #torque-toast.toast-visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        #torque-toast.toast-error { border-color: rgba(239,68,68,0.5); background: #1f1215; }
+        #torque-toast.toast-success { border-color: rgba(34,197,94,0.5); background: #0f1f14; }
+        #torque-toast.toast-info { border-color: rgba(30,94,255,0.5); background: #0f1525; }
+
         .swing-meta-pills {
             display: flex;
             flex-wrap: wrap;
@@ -72,6 +99,7 @@
     </script>
 </head>
 <body>
+    <div id="torque-toast"></div>
     <!-- Top Navigation Bar -->
     <nav class="top-nav">
         <div class="top-nav-container">
@@ -2518,7 +2546,7 @@
             var accountUpgradeBtn = document.getElementById('accountUpgradeBtn');
             if (accountUpgradeBtn) {
                 accountUpgradeBtn.addEventListener('click', function() {
-                    alert('Coming soon');
+                    showToast('Coming soon — stay tuned!', 'info');
                 });
             }
 
@@ -3166,14 +3194,14 @@
                 const fileType = file.type;
                 
                 if (!validTypes.includes(fileType) && !file.name.match(/\.(mp4|mov|avi)$/i)) {
-                    alert('Please upload a valid video file (MP4, MOV, or AVI)');
+                    showToast('Please upload a valid video file (MP4, MOV, or AVI)', 'error');
                     return;
                 }
 
                 // Validate file size (50MB = 50 * 1024 * 1024 bytes)
                 const maxSize = 50 * 1024 * 1024;
                 if (file.size > maxSize) {
-                    alert('File size exceeds 50MB limit');
+                    showToast('File size exceeds 50MB limit. Please upload a smaller video.', 'error');
                     return;
                 }
 
@@ -3540,16 +3568,16 @@
         async function analyzeSwing() {
             // Get the file from the input
             if (!videoFileInput || !videoFileInput.files || videoFileInput.files.length === 0) {
-                alert('Please upload a video first');
+                showToast('Please upload a video first', 'error');
                 return;
             }
 
             if (!selectedHand) {
-                alert('Please select your dominant hand before analyzing.');
+                showToast('Please select your dominant hand before analyzing', 'error');
                 return;
             }
             if (!selectedClub) {
-                alert('Please select your club type before analyzing.');
+                showToast('Please select your club type before analyzing', 'error');
                 return;
             }
             
@@ -3676,7 +3704,7 @@
                     errorMessage = 'Failed to fetch: This is usually a CORS or network issue. Check browser console for details.';
                 }
                 
-                alert(`Upload failed: ${errorMessage}`);
+                showToast(`Upload failed: ${errorMessage}`, 'error');
             }
         }
         
@@ -4620,6 +4648,18 @@
             const info = METRIC_EXPLANATIONS[key];
             if (info) showMetricModal(info.name, info.text);
         });
+        function showToast(message, type = 'error', duration = 3500) {
+            const toast = document.getElementById('torque-toast');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.className = '';
+            void toast.offsetWidth;
+            toast.classList.add('toast-visible', `toast-${type}`);
+            clearTimeout(window._toastTimeout);
+            window._toastTimeout = setTimeout(() => {
+                toast.classList.remove('toast-visible');
+            }, duration);
+        }
     </script>
     <div id="metricInfoModal" class="metric-info-modal-overlay" aria-hidden="true">
         <div class="metric-info-modal-card">
