@@ -53,6 +53,28 @@
             letter-spacing: 0.3px;
         }
 
+        .my-game-course-dropdown .course-dropdown-item {
+            background: #0d2137;
+            color: #ffffff;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .my-game-course-dropdown .course-dropdown-item:hover {
+            background: rgba(30,94,255,0.2);
+            color: #ffffff;
+        }
+        .my-game-course-dropdown .course-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .rounds-history-course-cell {
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .metric-locked-pills-row {
             display: flex;
             flex-wrap: wrap;
@@ -744,106 +766,151 @@
                     <div class="swing-tabs-separator"></div>
 
                     <div id="rounds-tab" class="tab-pane">
-                        <div class="my-game-form-card">
-                            <h2 class="my-game-form-title">Log a Round</h2>
-                            <form id="myGameRoundForm">
-                                <div class="my-game-form-grid">
-                                    <div class="form-group span-2">
-                                        <label for="myGameDate" class="form-label">Date played</label>
-                                        <input type="date" id="myGameDate" name="played_at" class="form-input" required />
-                                    </div>
-                                    <div class="form-group span-2 my-game-course-field">
-                                        <label for="myGameCourse" class="form-label">Course name</label>
-                                        <div class="my-game-course-input-row">
-                                            <input type="text" id="myGameCourse" name="course_name" class="form-input my-game-course-input" placeholder="Search for a course..." autocomplete="off" required />
-                                            <button type="button" class="my-game-course-clear" id="myGameCourseClear" style="display: none;" aria-label="Clear course and use manual entry" title="Clear course">×</button>
-                                        </div>
-                                        <div id="myGameCourseDropdown" class="my-game-course-dropdown" role="listbox" aria-label="Course search results"></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGameTees" class="form-label">Tees played</label>
-                                        <select id="myGameTees" name="tees_played" class="form-input" required>
-                                            <option value="">Select tees</option>
-                                            <option value="Black">Black</option>
-                                            <option value="Blue">Blue</option>
-                                            <option value="White">White</option>
-                                            <option value="Gold">Gold</option>
-                                            <option value="Red">Red</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGamePar" class="form-label">Par</label>
-                                        <input type="number" id="myGamePar" name="par" class="form-input" min="27" max="200" value="72" required />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGameRating" class="form-label">Course rating</label>
-                                        <input type="number" id="myGameRating" name="course_rating" class="form-input" step="0.1" min="60" max="90" placeholder="e.g. 71.4" required />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGameSlope" class="form-label">Slope</label>
-                                        <input type="number" id="myGameSlope" name="slope" class="form-input" min="55" max="155" placeholder="e.g. 125" required />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGameGross" class="form-label">Gross score</label>
-                                        <input type="number" id="myGameGross" name="gross_score" class="form-input" min="18" max="200" required />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGamePutts" class="form-label">Putts <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
-                                        <input type="number" id="myGamePutts" name="putts" class="form-input" min="0" max="200" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGameFairways" class="form-label">Fairways hit <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
-                                        <input type="number" id="myGameFairways" name="fairways_hit" class="form-input" min="0" max="18" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="myGameGir" class="form-label">Greens in regulation <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
-                                        <input type="number" id="myGameGir" name="greens_in_regulation" class="form-input" min="0" max="18" />
-                                    </div>
-                                    <div class="form-group span-2">
-                                        <label for="myGameDifferential" class="form-label">Handicap differential</label>
-                                        <input type="text" id="myGameDifferential" class="form-input" readonly value="" placeholder="Enter score, rating, and slope" />
-                                    </div>
-                                    <div class="form-group span-2">
-                                        <label for="myGameNotes" class="form-label">Notes <span style="font-weight:400;color:#B8C5D6;">(optional)</span></label>
-                                        <textarea id="myGameNotes" name="notes" class="form-textarea" style="height:100px;" placeholder="Anything you want to remember about this round..."></textarea>
-                                    </div>
-                                </div>
-                                <div class="my-game-form-actions">
-                                    <button type="submit" class="form-submit-button" id="myGameSaveBtn">Save Round</button>
-                                    <div id="myGameSaveSuccess" class="my-game-msg" role="status"></div>
-                                    <div id="myGameSaveError" class="my-game-msg" role="alert"></div>
-                                </div>
-                            </form>
+
+                        <!-- Page header -->
+                        <div style="text-align:center;margin-bottom:32px;">
+                            <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#ff8c1a;font-weight:700;margin-bottom:8px;">My Game</div>
+                            <div style="font-size:36px;font-weight:700;color:#fff;letter-spacing:-1px;font-family:'Space Grotesk',sans-serif;margin-bottom:6px;">Round Tracker</div>
+                            <div style="font-size:14px;color:#7a90b0;">Log your rounds and track your progress over time</div>
                         </div>
 
-                        <div class="my-game-stats-grid" id="myGameStatsGrid">
-                            <div class="my-game-stat-card">
-                                <div class="my-game-stat-label">Rounds logged</div>
-                                <div class="my-game-stat-value" id="myGameStatRounds">0</div>
+                        <!-- Stats row -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px;margin:0 auto 32px;">
+                            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;text-align:center;position:relative;overflow:hidden;">
+                                <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#1e5eff,#5b8fff);"></div>
+                                <div id="myGameStatRounds" style="font-size:52px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif;letter-spacing:-2px;line-height:1;margin-bottom:8px;">0</div>
+                                <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:#4a6080;font-weight:600;">Rounds Logged</div>
                             </div>
-                            <div class="my-game-stat-card">
-                                <div class="my-game-stat-label">Scoring average</div>
-                                <div class="my-game-stat-value" id="myGameStatAvg">—</div>
-                            </div>
-                            <div class="my-game-stat-card">
-                                <div class="my-game-stat-label">Lowest differential</div>
-                                <div class="my-game-stat-value" id="myGameStatLowDiff">—</div>
+                            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;text-align:center;position:relative;overflow:hidden;">
+                                <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ff8c1a,#ffb347);"></div>
+                                <div id="myGameStatAvg" style="font-size:52px;font-weight:700;color:#ff8c1a;font-family:'Space Grotesk',sans-serif;letter-spacing:-2px;line-height:1;margin-bottom:8px;">—</div>
+                                <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:#4a6080;font-weight:600;">Scoring Average</div>
                             </div>
                         </div>
-                        <h2 class="my-game-history-heading">Round history</h2>
-                        <div class="my-game-table-wrap">
-                            <table class="my-game-table" aria-label="Past rounds">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Course</th>
-                                        <th>Score</th>
-                                        <th>Par</th>
-                                        <th>Differential</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="myGameHistoryBody"></tbody>
-                            </table>
+
+                        <!-- Two column: form + history -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:860px;margin:0 auto;">
+
+                            <!-- Log a Round card -->
+                            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;">
+                                <div style="padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px;">
+                                    <div style="font-size:32px;font-weight:700;color:#1e5eff;font-family:'Space Grotesk',sans-serif;letter-spacing:-1px;line-height:1;opacity:0.8;">01</div>
+                                    <div style="font-size:16px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif;">Log a Round</div>
+                                </div>
+                                <div style="padding:20px 24px 24px;">
+                                    <form id="myGameRoundForm">
+
+                                        <!-- Course -->
+                                        <div style="margin-bottom:16px;" class="my-game-course-field">
+                                            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Course name</div>
+                                            <div class="my-game-course-input-row">
+                                                <input type="text" id="myGameCourse" name="course_name" class="form-input my-game-course-input" placeholder="Search for a course..." autocomplete="off" required style="border-radius:10px;" />
+                                                <button type="button" class="my-game-course-clear" id="myGameCourseClear" style="display:none;" aria-label="Clear course" title="Clear course">×</button>
+                                            </div>
+                                            <div id="myGameCourseDropdown" class="my-game-course-dropdown" role="listbox" aria-label="Course search results" style="background:#0d2137;border:1px solid rgba(30,94,255,0.3);border-radius:10px;margin-top:4px;overflow:hidden;"></div>
+                                        </div>
+
+                                        <!-- Tees + Date -->
+                                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Tees played</div>
+                                                <select id="myGameTees" name="tees_played" class="form-input" required style="border-radius:10px;">
+                                                    <option value="">Select tees</option>
+                                                    <option value="Black">Black</option>
+                                                    <option value="Blue">Blue</option>
+                                                    <option value="White">White</option>
+                                                    <option value="Gold">Gold</option>
+                                                    <option value="Red">Red</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Date played</div>
+                                                <input type="date" id="myGameDate" name="played_at" class="form-input" required style="border-radius:10px;" />
+                                            </div>
+                                        </div>
+
+                                        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.06);margin:4px 0 16px;" />
+
+                                        <!-- Score + Par -->
+                                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Gross score</div>
+                                                <input type="number" id="myGameGross" name="gross_score" class="form-input" min="18" max="200" required style="border-radius:10px;" />
+                                            </div>
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Par <span style="font-size:9px;color:#3a5070;text-transform:none;letter-spacing:0;font-weight:400;">auto-filled</span></div>
+                                                <input type="number" id="myGamePar" name="par" class="form-input" min="27" max="200" value="72" required style="border-radius:10px;background:rgba(30,94,255,0.06);border-color:rgba(30,94,255,0.2);color:#5b8fff;" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Rating + Slope -->
+                                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Course rating <span style="font-size:9px;color:#3a5070;text-transform:none;letter-spacing:0;font-weight:400;">auto-filled</span></div>
+                                                <input type="number" id="myGameRating" name="course_rating" class="form-input" step="0.1" min="60" max="90" placeholder="e.g. 71.4" required style="border-radius:10px;background:rgba(30,94,255,0.06);border-color:rgba(30,94,255,0.2);color:#5b8fff;" />
+                                            </div>
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Slope <span style="font-size:9px;color:#3a5070;text-transform:none;letter-spacing:0;font-weight:400;">auto-filled</span></div>
+                                                <input type="number" id="myGameSlope" name="slope" class="form-input" min="55" max="155" placeholder="e.g. 125" required style="border-radius:10px;background:rgba(30,94,255,0.06);border-color:rgba(30,94,255,0.2);color:#5b8fff;" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Hidden differential field (keeps JS working but not visible) -->
+                                        <input type="text" id="myGameDifferential" readonly value="" style="display:none;" />
+
+                                        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.06);margin:4px 0 12px;" />
+
+                                        <!-- Optional stats -->
+                                        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#3a5070;font-weight:600;margin-bottom:10px;">Optional stats</div>
+                                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Putts</div>
+                                                <input type="number" id="myGamePutts" name="putts" class="form-input" min="0" max="200" style="border-radius:10px;font-size:13px;" />
+                                            </div>
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Fairways</div>
+                                                <input type="number" id="myGameFairways" name="fairways_hit" class="form-input" min="0" max="18" style="border-radius:10px;font-size:13px;" />
+                                            </div>
+                                            <div>
+                                                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">GIR</div>
+                                                <input type="number" id="myGameGir" name="greens_in_regulation" class="form-input" min="0" max="18" style="border-radius:10px;font-size:13px;" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Notes -->
+                                        <div style="margin-bottom:16px;">
+                                            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;margin-bottom:6px;">Notes <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#3a5070;">optional</span></div>
+                                            <textarea id="myGameNotes" name="notes" class="form-textarea" style="height:70px;border-radius:10px;" placeholder="Anything to remember about this round..."></textarea>
+                                        </div>
+
+                                        <!-- Save button -->
+                                        <button type="submit" id="myGameSaveBtn" style="width:100%;background:#1e5eff;border:none;border-radius:50px;padding:14px;font-size:15px;font-weight:600;color:#ffffff;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.02em;">Save Round →</button>
+                                        <div id="myGameSaveSuccess" class="my-game-msg" role="status"></div>
+                                        <div id="myGameSaveError" class="my-game-msg" role="alert"></div>
+
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Round History card -->
+                            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;">
+                                <div style="padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px;">
+                                    <div style="font-size:32px;font-weight:700;color:#1e5eff;font-family:'Space Grotesk',sans-serif;letter-spacing:-1px;line-height:1;opacity:0.8;">02</div>
+                                    <div style="font-size:16px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif;">Round History</div>
+                                </div>
+                                <div style="overflow:hidden;">
+                                    <table style="width:100%;border-collapse:collapse;font-size:13px;" aria-label="Past rounds">
+                                        <thead>
+                                            <tr>
+                                                <th style="padding:10px 16px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);">Course</th>
+                                                <th style="padding:10px 16px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#4a6080;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);width:60px;">Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="myGameHistoryBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -2877,7 +2944,7 @@
                     list.forEach(function(c) {
                         var btn = document.createElement('button');
                         btn.type = 'button';
-                        btn.className = 'my-game-course-dd-item';
+                        btn.className = 'course-dropdown-item';
                         btn.setAttribute('role', 'option');
                         var title = document.createElement('div');
                         title.className = 'my-game-course-dd-item-title';
@@ -2996,7 +3063,7 @@
                 var list = rows || [];
                 if (list.length === 0) {
                     var tr = document.createElement('tr');
-                    tr.innerHTML = '<td colspan="5" class="my-game-table-empty">No rounds logged yet</td>';
+                    tr.innerHTML = '<td colspan="2" style="text-align:center;padding:40px 16px;color:#3a5070;font-size:13px;">No rounds logged yet — log your first round above</td>';
                     tbody.appendChild(tr);
                     if (statRounds) statRounds.textContent = '0';
                     if (statAvg) statAvg.textContent = '—';
@@ -3021,11 +3088,13 @@
                     var tr = document.createElement('tr');
                     var diffDisp = row.handicap_differential != null && !isNaN(Number(row.handicap_differential)) ? String(row.handicap_differential) : '—';
                     tr.innerHTML =
-                        '<td>' + myGameEscapeHtml(myGameFormatDateDisplay(row.played_at)) + '</td>' +
-                        '<td>' + myGameEscapeHtml(row.course_name || '—') + '</td>' +
-                        '<td>' + myGameEscapeHtml(row.gross_score != null ? row.gross_score : '—') + '</td>' +
-                        '<td>' + myGameEscapeHtml(row.par != null ? row.par : '—') + '</td>' +
-                        '<td>' + myGameEscapeHtml(diffDisp) + '</td>';
+                        '<td style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04);">' +
+                            '<div style="font-weight:600;color:#fff;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">' + myGameEscapeHtml(row.course_name || '—') + '</div>' +
+                            '<div style="font-size:11px;color:#4a6080;margin-top:2px;">' + myGameEscapeHtml(myGameFormatDateDisplay(row.played_at)) + '</div>' +
+                        '</td>' +
+                        '<td style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04);">' +
+                            '<span style="display:inline-block;background:rgba(30,94,255,0.15);border:1px solid rgba(30,94,255,0.25);border-radius:8px;padding:2px 10px;font-weight:700;color:#fff;font-size:13px;">' + myGameEscapeHtml(row.gross_score != null ? String(row.gross_score) : '—') + '</span>' +
+                        '</td>';
                     tbody.appendChild(tr);
                 });
             }
@@ -3037,7 +3106,7 @@
                         if (tbody) {
                             tbody.innerHTML = '';
                             var tr = document.createElement('tr');
-                            tr.innerHTML = '<td colspan="5" class="my-game-table-empty">Sign in to see your rounds</td>';
+                            tr.innerHTML = '<td colspan="2" style="text-align:center;padding:40px 16px;color:#3a5070;font-size:13px;">Sign in to see your rounds</td>';
                             tbody.appendChild(tr);
                         }
                         return;
@@ -3102,15 +3171,17 @@
                         supabase.from('rounds').insert([payload]).then(function(ins) {
                             if (ins.error) {
                                 if (errEl) {
-                                    errEl.textContent = ins.error.message || 'Could not save round.';
-                                    errEl.className = 'my-game-msg is-error';
+                                    errEl.textContent = '';
+                                    errEl.className = 'my-game-msg';
                                 }
+                                if (typeof showToast === 'function') showToast(ins.error.message || 'Could not save round. Please try again.', 'error');
                                 return;
                             }
                             if (successEl) {
-                                successEl.textContent = 'Round saved successfully.';
-                                successEl.className = 'my-game-msg is-success';
+                                successEl.textContent = '';
+                                successEl.className = 'my-game-msg';
                             }
+                            if (typeof showToast === 'function') showToast('Round saved successfully!', 'success');
                             myGameForm.reset();
                             if (myGameDate) myGameDate.value = myGameTodayISO();
                             if (typeof window.myGameResetCourseApi === 'function') window.myGameResetCourseApi();
