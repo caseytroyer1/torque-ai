@@ -769,6 +769,9 @@
                             <div style="font-size:14px;color:#7a90b0;">Log your rounds and track your progress over time</div>
                         </div>
 
+                        <!-- Stats loading indicator -->
+                        <div id="myGameStatsLoading" style="text-align:center;padding:12px 0 4px;font-size:14px;color:#7a90b0;font-family:'Inter',sans-serif;animation:accountStatsPulse 1.2s ease-in-out infinite;max-width:860px;margin:0 auto 8px;">Loading your stats…</div>
+
                         <!-- Stats row -->
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px;margin:0 auto 32px;">
                             <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;text-align:center;position:relative;overflow:hidden;">
@@ -3051,6 +3054,8 @@
                 var statRounds = document.getElementById('myGameStatRounds');
                 var statAvg = document.getElementById('myGameStatAvg');
                 var statLow = document.getElementById('myGameStatLowDiff');
+                var statsLoading = document.getElementById('myGameStatsLoading');
+                if (statsLoading) statsLoading.style.display = 'none';
                 if (!tbody) return;
                 tbody.innerHTML = '';
                 var list = rows || [];
