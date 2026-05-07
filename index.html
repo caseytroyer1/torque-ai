@@ -2645,11 +2645,16 @@
             if (!canvas) return;
             var ctx = canvas.getContext('2d');
             var root = canvas.parentElement;
-            function resize() { canvas.width = root.offsetWidth; canvas.height = root.offsetHeight; }
+            function resize() {
+                canvas.width = root.offsetWidth;
+                canvas.height = root.offsetHeight || window.innerHeight;
+            }
             resize();
             window.addEventListener('resize', resize);
-            window.addEventListener('load', function() { resize(); });
-            setTimeout(function() { resize(); }, 200);
+            window.addEventListener('load', resize);
+            setTimeout(resize, 50);
+            setTimeout(resize, 300);
+            setTimeout(resize, 800);
             var blobs = [
                 { x: 0.75, y: 0.2, r: 0.45, color: [99,102,241], speed: 0.0008, angle: 0, opacity: 0.13 },
                 { x: 0.85, y: 0.65, r: 0.4, color: [255,140,26], speed: 0.0012, angle: 1, opacity: 0.1 },
@@ -3429,16 +3434,48 @@
 
         function selectHand(hand) {
             selectedHand = hand;
-            document.querySelectorAll('[data-hand]').forEach(btn => btn.classList.remove('selected'));
-            const btn = document.getElementById('hand' + hand.charAt(0).toUpperCase() + hand.slice(1));
-            if (btn) btn.classList.add('selected');
+            document.querySelectorAll('[data-hand]').forEach(function(btn) {
+                btn.style.background = '#fff';
+                btn.style.color = '#4a6080';
+                btn.style.borderColor = 'rgba(0,0,0,0.12)';
+                btn.classList.remove('selected');
+            });
+            var btn = document.getElementById('hand' + hand.charAt(0).toUpperCase() + hand.slice(1));
+            if (btn) {
+                btn.style.background = '#1e5eff';
+                btn.style.color = '#fff';
+                btn.style.borderColor = '#1e5eff';
+                btn.classList.add('selected');
+            }
         }
 
         function selectClub(club) {
             selectedClub = club;
-            document.querySelectorAll('[data-club]').forEach(btn => btn.classList.remove('selected'));
-            const btn = document.getElementById('club' + club.charAt(0).toUpperCase() + club.slice(1));
-            if (btn) btn.classList.add('selected');
+            document.querySelectorAll('[data-club]').forEach(function(btn) {
+                btn.style.background = '#fff';
+                btn.style.color = '#4a6080';
+                btn.style.borderColor = 'rgba(0,0,0,0.12)';
+                btn.classList.remove('selected');
+            });
+            var btn = document.getElementById('club' + club.charAt(0).toUpperCase() + club.slice(1));
+            if (btn) {
+                btn.style.background = '#1e5eff';
+                btn.style.color = '#fff';
+                btn.style.borderColor = '#1e5eff';
+                btn.classList.add('selected');
+            }
+        }
+
+        function lockUploadSelectors() {
+            var dtl = document.getElementById('uploadAngleDTL');
+            var fo = document.getElementById('uploadAngleFO');
+            if (dtl) { dtl.onclick = null; dtl.style.pointerEvents = 'none'; dtl.style.opacity = '0.5'; }
+            if (fo) { fo.onclick = null; fo.style.pointerEvents = 'none'; fo.style.opacity = '0.5'; }
+            document.querySelectorAll('[data-hand],[data-club]').forEach(function(btn) {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            });
         }
 
         function selectCameraAngle(angle) {
@@ -3530,6 +3567,7 @@
                 }
                 const swingSelectors = document.getElementById('swingSelectors');
                 if (swingSelectors) swingSelectors.style.display = 'block';
+                lockUploadSelectors();
 
                 // Hide upload zone and show video preview in right column; show actions below
                 uploadZone.classList.add('hidden');
