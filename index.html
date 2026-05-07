@@ -3533,6 +3533,16 @@
             document.querySelectorAll('.swing-selector-btn').forEach(btn => btn.classList.remove('selected'));
             const cameraDTLBtn = document.getElementById('cameraDownTheLine');
             if (cameraDTLBtn) cameraDTLBtn.classList.add('selected');
+            var dtl = document.getElementById('uploadAngleDTL');
+            var fo = document.getElementById('uploadAngleFO');
+            if (dtl) { dtl.onclick = function(){ selectCameraAngle('down_the_line'); updateAngleCards('down_the_line'); }; dtl.style.pointerEvents = ''; dtl.style.opacity = ''; }
+            if (fo) { fo.onclick = function(){ selectCameraAngle('face_on'); updateAngleCards('face_on'); }; fo.style.pointerEvents = ''; fo.style.opacity = ''; }
+            document.querySelectorAll('[data-hand],[data-club]').forEach(function(btn) {
+                btn.disabled = false;
+                btn.style.opacity = '';
+                btn.style.cursor = '';
+            });
+            updateAngleCards('down_the_line');
         }
 
         // Function to handle file selection
@@ -3567,7 +3577,6 @@
                 }
                 const swingSelectors = document.getElementById('swingSelectors');
                 if (swingSelectors) swingSelectors.style.display = 'block';
-                lockUploadSelectors();
 
                 // Hide upload zone and show video preview in right column; show actions below
                 uploadZone.classList.add('hidden');
@@ -3935,6 +3944,7 @@
             console.log('File selected:', file.name, 'Size:', file.size, 'bytes');
             
             // Show loading state
+            lockUploadSelectors();
             if (analyzeButton) {
                 analyzeButton.disabled = true;
                 analyzeButton.classList.add('loading');
