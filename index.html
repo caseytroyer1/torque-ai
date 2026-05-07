@@ -441,97 +441,118 @@
 
                 <!-- Content Areas -->
                 <div id="analyze" class="tab-pane active">
-                    <!-- Upload Card - two columns -->
-                    <div class="upload-card">
-                        <div class="upload-layout">
-                            <div class="before-upload-column">
-                                <h2 class="before-upload-heading">Before You Upload</h2>
-                                <div class="tip-card">
-                                    <span class="tip-card-icon" aria-hidden="true">📍</span>
-                                    <p class="tip-card-text">Film Down-the-Line or Face-On</p>
+                    <div class="upload-card" style="background:transparent;box-shadow:none;border:none;padding:0;">
+                        <div style="max-width:700px;margin:0 auto;">
+
+                            <!-- Steps row -->
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:28px;">
+                                <div style="display:flex;align-items:flex-start;gap:10px;">
+                                    <div style="font-size:26px;font-weight:700;color:#1e5eff;font-family:'Space Grotesk',sans-serif;letter-spacing:-1px;line-height:1;opacity:0.7;flex-shrink:0;">01</div>
+                                    <div style="font-size:12px;color:#7a90b0;line-height:1.5;padding-top:4px;"><strong style="color:#fff;font-weight:600;display:block;margin-bottom:2px;">Pick your angle</strong>Down-the-Line or Face-On</div>
                                 </div>
-                                <div class="tip-card">
-                                    <span class="tip-card-icon" aria-hidden="true">⏱️</span>
-                                    <p class="tip-card-text">Keep it 5-10 seconds — just the swing, nothing extra</p>
+                                <div style="display:flex;align-items:flex-start;gap:10px;">
+                                    <div style="font-size:26px;font-weight:700;color:#1e5eff;font-family:'Space Grotesk',sans-serif;letter-spacing:-1px;line-height:1;opacity:0.7;flex-shrink:0;">02</div>
+                                    <div style="font-size:12px;color:#7a90b0;line-height:1.5;padding-top:4px;"><strong style="color:#fff;font-weight:600;display:block;margin-bottom:2px;">Upload your video</strong>5–10 sec, normal speed</div>
                                 </div>
-                                <div class="tip-card">
-                                    <span class="tip-card-icon" aria-hidden="true">☀️</span>
-                                    <p class="tip-card-text">Good lighting — outdoors or well-lit area works best</p>
-                                </div>
-                                <div class="tip-card">
-                                    <span class="tip-card-icon" aria-hidden="true">📱</span>
-                                    <p class="tip-card-text">Normal speed — avoid slow motion mode</p>
+                                <div style="display:flex;align-items:flex-start;gap:10px;">
+                                    <div style="font-size:26px;font-weight:700;color:#1e5eff;font-family:'Space Grotesk',sans-serif;letter-spacing:-1px;line-height:1;opacity:0.7;flex-shrink:0;">03</div>
+                                    <div style="font-size:12px;color:#7a90b0;line-height:1.5;padding-top:4px;"><strong style="color:#fff;font-weight:600;display:block;margin-bottom:2px;">Get your analysis</strong>Full breakdown in seconds</div>
                                 </div>
                             </div>
-                            <div class="upload-column">
-                                <div class="upload-zone" id="uploadZone">
-                                    <div class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-                                    <div class="upload-text">Drop your swing video here</div>
-                                    <div class="upload-or">or</div>
-                                    <button type="button" class="browse-button" id="browseButton">Browse Files</button>
+
+                            <!-- Camera angle selector -->
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+                                <div id="uploadAngleDTL" onclick="selectCameraAngle('down_the_line');updateAngleCards('down_the_line');" style="border-radius:14px;padding:16px 18px;cursor:pointer;transition:all 0.2s;border:2px solid #1e5eff;background:rgba(30,94,255,0.1);">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                                        <div style="font-size:14px;font-weight:700;color:#fff;">Down-the-Line</div>
+                                        <div id="uploadAngleDTLRadio" style="width:18px;height:18px;border-radius:50%;background:#1e5eff;border:2px solid #1e5eff;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;border-radius:50%;background:#fff;"></div></div>
+                                    </div>
+                                    <div style="font-size:12px;color:#7a90b0;line-height:1.4;">Camera ~10 ft behind your trail foot, pointing toward the target</div>
                                 </div>
-                                <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
-                                <div class="file-hint">MP4, MOV up to 100MB</div>
-                                <div class="video-preview-wrapper" id="videoPreviewSection">
-                                    <div style="position: relative;">
-                                        <video id="videoPreview" class="video-preview" controls></video>
-                                        <div class="processing-overlay" id="processingOverlay">
-                                            <div class="processing-content">
-                                                <div class="processing-spinner"></div>
-                                                <h3 class="processing-heading">Analyzing your swing...</h3>
-                                                <div class="processing-checklist">
-                                                    <div class="processing-step" id="step1">
-                                                        <div class="step-spinner"></div>
-                                                        <span class="step-text">Detecting body position...</span>
-                                                    </div>
-                                                    <div class="processing-step" id="step2">
-                                                        <div class="step-spinner"></div>
-                                                        <span class="step-text">Measuring swing angles...</span>
-                                                    </div>
-                                                    <div class="processing-step" id="step3">
-                                                        <div class="step-spinner"></div>
-                                                        <span class="step-text">Analyzing biomechanics...</span>
-                                                    </div>
+                                <div id="uploadAngleFO" onclick="selectCameraAngle('face_on');updateAngleCards('face_on');" style="border-radius:14px;padding:16px 18px;cursor:pointer;transition:all 0.2s;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                                        <div style="font-size:14px;font-weight:700;color:#fff;">Face-On</div>
+                                        <div id="uploadAngleFORadio" style="width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);"></div>
+                                    </div>
+                                    <div style="font-size:12px;color:#7a90b0;line-height:1.4;">Camera ~10 ft directly in front, centered between your feet</div>
+                                </div>
+                            </div>
+
+                            <!-- Upload zone -->
+                            <div class="upload-zone" id="uploadZone">
+                                <div class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+                                <div class="upload-text">Drop your swing video here</div>
+                                <div class="upload-or">or</div>
+                                <button type="button" class="browse-button" id="browseButton">Browse Files →</button>
+                                <div style="font-size:11px;color:#3a5070;margin-top:10px;">MP4 or MOV · Up to 100MB · Normal speed only</div>
+                            </div>
+                            <input type="file" id="videoFileInput" class="file-input" accept=".mp4,.mov,.avi" />
+
+                            <!-- Video preview and processing overlay -->
+                            <div class="video-preview-wrapper" id="videoPreviewSection">
+                                <div style="position:relative;">
+                                    <video id="videoPreview" class="video-preview" controls></video>
+                                    <div class="processing-overlay" id="processingOverlay">
+                                        <div class="processing-content">
+                                            <div class="processing-spinner"></div>
+                                            <h3 class="processing-heading">Analyzing your swing...</h3>
+                                            <div class="processing-checklist">
+                                                <div class="processing-step" id="step1">
+                                                    <div class="step-spinner"></div>
+                                                    <span class="step-text">Detecting body position...</span>
+                                                </div>
+                                                <div class="processing-step" id="step2">
+                                                    <div class="step-spinner"></div>
+                                                    <span class="step-text">Measuring swing angles...</span>
+                                                </div>
+                                                <div class="processing-step" id="step3">
+                                                    <div class="step-spinner"></div>
+                                                    <span class="step-text">Analyzing biomechanics...</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="video-file-info" id="videoFileInfo"></div>
                                 </div>
-                                <div class="file-selected" id="fileSelected">
-                                    <div class="file-name" id="fileName"></div>
-                                    <div class="file-size" id="fileSize"></div>
+                                <div class="video-file-info" id="videoFileInfo"></div>
+                            </div>
+                            <div class="file-selected" id="fileSelected">
+                                <div class="file-name" id="fileName"></div>
+                                <div class="file-size" id="fileSize"></div>
+                            </div>
+
+                            <!-- Hand + Club selectors always visible -->
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
+                                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;">
+                                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#4a6080;margin-bottom:10px;">Dominant Hand</div>
+                                    <div style="display:flex;gap:6px;">
+                                        <button type="button" class="swing-selector-btn selected" id="handRight" data-hand="right" onclick="selectHand('right')">Right-Handed</button>
+                                        <button type="button" class="swing-selector-btn" id="handLeft" data-hand="left" onclick="selectHand('left')">Left-Handed</button>
+                                    </div>
+                                </div>
+                                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;">
+                                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#4a6080;margin-bottom:10px;">Club Type</div>
+                                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                        <button type="button" class="swing-selector-btn" id="clubDriver" data-club="driver" onclick="selectClub('driver')">Driver</button>
+                                        <button type="button" class="swing-selector-btn" id="clubFairway" data-club="fairway" onclick="selectClub('fairway')">Fairway Wood</button>
+                                        <button type="button" class="swing-selector-btn" id="clubIron" data-club="iron" onclick="selectClub('iron')">Iron</button>
+                                        <button type="button" class="swing-selector-btn" id="clubWedge" data-club="wedge" onclick="selectClub('wedge')">Wedge</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="swing-selectors" id="swingSelectors" style="display:none;">
-                            <div>
-                                <div class="swing-selectors-label">Dominant Hand</div>
-                                <div class="swing-selector-group">
-                                    <button type="button" class="swing-selector-btn" id="handRight" data-hand="right" onclick="selectHand('right')">Right-Handed</button>
-                                    <button type="button" class="swing-selector-btn" id="handLeft" data-hand="left" onclick="selectHand('left')">Left-Handed</button>
-                                </div>
+
+                            <!-- Hidden camera btns for JS compatibility -->
+                            <div style="display:none;">
+                                <button type="button" id="cameraDownTheLine" data-camera="down_the_line" onclick="selectCameraAngle('down_the_line')"></button>
+                                <button type="button" id="cameraFaceOn" data-camera="face_on" onclick="selectCameraAngle('face_on')"></button>
+                                <div id="swingSelectors"></div>
                             </div>
-                            <div>
-                                <div class="swing-selectors-label">Club Type</div>
-                                <div class="swing-selector-group">
-                                    <button type="button" class="swing-selector-btn" id="clubDriver" data-club="driver" onclick="selectClub('driver')">Driver</button>
-                                    <button type="button" class="swing-selector-btn" id="clubFairway" data-club="fairway" onclick="selectClub('fairway')">Fairway Wood</button>
-                                    <button type="button" class="swing-selector-btn" id="clubIron" data-club="iron" onclick="selectClub('iron')">Iron</button>
-                                    <button type="button" class="swing-selector-btn" id="clubWedge" data-club="wedge" onclick="selectClub('wedge')">Wedge</button>
-                                </div>
+
+                            <!-- Analyze button -->
+                            <div class="upload-actions" id="uploadActions">
+                                <button class="analyze-button analyze-button-fullwidth" id="analyzeButton">Analyze Swing</button>
+                                <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
                             </div>
-                            <div>
-                                <div class="swing-selectors-label">Camera Angle</div>
-                                <div class="swing-selector-group">
-                                    <button type="button" class="swing-selector-btn selected" id="cameraDownTheLine" data-camera="down_the_line" onclick="selectCameraAngle('down_the_line')">Down-the-Line</button>
-                                    <button type="button" class="swing-selector-btn" id="cameraFaceOn" data-camera="face_on" onclick="selectCameraAngle('face_on')">Face-On</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="upload-actions" id="uploadActions">
-                            <button class="analyze-button analyze-button-fullwidth" id="analyzeButton">Analyze Swing</button>
-                            <a href="#" class="upload-different-link" id="uploadDifferentLink">Upload a different video</a>
+
                         </div>
                     </div>
 
@@ -3336,23 +3357,71 @@
 
         function selectHand(hand) {
             selectedHand = hand;
-            document.querySelectorAll('[data-hand]').forEach(btn => btn.classList.remove('selected'));
-            const btn = document.getElementById('hand' + hand.charAt(0).toUpperCase() + hand.slice(1));
+            document.querySelectorAll('[data-hand]').forEach(function(btn) { btn.classList.remove('selected'); });
+            var btn = document.getElementById('hand' + hand.charAt(0).toUpperCase() + hand.slice(1));
             if (btn) btn.classList.add('selected');
         }
 
         function selectClub(club) {
             selectedClub = club;
-            document.querySelectorAll('[data-club]').forEach(btn => btn.classList.remove('selected'));
-            const btn = document.getElementById('club' + club.charAt(0).toUpperCase() + club.slice(1));
+            document.querySelectorAll('[data-club]').forEach(function(btn) { btn.classList.remove('selected'); });
+            var btn = document.getElementById('club' + club.charAt(0).toUpperCase() + club.slice(1));
             if (btn) btn.classList.add('selected');
         }
 
         function selectCameraAngle(angle) {
             selectedCameraAngle = angle;
-            document.querySelectorAll('[data-camera]').forEach(btn => btn.classList.remove('selected'));
-            const btn = document.querySelector('[data-camera="' + angle + '"]');
+            document.querySelectorAll('[data-camera]').forEach(function(btn) { btn.classList.remove('selected'); });
+            var btn = document.querySelector('[data-camera="' + angle + '"]');
             if (btn) btn.classList.add('selected');
+        }
+
+        function updateAngleCards(angle) {
+            var dtl = document.getElementById('uploadAngleDTL');
+            var fo = document.getElementById('uploadAngleFO');
+            var dtlRadio = document.getElementById('uploadAngleDTLRadio');
+            var foRadio = document.getElementById('uploadAngleFORadio');
+            if (!dtl || !fo) return;
+            if (angle === 'down_the_line') {
+                dtl.style.border = '2px solid #1e5eff';
+                dtl.style.background = 'rgba(30,94,255,0.1)';
+                fo.style.border = '2px solid rgba(255,255,255,0.1)';
+                fo.style.background = 'rgba(255,255,255,0.03)';
+                if (dtlRadio) { dtlRadio.style.background = '#1e5eff'; dtlRadio.style.borderColor = '#1e5eff'; dtlRadio.innerHTML = '<div style=\"width:6px;height:6px;border-radius:50%;background:#fff;\"></div>'; }
+                if (foRadio) { foRadio.style.background = 'none'; foRadio.style.borderColor = 'rgba(255,255,255,0.3)'; foRadio.innerHTML = ''; }
+            } else {
+                fo.style.border = '2px solid #1e5eff';
+                fo.style.background = 'rgba(30,94,255,0.1)';
+                dtl.style.border = '2px solid rgba(255,255,255,0.1)';
+                dtl.style.background = 'rgba(255,255,255,0.03)';
+                if (foRadio) { foRadio.style.background = '#1e5eff'; foRadio.style.borderColor = '#1e5eff'; foRadio.innerHTML = '<div style=\"width:6px;height:6px;border-radius:50%;background:#fff;\"></div>'; }
+                if (dtlRadio) { dtlRadio.style.background = 'none'; dtlRadio.style.borderColor = 'rgba(255,255,255,0.3)'; dtlRadio.innerHTML = ''; }
+            }
+        }
+
+        function lockUploadSelectors() {
+            var dtl = document.getElementById('uploadAngleDTL');
+            var fo = document.getElementById('uploadAngleFO');
+            if (dtl) { dtl.onclick = null; dtl.style.pointerEvents = 'none'; dtl.style.opacity = '0.5'; }
+            if (fo) { fo.onclick = null; fo.style.pointerEvents = 'none'; fo.style.opacity = '0.5'; }
+            document.querySelectorAll('[data-hand],[data-club]').forEach(function(btn) {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            });
+        }
+
+        function unlockUploadSelectors() {
+            var dtl = document.getElementById('uploadAngleDTL');
+            var fo = document.getElementById('uploadAngleFO');
+            if (dtl) { dtl.onclick = function(){ selectCameraAngle('down_the_line'); updateAngleCards('down_the_line'); }; dtl.style.pointerEvents = ''; dtl.style.opacity = ''; }
+            if (fo) { fo.onclick = function(){ selectCameraAngle('face_on'); updateAngleCards('face_on'); }; fo.style.pointerEvents = ''; fo.style.opacity = ''; }
+            document.querySelectorAll('[data-hand],[data-club]').forEach(function(btn) {
+                btn.disabled = false;
+                btn.style.opacity = '';
+                btn.style.cursor = '';
+            });
+            updateAngleCards('down_the_line');
         }
 
         const uploadZone = document.getElementById('uploadZone');
@@ -3403,6 +3472,7 @@
             document.querySelectorAll('.swing-selector-btn').forEach(btn => btn.classList.remove('selected'));
             const cameraDTLBtn = document.getElementById('cameraDownTheLine');
             if (cameraDTLBtn) cameraDTLBtn.classList.add('selected');
+            unlockUploadSelectors();
         }
 
         // Function to handle file selection
@@ -3804,6 +3874,7 @@
             console.log('File selected:', file.name, 'Size:', file.size, 'bytes');
             
             // Show loading state
+            lockUploadSelectors();
             if (analyzeButton) {
                 analyzeButton.disabled = true;
                 analyzeButton.classList.add('loading');
