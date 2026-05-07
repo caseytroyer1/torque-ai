@@ -4465,17 +4465,6 @@
                     html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(addr.stance_width)), 'Stance Width', addr.stance_width.charAt(0).toUpperCase() + addr.stance_width.slice(1), '', 'stanceWidth');
                 }
                 html += `</div>`;
-                // Locked pills for unavailable metrics
-                const setupLockedPills = [];
-                if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Knee Flex', 'down_the_line'));
-                if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Stance Width', 'down_the_line'));
-                if (selectedCameraAngle !== 'down_the_line') setupLockedPills.push(lockedMetricPill('Hand Position', 'down_the_line'));
-                if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Shoulder Level', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Weight Distribution', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') setupLockedPills.push(lockedMetricPill('Ball Position', 'face_on'));
-                if (setupLockedPills.length > 0) {
-                    html += `<div class="metric-locked-pills-row"><div class="metric-locked-pills-row-label">Not available for this angle</div>${setupLockedPills.join('')}</div>`;
-                }
                 if (addr.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(addr.coaching_note)}</span></div>`;
                 html += `<button type="button" class="view-mechanics-btn">View Swing Mechanics →</button>`;
                 html += `</div></div></div>`;
@@ -4559,22 +4548,6 @@
                     if (finishPos) html += metricCardHtml(getMetricBorderColor(getStatusFromClaude(finishPos)), 'Finish Position', finishPos.charAt(0).toUpperCase() + finishPos.slice(1), '', 'finishPosition');
                 }
                 html += `</div>`;
-                // Locked pills for unavailable metrics this angle
-                const mechLockedPills = [];
-                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Left Arm', 'down_the_line'));
-                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Club at Top', 'down_the_line'));
-                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Hip Sway', 'down_the_line'));
-                if (selectedCameraAngle === 'face_on') mechLockedPills.push(lockedMetricPill('Shaft Lean at Impact', 'down_the_line'));
-                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Weight Transfer', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Lateral Head Movement', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Head Position at Impact', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Weight Transfer at Impact', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Hip Slide', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Finish Position', 'face_on'));
-                if (selectedCameraAngle !== 'face_on') mechLockedPills.push(lockedMetricPill('Shoulder Tilt at Impact', 'face_on'));
-                if (mechLockedPills.length > 0) {
-                    html += `<div class="metric-locked-pills-row"><div class="metric-locked-pills-row-label">Not available for this angle</div>${mechLockedPills.join('')}</div>`;
-                }
                 if (back.coaching_note) html += `<div class="results-coaching-tip-card"><span class="tip-icon" aria-hidden="true">💡</span><span>${escapeHtml(back.coaching_note)}</span></div>`;
 
                 // PRACTICE PLAN — map issues and Claude Vision findings to drills
