@@ -913,27 +913,91 @@
                     </div>
 
                     <div id="coach-tab" class="tab-pane active">
-                        <div class="golf-coach-header">
-                            <div class="golf-coach-label">POWERED BY TORQUE</div>
-                            <h1 class="golf-coach-heading">Your Personal Caddy</h1>
-                            <p class="golf-coach-subtext">Ask anything about your swing, technique, or game</p>
-                        </div>
-                        <div class="coach-welcome-msg" id="coachWelcomeMsg">
-                            <span class="ai-icon" aria-hidden="true">✦</span>
-                            <span>Hey! I'm your Torque AI coach. I can see your latest swing analysis and I'm ready to help. Ask me anything about your swing, or tap one of the questions below to get started.</span>
-                        </div>
-                        <div class="coach-prompts-row" id="coachPromptsRow">
-                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">What's my biggest issue?</button>
-                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">How do I fix early extension?</button>
-                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">Give me a drill to practice today</button>
-                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">How can I get more distance?</button>
-                            <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)">Explain my swing tempo</button>
-                        </div>
-                        <div class="golf-chat-wrap">
-                            <div class="golf-chat-messages" id="golfChatMessages"></div>
-                            <div class="golf-chat-input-row">
-                                <input type="text" class="golf-chat-input" id="golfChatInput" placeholder="Ask your personal coach anything..." />
-                                <button type="button" class="golf-chat-send" id="golfChatSend">Send</button>
+                        <div style="display:grid;grid-template-columns:240px 1fr;gap:20px;max-width:960px;margin:0 auto;align-items:start;">
+
+                            <!-- LEFT SIDEBAR -->
+                            <div style="display:flex;flex-direction:column;gap:14px;">
+
+                                <!-- What's your miss -->
+                                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;">
+                                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#4a6080;margin-bottom:4px;">What's your miss?</div>
+                                    <div style="font-size:11px;color:#3a5070;margin-bottom:12px;">Tell your coach what the ball is doing</div>
+                                    <div style="display:flex;flex-direction:column;gap:7px;">
+                                        <button type="button" class="miss-btn" data-miss="My miss is a hook — the ball curves hard to the left" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">
+                                            <div style="font-size:12px;font-weight:700;color:#ef4444;margin-bottom:1px;">Hook</div>
+                                            <div style="font-size:11px;color:#7a90b0;">Ball curves hard left</div>
+                                        </button>
+                                        <button type="button" class="miss-btn" data-miss="My miss is a slice — the ball curves hard to the right" style="background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.2);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">
+                                            <div style="font-size:12px;font-weight:700;color:#fb923c;margin-bottom:1px;">Slice</div>
+                                            <div style="font-size:11px;color:#7a90b0;">Ball curves hard right</div>
+                                        </button>
+                                        <button type="button" class="miss-btn" data-miss="My miss is hitting it fat — I'm catching the ground before the ball" style="background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">
+                                            <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:1px;">Fat / Chunk</div>
+                                            <div style="font-size:11px;color:#7a90b0;">Hitting the ground first</div>
+                                        </button>
+                                        <button type="button" class="miss-btn" data-miss="My miss is hitting it thin or topping it — I'm catching the ball too high" style="background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">
+                                            <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:1px;">Thin / Topped</div>
+                                            <div style="font-size:11px;color:#7a90b0;">Catching it too high</div>
+                                        </button>
+                                        <button type="button" class="miss-btn" data-miss="I'm losing distance and not getting my full yardage" style="background:rgba(30,94,255,0.08);border:1px solid rgba(30,94,255,0.2);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">
+                                            <div style="font-size:12px;font-weight:700;color:#5b8fff;margin-bottom:1px;">Loss of distance</div>
+                                            <div style="font-size:11px;color:#7a90b0;">Not getting full yardage</div>
+                                        </button>
+                                        <button type="button" class="miss-btn" data-miss="I'm not sure what my miss is — can you help me figure it out based on my swing data?" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">
+                                            <div style="font-size:12px;font-weight:700;color:#7a90b0;margin-bottom:1px;">Not sure</div>
+                                            <div style="font-size:11px;color:#3a5070;">Help me figure it out</div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Quick prompts -->
+                                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;">
+                                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#4a6080;margin-bottom:10px;">Ask your coach</div>
+                                    <div style="display:flex;flex-direction:column;gap:6px;" id="coachPromptsRow">
+                                        <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)" style="background:none;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 12px;text-align:left;color:#b0c4d8;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">What's my biggest issue?</button>
+                                        <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)" style="background:none;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 12px;text-align:left;color:#b0c4d8;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">Give me a drill for today</button>
+                                        <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)" style="background:none;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 12px;text-align:left;color:#b0c4d8;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">How can I get more distance?</button>
+                                        <button type="button" class="coach-prompt-chip" onclick="useCoachPrompt(this)" style="background:none;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 12px;text-align:left;color:#b0c4d8;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;width:100%;">Explain my swing tempo</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- RIGHT: CHAT -->
+                            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;min-height:560px;">
+
+                                <!-- Header -->
+                                <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;">
+                                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(30,94,255,0.2);border:1px solid rgba(30,94,255,0.4);display:flex;align-items:center;justify-content:center;font-size:14px;color:#5b8fff;">✦</div>
+                                    <div>
+                                        <div style="font-size:14px;font-weight:700;color:#fff;">Torque Coach</div>
+                                        <div style="font-size:11px;color:#3a5070;">Powered by your swing data</div>
+                                    </div>
+                                    <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+                                        <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;"></div>
+                                        <span style="font-size:11px;color:#22c55e;">Online</span>
+                                    </div>
+                                </div>
+
+                                <!-- Messages -->
+                                <div class="golf-chat-messages" id="golfChatMessages" style="flex:1;padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;"></div>
+
+                                <!-- Welcome message (hidden once chat starts) -->
+                                <div id="coachWelcomeMsg" style="padding:20px;display:flex;gap:10px;align-items:flex-start;">
+                                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(30,94,255,0.2);border:1px solid rgba(30,94,255,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;color:#5b8fff;flex-shrink:0;">✦</div>
+                                    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:0 12px 12px 12px;padding:12px 16px;">
+                                        <p style="font-size:13px;color:#b0c4d8;line-height:1.6;margin:0;">Hey! I'm your Torque coach. I've reviewed your swing analysis and I'm ready to help. Tell me what the ball is doing using the panel on the left, or just ask me anything.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Input -->
+                                <div class="golf-chat-input-row" style="padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:10px;">
+                                    <input type="text" class="golf-chat-input" id="golfChatInput" placeholder="Ask your coach anything..." style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:10px 16px;font-size:13px;color:#fff;font-family:'Inter',sans-serif;outline:none;" />
+                                    <button type="button" class="golf-chat-send" id="golfChatSend" style="background:#1e5eff;border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -2520,6 +2584,17 @@
             });
         }
         if (golfChatSend) golfChatSend.addEventListener('click', sendGolfCoachMessage);
+
+        document.querySelectorAll('.miss-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var miss = btn.getAttribute('data-miss');
+                if (!miss) return;
+                var welcomeMsg = document.getElementById('coachWelcomeMsg');
+                if (welcomeMsg) welcomeMsg.style.display = 'none';
+                if (golfChatInput) golfChatInput.value = miss;
+                sendGolfCoachMessage();
+            });
+        });
         if (golfChatInput) golfChatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); sendGolfCoachMessage(); } });
 
         // Golf Hub: drill library filter
