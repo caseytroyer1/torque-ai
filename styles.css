@@ -5322,13 +5322,13 @@
 
         /* Cursor grow on interactive elements */
         body.cursor-hover #torque-cursor-dot {
-            width: 14px; height: 14px;
-            background: #fff;
-            box-shadow: 0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(30,94,255,0.5);
+            width: 12px; height: 12px;
+            background: #1e5eff;
+            box-shadow: 0 0 8px rgba(30,94,255,0.5);
         }
         body.cursor-hover #torque-cursor-ring {
-            width: 52px; height: 52px;
-            border-color: rgba(30,94,255,0.85);
+            width: 44px; height: 44px;
+            border-color: rgba(30,94,255,0.5);
         }
 
         /* --- Hero Canvas (desktop only) --- */
