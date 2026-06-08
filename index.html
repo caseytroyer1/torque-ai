@@ -121,7 +121,6 @@
     </script>
 </head>
 <body>
-    <!-- Custom cursor elements -->
     <div id="torque-toast"></div>
     <!-- Top Navigation Bar -->
     <nav class="top-nav">
@@ -169,7 +168,6 @@
             <video class="hero-video" autoplay loop muted playsinline>
                 <source src="hero-background.mp4" type="video/mp4">
             </video>
-            <canvas id="torqueHeroCanvas"></canvas>
             <div class="hero-container">
                 <div class="hero-left">
                     <h1 class="hero-headline" id="heroHeadline" style="min-height: 220px;"></h1>
@@ -4933,256 +4931,19 @@
             <p class="metric-info-modal-body"></p>
         </div>
     </div>
+</body>
     <script>
-    /* ================================================================
-       TORQUE AI ENHANCEMENTS
-       1. Custom cursor with lag ring
-       2. Hero canvas — blue swing arc + particle field, mouse reactive
-       3. Scroll-reveal via IntersectionObserver
-       4. Testimonial card reveal
-       ================================================================ */
-
-    // ── 1. CUSTOM CURSOR ──────────────────────────────────────────────
-    (function() {
-        var dot = document.getElementById('torque-cursor-dot');
-        var ring = document.getElementById('torque-cursor-ring');
-        if (!dot || !ring) return;
-
-        // Only run on devices with a fine pointer (mouse/trackpad)
-        if (!window.matchMedia('(pointer: fine)').matches) return;
-
-        var mx = window.innerWidth / 2, my = window.innerHeight / 2;
-        var rx = mx, ry = my;
-        var dotX = mx, dotY = my;
-
-        // Smooth ring lag
-        function lerp(a, b, t) { return a + (b - a) * t; }
-
-        function loop() {
-            rx = lerp(rx, mx, 0.14);
-            ry = lerp(ry, my, 0.14);
-            dotX = lerp(dotX, mx, 0.55);
-            dotY = lerp(dotY, my, 0.55);
-
-            dot.style.left = dotX + 'px';
-            dot.style.top  = dotY + 'px';
-            ring.style.left = rx + 'px';
-            ring.style.top  = ry + 'px';
-            requestAnimationFrame(loop);
-        }
-
-        document.addEventListener('mousemove', function(e) {
-            mx = e.clientX;
-            my = e.clientY;
-        });
-
-        // Grow cursor on interactive elements
-        var interactors = 'a, button, [onclick], [role="button"], label, select, input, .swing-selector-btn, .hero-cta-button, .hero-cta-secondary, .top-nav-link, .how-it-works-column, .testi-card, .feature-card, .cta-button';
-        document.addEventListener('mouseover', function(e) {
-            if (e.target.closest(interactors)) {
-                document.body.classList.add('cursor-hover');
-            }
-        });
-        document.addEventListener('mouseout', function(e) {
-            if (e.target.closest(interactors)) {
-                document.body.classList.remove('cursor-hover');
-            }
-        });
-
-        // Hide when cursor leaves window
-        document.addEventListener('mouseleave', function() {
-            dot.style.opacity = '0';
-            ring.style.opacity = '0';
-        });
-        document.addEventListener('mouseenter', function() {
-            dot.style.opacity = '1';
-            ring.style.opacity = '1';
-        });
-
-        loop();
-    })();
-
-    // ── 2. HERO CANVAS ANIMATION ──────────────────────────────────────
-    (function() {
-        var canvas = document.getElementById('torqueHeroCanvas');
-        if (!canvas) return;
-        if (window.innerWidth < 769) return;
-
-        var ctx = canvas.getContext('2d');
-        var W, H, mouseX, mouseY;
-
-        function resize() {
-            W = canvas.width  = canvas.offsetWidth;
-            H = canvas.height = canvas.offsetHeight;
-        }
-        resize();
-        window.addEventListener('resize', function() {
-            if (window.innerWidth < 769) { ctx.clearRect(0,0,W,H); return; }
-            resize();
-        });
-
-        // Track mouse within hero
-        var hero = canvas.parentElement;
-        hero.addEventListener('mousemove', function(e) {
-            var r = canvas.getBoundingClientRect();
-            mouseX = e.clientX - r.left;
-            mouseY = e.clientY - r.top;
-        });
-        hero.addEventListener('mouseleave', function() {
-            mouseX = null; mouseY = null;
-        });
-
-        // Particles
-        var PARTICLE_COUNT = 55;
-        var particles = [];
-        function rand(a, b) { return a + Math.random() * (b - a); }
-
-        function initParticles() {
-            particles = [];
-            for (var i = 0; i < PARTICLE_COUNT; i++) {
-                particles.push({
-                    x: rand(0, W),
-                    y: rand(0, H),
-                    r: rand(1, 2.8),
-                    vx: rand(-0.18, 0.18),
-                    vy: rand(-0.12, 0.12),
-                    alpha: rand(0.15, 0.55),
-                    phase: rand(0, Math.PI * 2),
-                    speed: rand(0.008, 0.022)
-                });
-            }
-        }
-        initParticles();
-
-        // Swing arc definitions — several arcs at different angles + sizes
-        var ARCS = [
-            { cx: 0.68, cy: 0.88, rx: 0.38, ry: 0.52, start: -Math.PI * 0.9, end: -Math.PI * 0.15, speed: 0.0018, phase: 0,    width: 1.2, alpha: 0.18 },
-            { cx: 0.72, cy: 0.92, rx: 0.28, ry: 0.40, start: -Math.PI * 0.85, end: -Math.PI * 0.18, speed: 0.0024, phase: 1.2, width: 0.8, alpha: 0.12 },
-            { cx: 0.65, cy: 0.85, rx: 0.48, ry: 0.65, start: -Math.PI * 0.95, end: -Math.PI * 0.1,  speed: 0.0013, phase: 2.4, width: 1.6, alpha: 0.10 },
-            { cx: 0.70, cy: 0.90, rx: 0.20, ry: 0.30, start: -Math.PI * 0.8,  end: -Math.PI * 0.25, speed: 0.003,  phase: 0.6, width: 0.6, alpha: 0.14 },
-        ];
-
-        var t = 0;
-
-        function drawArcs() {
-            ARCS.forEach(function(a) {
-                var wave = (Math.sin(t * a.speed + a.phase) + 1) / 2;
-                var alpha = a.alpha * (0.5 + wave * 0.5);
-
-                // Mouse attracts arcs slightly
-                var cx = a.cx * W;
-                var cy = a.cy * H;
-                if (mouseX != null) {
-                    cx += (mouseX - cx) * 0.04;
-                    cy += (mouseY - cy) * 0.03;
-                }
-
-                var rx = a.rx * W;
-                var ry = a.ry * H;
-
-                var grad = ctx.createLinearGradient(
-                    cx + Math.cos(a.start) * rx,
-                    cy + Math.sin(a.start) * ry,
-                    cx + Math.cos(a.end) * rx,
-                    cy + Math.sin(a.end) * ry
-                );
-                grad.addColorStop(0, 'rgba(30,94,255,0)');
-                grad.addColorStop(0.4, 'rgba(30,94,255,' + (alpha * 0.7) + ')');
-                grad.addColorStop(0.75, 'rgba(80,140,255,' + alpha + ')');
-                grad.addColorStop(1, 'rgba(30,94,255,' + (alpha * 0.3) + ')');
-
-                ctx.beginPath();
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.scale(1, ry / rx);
-                ctx.arc(0, 0, rx, a.start, a.end);
-                ctx.restore();
-                ctx.strokeStyle = grad;
-                ctx.lineWidth = a.width + wave * 0.8;
-                ctx.stroke();
-            });
-        }
-
-        function drawParticles() {
-            particles.forEach(function(p) {
-                p.x += p.vx;
-                p.y += p.vy;
-
-                // Wrap
-                if (p.x < -5) p.x = W + 5;
-                if (p.x > W + 5) p.x = -5;
-                if (p.y < -5) p.y = H + 5;
-                if (p.y > H + 5) p.y = -5;
-
-                // Mouse repulsion — particles drift away from cursor gently
-                if (mouseX != null) {
-                    var dx = p.x - mouseX, dy = p.y - mouseY;
-                    var dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 90) {
-                        var force = (90 - dist) / 90 * 0.4;
-                        p.vx += (dx / dist) * force;
-                        p.vy += (dy / dist) * force;
-                    }
-                    // Dampen velocity so they don't fly off
-                    p.vx *= 0.97;
-                    p.vy *= 0.97;
-                }
-
-                p.phase += p.speed;
-                var a = p.alpha * (0.6 + Math.sin(p.phase) * 0.4);
-
-                var grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
-                grd.addColorStop(0, 'rgba(80,150,255,' + a + ')');
-                grd.addColorStop(1, 'rgba(30,94,255,0)');
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
-                ctx.fillStyle = grd;
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(180,210,255,' + a + ')';
-                ctx.fill();
-            });
-        }
-
-        function drawMouseGlow() {
-            if (mouseX == null) return;
-            var grd = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 130);
-            grd.addColorStop(0, 'rgba(30,94,255,0.12)');
-            grd.addColorStop(1, 'rgba(30,94,255,0)');
-            ctx.beginPath();
-            ctx.arc(mouseX, mouseY, 130, 0, Math.PI * 2);
-            ctx.fillStyle = grd;
-            ctx.fill();
-        }
-
-        function frame() {
-            if (window.innerWidth < 769) { requestAnimationFrame(frame); return; }
-            ctx.clearRect(0, 0, W, H);
-            drawArcs();
-            drawParticles();
-            drawMouseGlow();
-            t++;
-            requestAnimationFrame(frame);
-        }
-        frame();
-    })();
-
-    // ── 3. SCROLL REVEAL (how-it-works + stat items + testi cards) ────
     (function() {
         var reveals = document.querySelectorAll('.torque-reveal');
         var testiCards = document.querySelectorAll('.testi-card');
         var statItems = document.querySelectorAll('.torque-stat-item');
 
         if (!('IntersectionObserver' in window)) {
-            // Fallback: just show everything
             reveals.forEach(function(el) { el.classList.add('revealed'); });
             testiCards.forEach(function(el) { el.classList.add('revealed'); });
             return;
         }
 
-        // Generic reveal
         var obs = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
@@ -5191,12 +4952,10 @@
                 }
             });
         }, { threshold: 0.12 });
-
         reveals.forEach(function(el) { obs.observe(el); });
 
-        // Testimonial cards staggered
         var testiObs = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry, i) {
+            entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
                     var delay = parseInt(entry.target.getAttribute('data-testi-idx') || 0) * 120;
                     setTimeout(function() { entry.target.classList.add('revealed'); }, delay);
@@ -5204,13 +4963,11 @@
                 }
             });
         }, { threshold: 0.1 });
-
         testiCards.forEach(function(el, i) {
             el.setAttribute('data-testi-idx', i);
             testiObs.observe(el);
         });
 
-        // Stat items count-up glow
         var statObs = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
@@ -5223,9 +4980,8 @@
                 }
             });
         }, { threshold: 0.3 });
-
         statItems.forEach(function(el) { statObs.observe(el); });
     })();
     </script>
-</body>
+</html>
 
