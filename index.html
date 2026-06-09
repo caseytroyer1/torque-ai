@@ -4270,7 +4270,7 @@
             const getTierClass = (val) => {
                 if (!val) return 'tier-solid';
                 const v = String(val).toLowerCase();
-                if (v.includes('elite')) return 'tier-elite';
+                if (v.includes('elite') || v.includes('excellent')) return 'tier-elite';
                 if (v.includes('solid')) return 'tier-solid';
                 return 'tier-needs';
             };
@@ -4420,7 +4420,7 @@
                 ];
                 const setupRedCount = setupStatuses.filter(s => s === 'status-needs-attention').length;
                 const setupGreenCount = setupStatuses.filter(s => s === 'status-good').length;
-                const setupDerivedLabel = setupRedCount >= 2 ? 'Needs Attention' : (setupGreenCount >= 3 ? 'Elite' : 'Solid Foundation');
+                const setupDerivedLabel = setupRedCount >= 2 ? 'Needs Attention' : (setupGreenCount >= 3 ? 'Excellent Foundation' : 'Solid Foundation');
                 html += `<div class="results-overall-label ${getTierClass(setupDerivedLabel)}"><span aria-hidden="true">✦</span> ${setupDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 // Spine Angle — reliable all angles
@@ -4496,7 +4496,7 @@
                 }
                 const mechRedCount = mechStatuses.filter(s => s === 'status-needs-attention').length;
                 const mechGreenCount = mechStatuses.filter(s => s === 'status-good').length;
-                const mechDerivedLabel = mechRedCount >= 2 ? 'Needs Attention' : (mechGreenCount >= 2 ? 'Elite' : 'Solid Foundation');
+                const mechDerivedLabel = mechRedCount >= 2 ? 'Needs Attention' : (mechGreenCount >= 2 ? 'Excellent Foundation' : 'Solid Foundation');
                 html += `<div class="results-overall-label ${getTierClass(mechDerivedLabel)}"><span aria-hidden="true">✦</span> ${mechDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 // Spine Maintained — reliable all angles

@@ -162,7 +162,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     # ------ MediaPipe-driven grades (deterministic) ------
     def _setup_grade_to_tier(g):
         if g == 'A':
-            return 'Elite'
+            return 'Excellent Foundation'
         if g == 'B':
             return 'Solid Foundation'
         return 'Needs Attention'
@@ -259,6 +259,27 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
     mp_facts.append(f"- Backswing tier (computed): {backswing_tier}")
     mp_facts.append(f"- Impact tier (computed): {impact_tier}")
     mp_context = "\n".join(mp_facts) if mp_facts else "No MediaPipe measurements available."
+
+    def _downgrade_setup_tier(tier, claude_result, camera_angle):
+        if not claude_result:
+            return tier
+        addr = claude_result.get('address') or {}
+        bad_values = {'too upright', 'too hunched', 'too bent', 'too straight',
+                      'too narrow', 'too wide', 'too far forward', 'too far back',
+                      'slightly rounded', 'uneven'}
+        red_flags = 0
+        fields = ['posture', 'spine_angle_visual', 'knee_flex_visual',
+                  'stance_width', 'hand_position', 'weight_distribution',
+                  'shoulder_level', 'ball_position']
+        for f in fields:
+            val = str(addr.get(f) or '').lower().strip()
+            if any(b in val for b in bad_values):
+                red_flags += 1
+        if red_flags >= 2:
+            return 'Needs Attention'
+        if red_flags == 1 and tier == 'Excellent Foundation':
+            return 'Solid Foundation'
+        return tier
 
     club_desc = (
         'DRIVER — expect a wider stance, more spine tilt away from target, and a shallower swing arc' if golfer_club == 'driver'
@@ -529,6 +550,7 @@ def analyze_frames_with_claude(address_frame_b64, backswing_frame_b64, impact_fr
         claude_analysis['address']['knee_flex'] = knee_flex_str
     if shoulder_level_str is not None:
         claude_analysis['address']['shoulder_level'] = shoulder_level_str
+    setup_tier = _downgrade_setup_tier(setup_tier, claude_analysis, user_camera_angle)
     claude_analysis['address']['overall_setup'] = setup_tier
 
     if spine_maintained_str is not None:
