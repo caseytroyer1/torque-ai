@@ -172,7 +172,7 @@
                 <div class="hero-left">
                     <h1 class="hero-headline" id="heroHeadline" style="min-height: 220px;"></h1>
                     <div class="hero-btns">
-                        <button class="hero-cta-button" id="tryItFreeBtn" onclick="switchPage('swing-coach')">Try For Free →</button>
+                        <button class="hero-cta-button" id="tryItFreeBtn" onclick="switchPage('swing-coach')">Coach My Swing Free →</button>
                         <button class="hero-cta-secondary" onclick="document.querySelector('.how-it-works-section').scrollIntoView({behavior:'smooth'})">See How It Works</button>
                     </div>
                 </div>
@@ -394,7 +394,7 @@
         <div class="cta-container">
             <h2 class="cta-headline">Your Best Round Starts Here.</h2>
             <p class="cta-subtext">No lesson fees. No tee times. Just better golf.</p>
-            <button class="cta-button" id="startAnalyzingBtn" onclick="switchPage('swing-coach')">Try For Free →</button>
+            <button class="cta-button" id="startAnalyzingBtn" onclick="switchPage('swing-coach')">Coach My Swing Free →</button>
             <div class="cta-note">
                 <div class="cta-note-item"><div class="cta-note-dot"></div>No credit card required</div>
                 <div class="cta-note-item"><div class="cta-note-dot"></div>Works on any smartphone</div>
@@ -2348,15 +2348,8 @@
                     charIndex = 0;
                     if (lineIndex < lines.length) {
                         setTimeout(type, 200);
-                    } else {
-                        setTimeout(function() {
-                            lineIndex = 0;
-                            charIndex = 0;
-                            completedLines.length = 0;
-                            el.innerHTML = '';
-                            setTimeout(type, 400);
-                        }, 4000);
                     }
+                    // Intentionally stop after all lines are typed — headline stays visible
                 }
             }
 
