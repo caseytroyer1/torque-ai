@@ -5311,3 +5311,62 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+/* ============================================
+   MOBILE CONSOLIDATION — appended last to override
+   inline styles and conflicting media queries
+   ============================================ */
+@media (max-width: 640px) {
+
+  /* Kill horizontal scroll */
+  html, body { overflow-x: hidden !important; max-width: 100% !important; }
+
+  /* Force ALL inline and class-based grids to single column */
+  [class*="grid"],
+  [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Neutralize the 100vw full-bleed trick on results view */
+  .results-split-viewport-wrap,
+  .results-split-viewport-wrap:has(.results-split-container.active) {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Stack results split view vertically */
+  .results-split-container.active {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+  .results-video-panel {
+    position: relative !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+  }
+  .results-analysis-panel { min-width: 0 !important; }
+
+  /* Side padding so content has breathing room */
+  .results-split-container,
+  .golf-hub-container,
+  .swing-coach-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* How It Works columns — force stack */
+  .how-it-works-columns {
+    grid-template-columns: 1fr !important;
+  }
+  .how-it-works-connector { display: none !important; }
+
+  /* Testi grid single column */
+  .testi-grid { grid-template-columns: 1fr !important; }
+
+  /* Hero phone image — don't let it overflow */
+  .hero-phone { max-width: 100% !important; width: 100% !important; }
+}
