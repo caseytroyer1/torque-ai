@@ -4556,12 +4556,31 @@
                     'early extension': { name: 'Spine Angle Hold Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Eliminates early extension — one of the most common causes of thin and fat shots.' },
                     'tempo': { name: 'Pause at the Top', category: 'tempo', categoryLabel: 'Tempo', desc: 'The single best drill for golfers who rush the downswing.' },
                     'rushing': { name: 'Pause at the Top', category: 'tempo', categoryLabel: 'Tempo', desc: 'The single best drill for golfers who rush the downswing.' },
+                    'too fast': { name: 'Count Rhythm Drill', category: 'tempo', categoryLabel: 'Tempo', desc: 'Locks in a repeatable swing rhythm using a simple counting method.' },
                     'left arm': { name: 'Left Arm Straight Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Trains a wide swing arc by keeping the lead arm extended through the backswing.' },
+                    'bent': { name: 'Left Arm Straight Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Trains a wide swing arc by keeping the lead arm extended through the backswing.' },
                     'weight transfer': { name: 'Hip Bump Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Trains proper hip clearance and sequencing through the impact zone.' },
+                    'reverse pivot': { name: 'Step Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Fixes reverse pivot and builds proper weight shift from back foot to front foot.' },
+                    'minimal': { name: 'Step Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Fixes reverse pivot and builds proper weight shift from back foot to front foot.' },
+                    'hip sway': { name: 'Hip Coil Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Builds hip-shoulder separation and X-Factor for more power without swinging harder.' },
+                    'sway': { name: 'Hip Coil Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Builds hip-shoulder separation and X-Factor for more power without swinging harder.' },
                     'hip': { name: 'Hip Coil Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Builds hip-shoulder separation and X-Factor for more power without swinging harder.' },
                     'separation': { name: 'Hip Coil Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Builds hip-shoulder separation and X-Factor for more power without swinging harder.' },
+                    'above parallel': { name: 'Towel Under Arms Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Shortens an overswing by keeping the arms connected to the body through the backswing.' },
+                    'over extended': { name: 'Towel Under Arms Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Shortens an overswing by keeping the arms connected to the body through the backswing.' },
                     'posture': { name: 'Wall Posture Drill', category: 'setup', categoryLabel: 'Setup', desc: 'Builds spine angle awareness and corrects slouching at address.' },
+                    'hunched': { name: 'Wall Posture Drill', category: 'setup', categoryLabel: 'Setup', desc: 'Builds spine angle awareness and corrects slouching at address.' },
+                    'rounded': { name: 'Wall Posture Drill', category: 'setup', categoryLabel: 'Setup', desc: 'Builds spine angle awareness and corrects slouching at address.' },
+                    'knee flex': { name: 'Knee Flex Check', category: 'setup', categoryLabel: 'Setup', desc: 'Fixes locked or over-bent knees that cause balance issues throughout the swing.' },
+                    'too bent': { name: 'Knee Flex Check', category: 'setup', categoryLabel: 'Setup', desc: 'Fixes locked or over-bent knees that cause balance issues throughout the swing.' },
+                    'too straight': { name: 'Knee Flex Check', category: 'setup', categoryLabel: 'Setup', desc: 'Fixes locked or over-bent knees that cause balance issues throughout the swing.' },
+                    'shoulder level': { name: 'Shoulder Level Drill', category: 'setup', categoryLabel: 'Setup', desc: 'Corrects uneven shoulders that cause mis-hits and inconsistent ball flight.' },
+                    'uneven': { name: 'Shoulder Level Drill', category: 'setup', categoryLabel: 'Setup', desc: 'Corrects uneven shoulders that cause mis-hits and inconsistent ball flight.' },
+                    'shaft lean': { name: 'Gate Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Trains forward shaft lean and proper ball-first contact through the impact zone.' },
+                    'scooping': { name: 'Gate Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Trains forward shaft lean and proper ball-first contact through the impact zone.' },
+                    'alignment': { name: 'Alignment Stick Drill', category: 'setup', categoryLabel: 'Setup', desc: 'Grooves consistent alignment of feet, hips, and shoulders at address.' },
                     'head': { name: 'Head Behind Ball Drill', category: 'impact', categoryLabel: 'Impact', desc: 'Stops the head from sliding forward which causes thin shots and loss of power.' },
+                    'balance': { name: 'Feet Together Drill', category: 'backswing', categoryLabel: 'Backswing', desc: 'Improves balance and weight transfer by forcing you to stay centered.' },
                 };
 
                 function getRecommendedDrills(diagnosisData, claudeData) {
@@ -4589,13 +4608,27 @@
                         const spineM = (claudeData.backswing || {}).spine_angle_maintained || '';
                         if (spineM.includes('lost')) addDrill(DRILL_MAP['spine']);
                         const leftArm = (claudeData.backswing || {}).left_arm || '';
-                        if (leftArm.includes('bent')) addDrill(DRILL_MAP['left arm']);
+                        if (leftArm.includes('bent')) addDrill(DRILL_MAP['bent']);
+                        const clubPos = (claudeData.backswing || {}).club_position || '';
+                        if (clubPos.includes('above')) addDrill(DRILL_MAP['above parallel']);
+                        const hipSway = (claudeData.backswing || {}).hip_sway || '';
+                        if (hipSway.includes('sway')) addDrill(DRILL_MAP['sway']);
                         const wt = (claudeData.backswing || {}).weight_transfer || '';
-                        if (wt.includes('minimal') || wt.includes('reverse')) addDrill(DRILL_MAP['weight transfer']);
+                        if (wt.includes('reverse')) addDrill(DRILL_MAP['reverse pivot']);
+                        else if (wt.includes('minimal')) addDrill(DRILL_MAP['minimal']);
                         const tempoL = analysis.tempo_label || '';
-                        if (tempoL.includes('Rushed') || tempoL.includes('Fast')) addDrill(DRILL_MAP['tempo']);
+                        if (tempoL.includes('Rushed')) addDrill(DRILL_MAP['tempo']);
+                        else if (tempoL.includes('Fast')) addDrill(DRILL_MAP['too fast']);
                         const sep = (claudeData.backswing || {}).hip_shoulder_separation || '';
                         if (sep.includes('needs')) addDrill(DRILL_MAP['separation']);
+                        const posture = (claudeData.address || {}).posture || '';
+                        if (posture.includes('hunched') || posture.includes('rounded')) addDrill(DRILL_MAP['hunched']);
+                        const kneeFlex = (claudeData.address || {}).knee_flex_visual || '';
+                        if (kneeFlex.includes('too bent') || kneeFlex.includes('too straight')) addDrill(DRILL_MAP['knee flex']);
+                        const shaftLean = (claudeData.impact || {}).shaft_lean || '';
+                        if (shaftLean.includes('none') || shaftLean.includes('too much')) addDrill(DRILL_MAP['shaft lean']);
+                        const shoulderLevel = (claudeData.address || {}).shoulder_level || '';
+                        if (shoulderLevel.includes('uneven')) addDrill(DRILL_MAP['uneven']);
                     }
 
                     // Default fallback
