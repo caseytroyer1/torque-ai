@@ -3950,6 +3950,25 @@
         
         // Main analysis function
         async function analyzeSwing() {
+            // Check analysis limit (3 free per user) — fail open so Supabase issues never block real users
+            try {
+                const sb = window.torqueSupabase;
+                if (sb) {
+                    const { data: sessionData } = await sb.auth.getSession();
+                    const userId = sessionData && sessionData.session && sessionData.session.user ? sessionData.session.user.id : null;
+                    if (userId) {
+                        const { data: countRow } = await sb.from('swing_analyses').select('count').eq('user_id', userId).single();
+                        const currentCount = countRow ? countRow.count : 0;
+                        if (currentCount >= 3) {
+                            showToast('You\'ve used your 3 free analyses. Unlimited analyses coming soon — stay tuned!', 'info', 5000);
+                            return;
+                        }
+                    }
+                }
+            } catch (limitErr) {
+                console.warn('Analysis limit check failed (non-blocking):', limitErr);
+            }
+
             // Get the file from the input
             if (!videoFileInput || !videoFileInput.files || videoFileInput.files.length === 0) {
                 showToast('Please upload a video first', 'error');
@@ -4041,12 +4060,31 @@
                     const elapsed = Date.now() - processingStartTime;
                     const remaining = Math.max(0, minProcessingTime - elapsed);
                     
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         // Hide processing overlay
                         if (processingOverlay) {
                             processingOverlay.classList.remove('active');
                         }
                         
+                        // Increment analysis count in Supabase — fail open
+                        try {
+                            const sb = window.torqueSupabase;
+                            if (sb) {
+                                const { data: sessionData } = await sb.auth.getSession();
+                                const userId = sessionData && sessionData.session && sessionData.session.user ? sessionData.session.user.id : null;
+                                if (userId) {
+                                    const { data: existing } = await sb.from('swing_analyses').select('count').eq('user_id', userId).single();
+                                    if (existing) {
+                                        await sb.from('swing_analyses').update({ count: existing.count + 1, updated_at: new Date().toISOString() }).eq('user_id', userId);
+                                    } else {
+                                        await sb.from('swing_analyses').insert({ user_id: userId, count: 1, updated_at: new Date().toISOString() });
+                                    }
+                                }
+                            }
+                        } catch (countErr) {
+                            console.warn('Analysis count update failed (non-blocking):', countErr);
+                        }
+
                         // Display split-view results
                         displaySplitViewResults(data);
                         
