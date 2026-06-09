@@ -4496,7 +4496,7 @@
                 }
                 const mechRedCount = mechStatuses.filter(s => s === 'status-needs-attention').length;
                 const mechGreenCount = mechStatuses.filter(s => s === 'status-good').length;
-                const mechDerivedLabel = mechRedCount >= 2 ? 'Needs Attention' : (mechGreenCount >= 2 ? 'Excellent Foundation' : 'Solid Foundation');
+                const mechDerivedLabel = (mechRedCount >= 1 || mechGreenCount < mechStatuses.filter(s => s !== '').length * 0.6) ? (mechRedCount >= 2 ? 'Needs Attention' : 'Solid Foundation') : 'Excellent Foundation';
                 html += `<div class="results-overall-label ${getTierClass(mechDerivedLabel)}"><span aria-hidden="true">✦</span> ${mechDerivedLabel}</div>`;
                 html += `<div class="results-tab-metrics-grid">`;
                 // Spine Maintained — reliable all angles
