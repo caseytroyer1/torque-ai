@@ -20,11 +20,15 @@
             background: linear-gradient(135deg, #060f1e 0%, #0d2137 50%, #0a1829 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 20px;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+        }
+
+        @media (min-height: 700px) {
+            body { align-items: center; }
         }
 
         body::before {
