@@ -4389,9 +4389,8 @@
         }
 
         .top-nav-logo {
-            height: 64px;
+            height: 26px;
             width: auto;
-            filter: brightness(0) invert(1);
             display: block;
         }
 
@@ -4623,7 +4622,7 @@
             }
 
             .top-nav-logo {
-                height: 50px;
+                height: 22px;
             }
         }
 
@@ -4643,9 +4642,8 @@
         }
 
         .footer-logo {
-            width: 120px;
-            height: auto;
-            filter: brightness(0) invert(1);
+            height: 30px;
+            width: auto;
         }
 
         .footer-nav {

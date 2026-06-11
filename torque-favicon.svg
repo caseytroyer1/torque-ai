@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Torque">
+  <defs>
+    <linearGradient id="flight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1e5eff"/>
+      <stop offset="1" stop-color="#1e5eff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#060f1e"/>
+  <g transform="translate(16.0,34.9) scale(0.5825)">
+    <path d="M46.45077897230321 100.0V25.462585983053927H3.4525968590561225V-0.25826946291910247H122.29359796373907V25.462585983053927H79.29541585049199V100.0Z" fill="#ffffff"/>
+    <rect x="134.8" y="46.0" width="30" height="8" rx="4.0" fill="url(#flight)"/>
+  </g>
+</svg>
